@@ -23,7 +23,7 @@ include_directories(${CUDA_INCLUDE_DIRS})
 include_directories(${GLEW_INCLUDE_DIRS})
 include_directories(${GLUT_INCLUDE_DIRS})
 include_directories(${ZED_INCLUDE_DIRS})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR/include})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 link_directories(${CUDA_LIBRARY_DIRS})
 link_directories(${ZED_LIBRARY_DIRS})

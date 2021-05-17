@@ -1,11 +1,17 @@
 #include <sl/Camera.hpp>
 
+#include "GLViewer.hpp"
+
 using namespace std;
 using namespace sl;
 
 
 int main(int argc, char **argv) {
+
 	Camera zed;
+
+	GLViewer viewer;
+	viewer.init(argc, argv);
 
 	ERROR_CODE returned_state = zed.open();
 

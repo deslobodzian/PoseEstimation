@@ -25,8 +25,10 @@ GLViewer* currentInstance_ = nullptr;
 
 GLViewer::GLViewer() {
 	currentInstance_ = this;
-
 }
+
+GLViewer::~GLViewer() {}
+
 
 void GLViewer::init(int argc, char **argv) {
 	glutInit(&argc, argv);

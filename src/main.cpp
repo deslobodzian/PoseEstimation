@@ -1,27 +1,12 @@
-#include <sl/Camera.hpp>
+#include <iostream>
+#include <Eigen/Dense>
 
-#include "GLViewer.hpp"
-
-using namespace std;
-using namespace sl;
-
-
-int main(int argc, char **argv) {
-
-	Camera zed;
-
-	GLViewer viewer;
-	viewer.init(argc, argv);
-
-	ERROR_CODE returned_state = zed.open();
-
-	if (returned_state != ERROR_CODE::SUCCESS) {
-		cout << "Error " << returned_state << ", exit program.\n";
-		return EXIT_FAILURE;
-	}
-
-	auto camera_infos = zed.getCameraInformation();
-	printf("Hello! This is my serial number: %d\n", camera_infos.serial_number);
-	zed.close();
-	return EXIT_SUCCESS; 
+int main() {
+	Eigen::MatrixXd m(2,2);
+	m(0,0) = 3;
+	m(1,0) = 3;
+	m(0,1) = 3;
+	m(1,1) = 3;
+	std::cout << m << std::endl;
+	return 0;
 }

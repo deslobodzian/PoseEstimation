@@ -1,4 +1,10 @@
-[X] Install OpenGL Cpp
-[X] Create a window
-[] Keyboard Inturupt
-[] Visualize Camera
+[] Import Eigen Lib
+[] Create Kalman Filter
+[] Test KF
+[] Determin state variables
+[] Define Motion Model
+[] Define Observation Sensors
+[] Define Observation Model
+[] Create Uncented Kalman Filter(UFK)
+[]
+[]

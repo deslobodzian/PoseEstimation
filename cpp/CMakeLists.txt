@@ -53,7 +53,7 @@ endif()
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} 
                         ${SPECIAL_OS_LIBS} 
                         ${ZED_LIBS}
-			${OpenCV_LIBS}
-			${OPENGL_LIBS}
-			${GLUT_LIBS}
-			${GLEW_LIBS})
+			${OpenCV_LIBRARIES}
+			${OPENGL_LIBRARIES}
+			${GLUT_LIBRARY}
+			${GLEW_LIBRARIES})

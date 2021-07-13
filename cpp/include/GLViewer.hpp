@@ -16,10 +16,10 @@
 #define M_I 3.141592653f
 #endif
 
-const float MOUSE_R_SENSITIVITY = 0.025f
-const float MOUSE_UZ_SENSITIVITY = 0.75f
-const float MOUSE_DZ_SENSITIVITY = 1.25f
-const float MOUSE_T_SENSITIVITY = 80.f
+const float MOUSE_R_SENSITIVITY = 0.025f;
+const float MOUSE_UZ_SENSITIVITY = 0.75f;
+const float MOUSE_DZ_SENSITIVITY = 1.25f;
+const float MOUSE_T_SENSITIVITY = 80.f;
 const float KEY_T_SENSITIVITY = 0.1f;
 
 class CameraGL {
@@ -137,14 +137,14 @@ public:
 
 	void setRT(const sl::Transform& mRT);
 
-	void rotate(const sl:Orientation& rot);
-	void rotate(const sl:Rotation& m);
+	void rotate(const sl::Orientation& rot);
+	void rotate(const sl::Rotation& m);
 	void setRotation(const sl::Orientation& rot);
 	void setRotation(const sl::Rotation& m);
 
 	const sl::Translation& getPosition() const;
 
-	sl::Transfrom getModelMatrix() const;
+	sl::Transform getModelMatrix() const;
 private:
 	std::vector<float> vertices_;
 	std::vector<float> colors_;
@@ -169,7 +169,7 @@ private:
 
 class SubMapObj {
 	GLuint vaoID_;
-	GLuint vboID_;
+	GLuint vboID_[2];
 	int current_fc;
 
 	std::vector<sl::uint1> index;
@@ -248,7 +248,7 @@ private:
 	std::vector<sl::float3> vecPath;
 
 	std::mutex mtx;
-	bool updateZEDPosition = false;
+	bool updateZEDposition = false;
 
 	bool mouseButton_[3];
 	int mouseWheelPosition_;

@@ -26,16 +26,11 @@ ENDIF()
 include_directories(${CUDA_INCLUDE_DIRS})
 include_directories(${ZED_INCLUDE_DIRS})
 include_directories(${OpenCV_INCLUDE_DIRS})
-include_directories(${GLEW_INCLUDE_DIRS})
-include_directories(${GLUT_INCLUDE_PATH})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 link_directories(${CUDA_LIBRARY_DIRS})
 link_directories(${ZED_LIBRARY_DIRS})
 link_directories(${OpenCV_LIBRARY_DIRS})
-link_directories(${GLEW_LIBRARY_DIRS})
-link_directories(${GLUT_LIBRARY_DIRS})
-link_directories(${OpenGL_LIBRARY_DIRS})
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
 FILE(GLOB_RECURSE SRC_FILES src/*.cpp)
@@ -53,7 +48,4 @@ endif()
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} 
                         ${SPECIAL_OS_LIBS} 
                         ${ZED_LIBS}
-			${OpenCV_LIBRARIES}
-			${OPENGL_LIBRARIES}
-			${GLUT_LIBRARY}
-			${GLEW_LIBRARIES})
+			${OpenCV_LIBRARIES})

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="pose_estimation"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="msvc8"/>
+		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\..\;CMake Files\..\..\..\..\..\..\;CMake Files\..\..\..\..\..\..\Program Files (x86)\;CMake Files\..\..\..\..\..\..\Program Files (x86)\ZED SDK\;CMake Files\..\..\..\..\..\..\Program Files (x86)\ZED SDK\dependencies\;CMake Files\..\..\..\..\..\..\Program Files (x86)\ZED SDK\dependencies\opencv_3.1.0\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\Makefile VERBOSE=1 all"/>
+					<CompileFile command="nmake /NOLOGO /f C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="pose_estimation">
+				<Option output="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/cmake-build-debug/pose_estimation.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="."/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="msvc8"/>
+				<Compiler>
+					<Add directory="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v10.2/include"/>
+					<Add directory="C:/Program Files (x86)/ZED SDK/include"/>
+					<Add directory="C:/Program Files (x86)/ZED SDK/dependencies/opencv_3.1.0/include"/>
+					<Add directory="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\ATLMFC\include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\cppwinrt"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\Makefile VERBOSE=1 pose_estimation"/>
+					<CompileFile command="nmake /NOLOGO /f C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="pose_estimation/fast">
+				<Option output="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/cmake-build-debug/pose_estimation.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="."/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="msvc8"/>
+				<Compiler>
+					<Add directory="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v10.2/include"/>
+					<Add directory="C:/Program Files (x86)/ZED SDK/include"/>
+					<Add directory="C:/Program Files (x86)/ZED SDK/dependencies/opencv_3.1.0/include"/>
+					<Add directory="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\ATLMFC\include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\cppwinrt"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\Makefile VERBOSE=1 pose_estimation/fast"/>
+					<CompileFile command="nmake /NOLOGO /f C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\Makefile VERBOSE=1 edit_cache"/>
+					<CompileFile command="nmake /NOLOGO /f C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\Makefile VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="nmake /NOLOGO /f C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/include/Zed2.hpp">
+			<Option target="pose_estimation"/>
+		</Unit>
+		<Unit filename="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/src/main.cpp">
+			<Option target="pose_estimation"/>
+		</Unit>
+		<Unit filename="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/../../../../../../Program Files (x86)/ZED SDK/zed-config-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\Program Files (x86)\ZED SDK\"/>
+		</Unit>
+		<Unit filename="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/../../../../../../Program Files (x86)/ZED SDK/zed-config.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\Program Files (x86)\ZED SDK\"/>
+		</Unit>
+		<Unit filename="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/../../../../../../Program Files (x86)/ZED SDK/dependencies/opencv_3.1.0/OpenCVConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\Program Files (x86)\ZED SDK\dependencies\opencv_3.1.0\"/>
+		</Unit>
+		<Unit filename="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/../../../../../../Program Files (x86)/ZED SDK/dependencies/opencv_3.1.0/OpenCVConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\Program Files (x86)\ZED SDK\dependencies\opencv_3.1.0\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

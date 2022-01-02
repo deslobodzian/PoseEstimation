@@ -14,15 +14,17 @@
 #include <sl/Camera.hpp>
 
 int main(int argc, char** argv) {
+    static Logger gLogger;
 
     Yolov5 yoloRT;
     std::string wts_name = "";
     std::string engine_name = "";
     bool is_p6 = false;
     float gd = 0.0f, gw = 0.0f;
-    if (!parse_args(argc, argv, wts_name, engine_name, is_p6, gd, gw)) {
+    if (!yoloRT.parse_args(argc, argv, wts_name, engine_name, is_p6, gd, gw)) {
         std::cerr << "arguments not right!" << std::endl;
-        std::cerr << "./yolov5 -s [.wts] [.engine] [s/m/l/x/s6/m6/l6/x6 or c/c6 gd gw]  // serialize model to plan file" << std::endl;
+        std::cerr << "./yolov5 -s [.wts] [.engine] [s/m/l/x/s6/m6/l6/x6 or c/c6 gd gw]  // serialize model to plan file"
+                  << std::endl;
         std::cerr << "./yolov5 -d [.engine] ZED_input_option  // deserialize plan file and run inference" << std::endl;
         return -1;
     }
@@ -30,7 +32,7 @@ int main(int argc, char** argv) {
     // create a model using the API directly and serialize it to a stream
     if (!wts_name.empty()) {
         cudaSetDevice(DEVICE);
-        IHostMemory * modelStream{ nullptr};
+        IHostMemory *modelStream{nullptr};
         yoloRT.APIToModel(BATCH_SIZE, &modelStream, is_p6, gd, gw, wts_name);
         assert(modelStream != nullptr);
         std::ofstream p(engine_name, std::ios::binary);
@@ -38,7 +40,7 @@ int main(int argc, char** argv) {
             std::cerr << "could not open plan output file" << std::endl;
             return -1;
         }
-        p.write(reinterpret_cast<const char*> (modelStream->data()), modelStream->size());
+        p.write(reinterpret_cast<const char *> (modelStream->data()), modelStream->size());
         modelStream->destroy();
         return 0;
     }
@@ -59,7 +61,7 @@ int main(int argc, char** argv) {
     // Open the camera
     auto returned_state = zed.open(init_parameters);
     if (returned_state != sl::ERROR_CODE::SUCCESS) {
-        print("Camera Open", returned_state, "Exit program.");
+        yoloRT.print("Camera Open", returned_state, "Exit program.");
         return EXIT_FAILURE;
     }
     zed.enablePositionalTracking();
@@ -70,12 +72,13 @@ int main(int argc, char** argv) {
     detection_parameters.detection_model = sl::DETECTION_MODEL::CUSTOM_BOX_OBJECTS;
     returned_state = zed.enableObjectDetection(detection_parameters);
     if (returned_state != sl::ERROR_CODE::SUCCESS) {
-        print("enableObjectDetection", returned_state, "\nExit program.");
+        yoloRT.print("enableObjectDetection", returned_state, "\nExit program.");
         zed.close();
         return EXIT_FAILURE;
     }
     auto camera_config = zed.getCameraInformation().camera_configuration;
-    sl::Resolution pc_resolution(std::min((int) camera_config.resolution.width, 720), std::min((int) camera_config.resolution.height, 404));
+    sl::Resolution pc_resolution(std::min((int) camera_config.resolution.width, 720),
+                                 std::min((int) camera_config.resolution.height, 404));
     auto camera_info = zed.getCameraInformation(pc_resolution).camera_configuration;
 
     // deserialize the .engine and run inference
@@ -95,26 +98,26 @@ int main(int argc, char** argv) {
     file.close();
 
     // prepare input data ---------------------------
-    static float data[BATCH_SIZE * 3 * INPUT_H * INPUT_W];
-    static float prob[BATCH_SIZE * OUTPUT_SIZE];
-    IRuntime* runtime = createInferRuntime(gLogger);
+    static float data[BATCH_SIZE * 3 * yoloRT.INPUT_H * yoloRT.INPUT_W];
+    static float prob[BATCH_SIZE * yoloRT.OUTPUT_SIZE];
+    IRuntime *runtime = createInferRuntime(gLogger);
     assert(runtime != nullptr);
-    ICudaEngine* engine = runtime->deserializeCudaEngine(trtModelStream, size);
+    ICudaEngine *engine = runtime->deserializeCudaEngine(trtModelStream, size);
     assert(engine != nullptr);
-    IExecutionContext* context = engine->createExecutionContext();
+    IExecutionContext *context = engine->createExecutionContext();
     assert(context != nullptr);
     delete[] trtModelStream;
     assert(engine->getNbBindings() == 2);
-    void* buffers[2];
+    void *buffers[2];
     // In order to bind the buffers, we need to know the names of the input and output tensors.
     // Note that indices are guaranteed to be less than IEngine::getNbBindings()
-    const int inputIndex = engine->getBindingIndex(INPUT_BLOB_NAME);
-    const int outputIndex = engine->getBindingIndex(OUTPUT_BLOB_NAME);
+    const int inputIndex = engine->getBindingIndex(yoloRT.INPUT_BLOB_NAME);
+    const int outputIndex = engine->getBindingIndex(yoloRT.OUTPUT_BLOB_NAME);
     assert(inputIndex == 0);
     assert(outputIndex == 1);
     // Create GPU buffers on device
-    CUDA_CHECK(cudaMalloc(&buffers[inputIndex], BATCH_SIZE * 3 * INPUT_H * INPUT_W * sizeof (float)));
-    CUDA_CHECK(cudaMalloc(&buffers[outputIndex], BATCH_SIZE * OUTPUT_SIZE * sizeof (float)));
+    CUDA_CHECK(cudaMalloc(&buffers[inputIndex], BATCH_SIZE * 3 * yoloRT.INPUT_H * yoloRT.INPUT_W * sizeof(float)));
+    CUDA_CHECK(cudaMalloc(&buffers[outputIndex], BATCH_SIZE * yoloRT.OUTPUT_SIZE * sizeof(float)));
     // Create stream
     cudaStream_t stream;
     CUDA_CHECK(cudaStreamCreate(&stream));
@@ -128,7 +131,7 @@ int main(int argc, char** argv) {
     sl::Pose cam_w_pose;
     cam_w_pose.pose_data.setIdentity();
 
-    while (viewer.isAvailable()) {
+    while (true) {
         if (zed.grab() == sl::ERROR_CODE::SUCCESS) {
 
             zed.retrieveImage(left_sl, sl::VIEW::LEFT);
@@ -137,15 +140,15 @@ int main(int argc, char** argv) {
             cv::Mat left_cv_rgba = slMat2cvMat(left_sl);
             cv::cvtColor(left_cv_rgba, left_cv_rgb, cv::COLOR_BGRA2BGR);
             if (left_cv_rgb.empty()) continue;
-            cv::Mat pr_img = preprocess_img(left_cv_rgb, INPUT_W, INPUT_H); // letterbox BGR to RGB
+            cv::Mat pr_img = preprocess_img(left_cv_rgb, yoloRT.INPUT_W, yoloRT.INPUT_H); // letterbox BGR to RGB
             int i = 0;
             int batch = 0;
-            for (int row = 0; row < INPUT_H; ++row) {
-                uchar* uc_pixel = pr_img.data + row * pr_img.step;
-                for (int col = 0; col < INPUT_W; ++col) {
-                    data[batch * 3 * INPUT_H * INPUT_W + i] = (float) uc_pixel[2] / 255.0;
-                    data[batch * 3 * INPUT_H * INPUT_W + i + INPUT_H * INPUT_W] = (float) uc_pixel[1] / 255.0;
-                    data[batch * 3 * INPUT_H * INPUT_W + i + 2 * INPUT_H * INPUT_W] = (float) uc_pixel[0] / 255.0;
+            for (int row = 0; row < yoloRT.INPUT_H; ++row) {
+                uchar *uc_pixel = pr_img.data + row * pr_img.step;
+                for (int col = 0; col < yoloRT.INPUT_W; ++col) {
+                    data[batch * 3 * yoloRT.INPUT_H * yoloRT.INPUT_W + i] = (float) uc_pixel[2] / 255.0;
+                    data[batch * 3 * yoloRT.INPUT_H * yoloRT.INPUT_W + i + yoloRT.INPUT_H * yoloRT.INPUT_W] = (float) uc_pixel[1] / 255.0;
+                    data[batch * 3 * yoloRT.INPUT_H * yoloRT.INPUT_W + i + 2 * yoloRT.INPUT_H * yoloRT.INPUT_W] = (float) uc_pixel[0] / 255.0;
                     uc_pixel += 3;
                     ++i;
                 }
@@ -153,21 +156,22 @@ int main(int argc, char** argv) {
 
             // Running inference
             yoloRT.doInference(*context, stream, buffers, data, prob, BATCH_SIZE);
-            std::vector<std::vector < Yolo::Detection >> batch_res(BATCH_SIZE);
-            auto& res = batch_res[batch];
-            nms(res, &prob[batch * OUTPUT_SIZE], CONF_THRESH, NMS_THRESH);
+            std::vector<std::vector<Yolo::Detection >> batch_res(BATCH_SIZE);
+            auto &res = batch_res[batch];
+            nms(res, &prob[batch * yoloRT.OUTPUT_SIZE], CONF_THRESH, NMS_THRESH);
 
             // Preparing for ZED SDK ingesting
             std::vector<sl::CustomBoxObjectData> objects_in;
-            for (auto &it : res) {
+            for (auto &it: res) {
                 sl::CustomBoxObjectData tmp;
                 cv::Rect r = get_rect(left_cv_rgb, it.bbox);
                 // Fill the detections into the correct format
                 tmp.unique_object_id = sl::generate_unique_id();
                 tmp.probability = it.conf;
                 tmp.label = (int) it.class_id;
-                tmp.bounding_box_2d = cvt(r);
-                tmp.is_grounded = ((int) it.class_id == 0); // Only the first class (person) is grounded, that is moving on the floor plane
+                tmp.bounding_box_2d = yoloRT.cvt(r);
+                tmp.is_grounded = ((int) it.class_id ==
+                                   0); // Only the first class (person) is grounded, that is moving on the floor plane
                 // others are tracked in full 3D space
                 objects_in.push_back(tmp);
             }
@@ -179,7 +183,8 @@ int main(int argc, char** argv) {
             for (size_t j = 0; j < res.size(); j++) {
                 cv::Rect r = get_rect(left_cv_rgb, res[j].bbox);
                 cv::rectangle(left_cv_rgb, r, cv::Scalar(0x27, 0xC1, 0x36), 2);
-                cv::putText(left_cv_rgb, std::to_string((int) res[j].class_id), cv::Point(r.x, r.y - 1), cv::FONT_HERSHEY_PLAIN, 1.2, cv::Scalar(0xFF, 0xFF, 0xFF), 2);
+                cv::putText(left_cv_rgb, std::to_string((int) res[j].class_id), cv::Point(r.x, r.y - 1),
+                            cv::FONT_HERSHEY_PLAIN, 1.2, cv::Scalar(0xFF, 0xFF, 0xFF), 2);
             }
             cv::imshow("Objects", left_cv_rgb);
             cv::waitKey(10);
@@ -199,3 +204,4 @@ int main(int argc, char** argv) {
     runtime->destroy();
 
     return 0;
+}

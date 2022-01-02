@@ -244,7 +244,7 @@ void Yolov5::doInference(IExecutionContext& context, cudaStream_t& stream, void 
     cudaStreamSynchronize(stream);
 }
 
-bool parse_args(int argc, char** argv, std::string& wts, std::string& engine, bool& is_p6, float& gd, float& gw) {
+bool Yolov5::parse_args(int argc, char** argv, std::string& wts, std::string& engine, bool& is_p6, float& gd, float& gw) {
     if (std::string(argv[1]) == "-s" && (argc == 5 || argc == 7)) {
         wts = std::string(argv[2]);
         engine = std::string(argv[3]);
@@ -278,7 +278,7 @@ bool parse_args(int argc, char** argv, std::string& wts, std::string& engine, bo
     return true;
 }
 
-void print(std::string msg_prefix, sl::ERROR_CODE err_code, std::string msg_suffix) {
+void Yolov5::print(std::string msg_prefix, sl::ERROR_CODE err_code, std::string msg_suffix) {
     std::cout << "[Sample] ";
     if (err_code != sl::ERROR_CODE::SUCCESS)
         std::cout << "[Error] ";

@@ -1,22 +1,15 @@
 //
 // Created by DSlobodzian on 1/2/2022.
 //
-#include <iostream>
-#include <chrono>
-#include <cmath>
-#include "cuda_utils.h"
-#include "logging.h"
-#include "common.hpp"
-#include "utils.h"
-#include "calibrator.h"
 #include "yolov5.hpp"
 
 #include <sl/Camera.hpp>
 
+
 int main(int argc, char** argv) {
-    static Logger gLogger;
 
     Yolov5 yoloRT;
+    sl::ObjectData object;
     std::string wts_name = "";
     std::string engine_name = "";
     bool is_p6 = false;
@@ -100,7 +93,7 @@ int main(int argc, char** argv) {
     // prepare input data ---------------------------
     static float data[BATCH_SIZE * 3 * yoloRT.INPUT_H * yoloRT.INPUT_W];
     static float prob[BATCH_SIZE * yoloRT.OUTPUT_SIZE];
-    IRuntime *runtime = createInferRuntime(gLogger);
+    IRuntime *runtime = createInferRuntime(yoloRT.gLogger);
     assert(runtime != nullptr);
     ICudaEngine *engine = runtime->deserializeCudaEngine(trtModelStream, size);
     assert(engine != nullptr);
@@ -131,7 +124,7 @@ int main(int argc, char** argv) {
     sl::Pose cam_w_pose;
     cam_w_pose.pose_data.setIdentity();
 
-    while (true) {
+    while ((char)cv::waitKey(1) != 27) {
         if (zed.grab() == sl::ERROR_CODE::SUCCESS) {
 
             zed.retrieveImage(left_sl, sl::VIEW::LEFT);
@@ -191,6 +184,10 @@ int main(int argc, char** argv) {
 
             // Retrieve the tracked objects, with 2D and 3D attributes
             zed.retrieveObjects(objects, objectTracker_parameters_rt);
+	    objects.getObjectDataFromId(object, 0);
+	    if (object.tracking_state == sl::OBJECT_TRACKING_STATE::OK) {
+		    std::cout << object.position << std::endl;
+	    }
         }
     }
 

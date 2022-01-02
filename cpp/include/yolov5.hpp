@@ -10,6 +10,7 @@
 #include "logging.h"
 #include "common.hpp"
 #include "utils.h"
+#include "utils.hpp"
 #include "calibrator.h"
 
 #include <sl/Camera.hpp>
@@ -30,10 +31,11 @@ public:
                                    1; // we assume the yololayer outputs no more than MAX_OUTPUT_BBOX_COUNT boxes that conf >= 0.1
     const char *INPUT_BLOB_NAME = "data";
     const char *OUTPUT_BLOB_NAME = "prob";
+    Logger gLogger;
 
-    static int get_width(int x, float gw, int divisor = 8);
+    int get_width(int x, float gw, int divisor = 8);
 
-    static int get_depth(int x, float gd);
+    int get_depth(int x, float gd);
 
     ICudaEngine* build_engine(unsigned int maxBatchSize, IBuilder *builder, IBuilderConfig *config, DataType dt, float &gd,
                  float &gw, std::string &wts_name);

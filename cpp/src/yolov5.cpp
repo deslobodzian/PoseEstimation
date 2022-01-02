@@ -1,10 +1,10 @@
+#include "yolov5.hpp"
 
-
-static int Yolov5::get_width(int x, float gw, int divisor = 8) {
+int Yolov5::get_width(int x, float gw, int divisor) {
     return int(ceil((x * gw) / divisor)) * divisor;
 }
 
-static int Yolov5::get_depth(int x, float gd) {
+int Yolov5::get_depth(int x, float gd) {
     if (x == 1) return 1;
     int r = round(x * gd);
     if (x * gd - int(x * gd) == 0.5 && (int(x * gd) % 2) == 0) {
@@ -301,5 +301,3 @@ std::vector<sl::uint2> Yolov5::cvt(const cv::Rect &bbox_in){
     return bbox_out;
 }
 
-
-}

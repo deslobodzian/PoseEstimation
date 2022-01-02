@@ -1,4 +1,5 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/pose_estimation.dir/src/GLViewer.cpp.obj"
   "CMakeFiles/pose_estimation.dir/src/main.cpp.obj"
   "pose_estimation.exe"
   "pose_estimation.exe.manifest"

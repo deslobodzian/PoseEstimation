@@ -118,6 +118,30 @@ pose_estimation\fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\pose_estimation.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\pose_estimation.dir\build
 .PHONY : pose_estimation\fast
 
+src\GLViewer.obj: src\GLViewer.cpp.obj
+.PHONY : src\GLViewer.obj
+
+# target to build an object file
+src\GLViewer.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\pose_estimation.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\pose_estimation.dir\src\GLViewer.cpp.obj
+.PHONY : src\GLViewer.cpp.obj
+
+src\GLViewer.i: src\GLViewer.cpp.i
+.PHONY : src\GLViewer.i
+
+# target to preprocess a source file
+src\GLViewer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\pose_estimation.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\pose_estimation.dir\src\GLViewer.cpp.i
+.PHONY : src\GLViewer.cpp.i
+
+src\GLViewer.s: src\GLViewer.cpp.s
+.PHONY : src\GLViewer.s
+
+# target to generate assembly for a file
+src\GLViewer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\pose_estimation.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\pose_estimation.dir\src\GLViewer.cpp.s
+.PHONY : src\GLViewer.cpp.s
+
 src\main.obj: src\main.cpp.obj
 .PHONY : src\main.obj
 
@@ -151,6 +175,9 @@ help:
 	@echo ... edit_cache
 	@echo ... rebuild_cache
 	@echo ... pose_estimation
+	@echo ... src/GLViewer.obj
+	@echo ... src/GLViewer.i
+	@echo ... src/GLViewer.s
 	@echo ... src/main.obj
 	@echo ... src/main.i
 	@echo ... src/main.s

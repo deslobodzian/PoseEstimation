@@ -55,42 +55,65 @@ include CMakeFiles\pose_estimation.dir\progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles\pose_estimation.dir\flags.make
 
+CMakeFiles\pose_estimation.dir\src\GLViewer.cpp.obj: CMakeFiles\pose_estimation.dir\flags.make
+CMakeFiles\pose_estimation.dir\src\GLViewer.cpp.obj: ..\src\GLViewer.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/pose_estimation.dir/src/GLViewer.cpp.obj"
+	C:\PROGRA~1\MIB055~1\2022\COMMUN~1\VC\Tools\MSVC\1430~1.307\bin\Hostx86\x64\cl.exe @<<
+ /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) /FoCMakeFiles\pose_estimation.dir\src\GLViewer.cpp.obj /FdCMakeFiles\pose_estimation.dir\ /FS -c C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\src\GLViewer.cpp
+<<
+
+CMakeFiles\pose_estimation.dir\src\GLViewer.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/pose_estimation.dir/src/GLViewer.cpp.i"
+	C:\PROGRA~1\MIB055~1\2022\COMMUN~1\VC\Tools\MSVC\1430~1.307\bin\Hostx86\x64\cl.exe > CMakeFiles\pose_estimation.dir\src\GLViewer.cpp.i @<<
+ /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\src\GLViewer.cpp
+<<
+
+CMakeFiles\pose_estimation.dir\src\GLViewer.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/pose_estimation.dir/src/GLViewer.cpp.s"
+	C:\PROGRA~1\MIB055~1\2022\COMMUN~1\VC\Tools\MSVC\1430~1.307\bin\Hostx86\x64\cl.exe @<<
+ /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) /FoNUL /FAs /FaCMakeFiles\pose_estimation.dir\src\GLViewer.cpp.s /c C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\src\GLViewer.cpp
+<<
+
 CMakeFiles\pose_estimation.dir\src\main.cpp.obj: CMakeFiles\pose_estimation.dir\flags.make
 CMakeFiles\pose_estimation.dir\src\main.cpp.obj: ..\src\main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/pose_estimation.dir/src/main.cpp.obj"
-	C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx86\x64\cl.exe @<<
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/pose_estimation.dir/src/main.cpp.obj"
+	C:\PROGRA~1\MIB055~1\2022\COMMUN~1\VC\Tools\MSVC\1430~1.307\bin\Hostx86\x64\cl.exe @<<
  /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) /FoCMakeFiles\pose_estimation.dir\src\main.cpp.obj /FdCMakeFiles\pose_estimation.dir\ /FS -c C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\src\main.cpp
 <<
 
 CMakeFiles\pose_estimation.dir\src\main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/pose_estimation.dir/src/main.cpp.i"
-	C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx86\x64\cl.exe > CMakeFiles\pose_estimation.dir\src\main.cpp.i @<<
+	C:\PROGRA~1\MIB055~1\2022\COMMUN~1\VC\Tools\MSVC\1430~1.307\bin\Hostx86\x64\cl.exe > CMakeFiles\pose_estimation.dir\src\main.cpp.i @<<
  /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\src\main.cpp
 <<
 
 CMakeFiles\pose_estimation.dir\src\main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/pose_estimation.dir/src/main.cpp.s"
-	C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx86\x64\cl.exe @<<
+	C:\PROGRA~1\MIB055~1\2022\COMMUN~1\VC\Tools\MSVC\1430~1.307\bin\Hostx86\x64\cl.exe @<<
  /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) /FoNUL /FAs /FaCMakeFiles\pose_estimation.dir\src\main.cpp.s /c C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\src\main.cpp
 <<
 
 # Object files for target pose_estimation
 pose_estimation_OBJECTS = \
+"CMakeFiles\pose_estimation.dir\src\GLViewer.cpp.obj" \
 "CMakeFiles\pose_estimation.dir\src\main.cpp.obj"
 
 # External object files for target pose_estimation
 pose_estimation_EXTERNAL_OBJECTS =
 
+pose_estimation.exe: CMakeFiles\pose_estimation.dir\src\GLViewer.cpp.obj
 pose_estimation.exe: CMakeFiles\pose_estimation.dir\src\main.cpp.obj
 pose_estimation.exe: CMakeFiles\pose_estimation.dir\build.make
 pose_estimation.exe: "C:\Program Files (x86)\ZED SDK\lib\sl_zed64.lib"
 pose_estimation.exe: "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.2\lib\x64\cuda.lib"
 pose_estimation.exe: "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.2\lib\x64\cudart.lib"
+pose_estimation.exe: "C:\Program Files (x86)\ZED SDK\dependencies\freeglut_2.8\x64\freeglut.lib"
+pose_estimation.exe: "C:\Program Files (x86)\ZED SDK\dependencies\glew-1.12.0\x64\glew32.lib"
 pose_estimation.exe: "C:\Program Files (x86)\ZED SDK\dependencies\opencv_3.1.0\x64\opencv_world310.lib"
 pose_estimation.exe: CMakeFiles\pose_estimation.dir\objects1.rsp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable pose_estimation.exe"
-	"C:\Program Files\JetBrains\CLion 2021.1.3\bin\cmake\win\bin\cmake.exe" -E vs_link_exe --intdir=CMakeFiles\pose_estimation.dir --rc=C:\PROGRA~2\WI3CF2~1\10\bin\100190~1.0\x86\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\10\bin\100190~1.0\x86\mt.exe --manifests -- C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx86\x64\link.exe /nologo @CMakeFiles\pose_estimation.dir\objects1.rsp @<<
- /out:pose_estimation.exe /implib:pose_estimation.lib /pdb:C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\pose_estimation.pdb /version:0.0 /machine:x64 /debug /INCREMENTAL /subsystem:console   -LIBPATH:C:\PROGRA~2\ZEDSDK~1\DEPEND~1\OPENCV~1.0\x64  -LIBPATH:C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\lib  "C:\Program Files (x86)\ZED SDK\lib\sl_zed64.lib" "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.2\lib\x64\cuda.lib" "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.2\lib\x64\cudart.lib" "C:\Program Files (x86)\ZED SDK\dependencies\opencv_3.1.0\x64\opencv_world310.lib" kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib 
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable pose_estimation.exe"
+	"C:\Program Files\JetBrains\CLion 2021.1.3\bin\cmake\win\bin\cmake.exe" -E vs_link_exe --intdir=CMakeFiles\pose_estimation.dir --rc=C:\PROGRA~2\WI3CF2~1\10\bin\100190~1.0\x86\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\10\bin\100190~1.0\x86\mt.exe --manifests -- C:\PROGRA~1\MIB055~1\2022\COMMUN~1\VC\Tools\MSVC\1430~1.307\bin\Hostx86\x64\link.exe /nologo @CMakeFiles\pose_estimation.dir\objects1.rsp @<<
+ /out:pose_estimation.exe /implib:pose_estimation.lib /pdb:C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\pose_estimation.pdb /version:0.0 /machine:x64 /debug /INCREMENTAL /subsystem:console   -LIBPATH:C:\PROGRA~2\ZEDSDK~1\DEPEND~1\OPENCV~1.0\x64  -LIBPATH:C:\PROGRA~2\ZEDSDK~1\DEPEND~1\FREEGL~1.8\x64  -LIBPATH:C:\PROGRA~2\ZEDSDK~1\DEPEND~1\GLEW-1~1.0\x64  -LIBPATH:C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\lib  "C:\Program Files (x86)\ZED SDK\lib\sl_zed64.lib" "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.2\lib\x64\cuda.lib" "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.2\lib\x64\cudart.lib" "C:\Program Files (x86)\ZED SDK\dependencies\freeglut_2.8\x64\freeglut.lib" "C:\Program Files (x86)\ZED SDK\dependencies\glew-1.12.0\x64\glew32.lib" opengl32.lib glu32.lib "C:\Program Files (x86)\ZED SDK\dependencies\opencv_3.1.0\x64\opencv_world310.lib" kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib 
 <<
 
 # Rule to build all files generated by this target.

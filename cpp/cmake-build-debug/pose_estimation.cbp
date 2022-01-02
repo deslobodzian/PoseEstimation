@@ -5,7 +5,7 @@
 		<Option title="pose_estimation"/>
 		<Option makefile_is_custom="1"/>
 		<Option compiler="msvc8"/>
-		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\..\;CMake Files\..\..\..\..\..\..\;CMake Files\..\..\..\..\..\..\Program Files (x86)\;CMake Files\..\..\..\..\..\..\Program Files (x86)\ZED SDK\;CMake Files\..\..\..\..\..\..\Program Files (x86)\ZED SDK\dependencies\;CMake Files\..\..\..\..\..\..\Program Files (x86)\ZED SDK\dependencies\opencv_3.1.0\;"/>
+		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\..\;CMake Files\..\..\..\..\..\..\;CMake Files\..\..\..\..\..\..\Program Files (x86)\;CMake Files\..\..\..\..\..\..\Program Files (x86)\ZED SDK\;CMake Files\..\..\..\..\..\..\Program Files (x86)\ZED SDK\dependencies\;CMake Files\..\..\..\..\..\..\Program Files (x86)\ZED SDK\dependencies\opencv_3.1.0\;CMake Files\..\..\..\c++ lib\;CMake Files\..\..\..\c++ lib\Eigen3\;CMake Files\..\..\..\c++ lib\Eigen3\build\;"/>
 		<Build>
 			<Target title="all">
 				<Option working_dir="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/cmake-build-debug"/>
@@ -26,15 +26,18 @@
 				<Compiler>
 					<Add directory="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v10.2/include"/>
 					<Add directory="C:/Program Files (x86)/ZED SDK/include"/>
+					<Add directory="C:/Program Files (x86)/ZED SDK/dependencies/freeglut_2.8/include"/>
+					<Add directory="C:/Program Files (x86)/ZED SDK/dependencies/glew-1.12.0/include"/>
 					<Add directory="C:/Program Files (x86)/ZED SDK/dependencies/opencv_3.1.0/include"/>
 					<Add directory="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/include"/>
-					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\ATLMFC\include"/>
-					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include"/>
+					<Add directory="C:/Users/DSlobodzian/Documents/c++ lib/Eigen3"/>
+					<Add directory="C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\ATLMFC\include"/>
+					<Add directory="C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\include"/>
 					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\ucrt"/>
-					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\shared"/>
-					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\um"/>
-					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\winrt"/>
-					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\cppwinrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\\include\10.0.19041.0\\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\\include\10.0.19041.0\\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\\include\10.0.19041.0\\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\\include\10.0.19041.0\\cppwinrt"/>
 				</Compiler>
 				<MakeCommands>
 					<Build command="nmake /NOLOGO /f C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\Makefile VERBOSE=1 pose_estimation"/>
@@ -52,15 +55,18 @@
 				<Compiler>
 					<Add directory="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v10.2/include"/>
 					<Add directory="C:/Program Files (x86)/ZED SDK/include"/>
+					<Add directory="C:/Program Files (x86)/ZED SDK/dependencies/freeglut_2.8/include"/>
+					<Add directory="C:/Program Files (x86)/ZED SDK/dependencies/glew-1.12.0/include"/>
 					<Add directory="C:/Program Files (x86)/ZED SDK/dependencies/opencv_3.1.0/include"/>
 					<Add directory="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/include"/>
-					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\ATLMFC\include"/>
-					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include"/>
+					<Add directory="C:/Users/DSlobodzian/Documents/c++ lib/Eigen3"/>
+					<Add directory="C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\ATLMFC\include"/>
+					<Add directory="C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\include"/>
 					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\ucrt"/>
-					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\shared"/>
-					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\um"/>
-					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\winrt"/>
-					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\cppwinrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\\include\10.0.19041.0\\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\\include\10.0.19041.0\\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\\include\10.0.19041.0\\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\\include\10.0.19041.0\\cppwinrt"/>
 				</Compiler>
 				<MakeCommands>
 					<Build command="nmake /NOLOGO /f C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\cmake-build-debug\Makefile VERBOSE=1 pose_estimation/fast"/>
@@ -90,7 +96,16 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/include/Zed2.hpp">
+		<Unit filename="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/include/GLViewer.hpp">
+			<Option target="pose_estimation"/>
+		</Unit>
+		<Unit filename="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/include/UDPServer.hpp">
+			<Option target="pose_estimation"/>
+		</Unit>
+		<Unit filename="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/include/Zed.hpp">
+			<Option target="pose_estimation"/>
+		</Unit>
+		<Unit filename="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/src/GLViewer.cpp">
 			<Option target="pose_estimation"/>
 		</Unit>
 		<Unit filename="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/src/main.cpp">
@@ -110,6 +125,15 @@
 		</Unit>
 		<Unit filename="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/../../../../../../Program Files (x86)/ZED SDK/dependencies/opencv_3.1.0/OpenCVConfig.cmake">
 			<Option virtualFolder="CMake Files\..\..\..\..\..\..\Program Files (x86)\ZED SDK\dependencies\opencv_3.1.0\"/>
+		</Unit>
+		<Unit filename="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/../../../c++ lib/Eigen3/build/Eigen3Config.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\c++ lib\Eigen3\build\"/>
+		</Unit>
+		<Unit filename="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/../../../c++ lib/Eigen3/build/Eigen3ConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\c++ lib\Eigen3\build\"/>
+		</Unit>
+		<Unit filename="C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/../../../c++ lib/Eigen3/build/Eigen3Targets.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\c++ lib\Eigen3\build\"/>
 		</Unit>
 	</Project>
 </CodeBlocks_project_file>

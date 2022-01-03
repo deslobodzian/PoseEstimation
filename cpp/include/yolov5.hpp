@@ -23,14 +23,27 @@
 
 class Yolov5 {
 
+private:
+    ICudaEngine* engine_;
+    IExecutionContext* context_;
+    cudaStream_t stream_;
+    void* buffers_[2];
+    int batch_ = 0;
+    std::vector<sl::CustomBoxObjectData> objects_in_;
+
 public:
     static const int INPUT_H = Yolo::INPUT_H;
     static const int INPUT_W = Yolo::INPUT_W;
-    static const int CLASS_NUM = Yolo::CLASS_NUM;
-    static const int OUTPUT_SIZE = Yolo::MAX_OUTPUT_BBOX_COUNT * sizeof(Yolo::Detection) / sizeof(float) +
-                                   1; // we assume the yololayer outputs no more than MAX_OUTPUT_BBOX_COUNT boxes that conf >= 0.1
+    static const int CLASS_NUM = Yolo::CLASS_NUM; 
+    // we assume the yololayer outputs no more than MAX_OUTPUT_BBOX_COUNT boxes that conf >= 0.1
+    static const int OUTPUT_SIZE = Yolo::MAX_OUTPUT_BBOX_COUNT * sizeof(Yolo::Detection) / sizeof(float) + 1;    
+
+    float data[BATCH_SIZE * 3 * INPUT_H * INPUT_W];
+    float prob[BATCH_SIZE * OUTPUT_SIZE];
+
     const char *INPUT_BLOB_NAME = "data";
     const char *OUTPUT_BLOB_NAME = "prob";
+    
     Logger gLogger;
 
     int get_width(int x, float gw, int divisor = 8);
@@ -52,4 +65,11 @@ public:
     std::vector<sl::uint2> cvt(const cv::Rect &bbox_in);
     void print(std::string msg_prefix, sl::ERROR_CODE err_code, std::string msg_suffix);
     bool parse_args(int argc, char** argv, std::string& wts, std::string& engine, bool& is_p6, float& gd, float& gw);
+    bool initialize_engine(std::string& engine_engine);
+    bool prepare_inference(sl::Mat img_sl, cv::Mat& img_cv_rgb);
+    void run_inference_and_convert_to_zed(cv::Mat& img_cv_rgb);
+    template <typename T>
+    void convert_for_zed_sdk(T& res, cv::Mat& img_cv_rgb);
+    std::vector<sl::CustomBoxObjectData> get_custom_obj_data() {
+
 };

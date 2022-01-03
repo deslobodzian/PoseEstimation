@@ -4,17 +4,35 @@
 #include "yolov5.hpp"
 #include "Zed.hpp"
 
-
 int main() {
-    Zed zed;
 
+    Zed zed;
+    Yolov5 yoloRT;
+    std::string engine_name = "yolov5s.engine";
+    yoloRT.initialize_engine(engine_name);
+    sl::Mat img_sl;
+    cv::Mat img_cv;
+	    
     if (!zed.openCamera()) {
         return EXIT_FAILURE;
     }
-    if (!zed.enable()) {
-
+    if (zed.enableTracking()) {
     }
 
+    if (zed.enableObjectDetection()) {
+    }
+
+
+    while(true) {
+    	//zed.printPose(zed.getPose());
+	yoloRT.prepare_inference(img_sl, img_cv);
+	yoloRT.run_inference_and_convert_to_zed(img_cv);
+    }
+
+    zed.close();
+
+  
+    std::cout << "Cam open and closed" << std::endl;
 }
 
 //int main(int argc, char** argv) {
@@ -141,6 +159,8 @@ int main() {
 //            yoloRT.doInference(*context, stream, buffers, data, prob, BATCH_SIZE);
 //            std::vector<std::vector<Yolo::Detection >> batch_res(BATCH_SIZE);
 //            auto &res = batch_res[batch];
+//	    int len = sizeof(res)/sizeof(res[0]);
+//	    std::cout << "lenght is " << len << std::endl;
 //            nms(res, &prob[batch * yoloRT.OUTPUT_SIZE], CONF_THRESH, NMS_THRESH);
 //
 //            // Preparing for ZED SDK ingesting

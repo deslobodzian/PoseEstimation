@@ -30,20 +30,25 @@ public:
     }
     ~Zed(){}
 
-    void enable() {
+    bool openCamera() {
+         return (zed_.open(init_params_) == ERROR_CODE::SUCCESS);
+    }
+
+
+
+    bool enable() {
         PositionalTrackingParameters tracking_params;
-        zed_.open(init_params_);
         if (!zed_.isOpened()) {
             std::cout << "ERROR: opening camera failed" << std::endl;
+            return false;
         }
         camera_infos_ = zed_.getCameraInformation();
-        if (true) {
-            if (has_area_map_) {
-                tracking_params.area_file_path = "map.area";
-            }
-            tracking_params.enable_area_memory = true;
-            zed_.enablePositionalTracking(tracking_params);
+        if (has_area_map_) {
+           tracking_params.area_file_path = "map.area";
         }
+        tracking_params.enable_area_memory = true;
+        zed_.enablePositionalTracking(tracking_params);
+        return true;
      }
 
     Pose getPose() {

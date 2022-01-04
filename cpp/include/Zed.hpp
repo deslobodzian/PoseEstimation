@@ -69,6 +69,13 @@ public:
 	    zed_.ingestCustomBoxObjects(objects_in);
     }
 
+    ObjectData getObjectFromId(int id) {
+	    ObjectData tmp;
+	    zed_.retrieveObjects(objects_, objectTracker_params_rt_);
+	    objects_.getObjectDataFromId(tmp, id);
+	    return tmp;
+    }
+
     Pose getPose() {
         if (successfulGrab()) {
             auto state = zed_.getPosition(pose_, REFERENCE_FRAME::WORLD);
@@ -97,9 +104,11 @@ public:
 
     sl::Mat getLeftImage() {
         if (successfulGrab()) {
-            zed_.retrieveImage(image_, VIEW::LEFT, MEM::GPU);
+	    sl::Mat im;
+            zed_.retrieveImage(im, VIEW::LEFT);
+	    return im;
         }
-        return image_;
+        return sl::Mat();
     }
 
     sl::Mat getRightImage() {

@@ -2,16 +2,59 @@
 // Created by DSlobodzian on 1/2/2022.
 //
 #include "yolov5.hpp"
+#include "utils.hpp"
 #include "Zed.hpp"
 
 int main() {
 
+
+    std::string engine_name = "yolov5s.engine";
     Zed zed;
     Yolov5 yoloRT;
-    std::string engine_name = "yolov5s.engine";
-    yoloRT.initialize_engine(engine_name);
+    std::ifstream file(engine_name,  std::ios::binary);
+    if (!file.good()) {
+    std::cout << "Error reading engine name!\n";
+    return false;
+    }
+    char *trtModelStream = nullptr;
+	size_t size = 0;
+	file.seekg(0, file.end);
+	size = file.tellg();
+	file.seekg(0, file.beg);
+	trtModelStream = new char[size];
+	assert(trtModelStream);
+	file.read(trtModelStream, size);
+	file.close();
+	std::cout << trtModelStream << std::endl;
+
+    IRuntime *runtime = createInferRuntime(yoloRT.gLogger);
+    assert(runtime != nullptr);
+    ICudaEngine *engine = runtime->deserializeCudaEngine(trtModelStream, size);
+    assert(engine != nullptr);
+    IExecutionContext *context = engine->createExecutionContext();
+    assert(context != nullptr);
+    delete[] trtModelStream;
+    assert(engine->getNbBindings() == 2);
+    void *buffers[2];
+    // In order to bind the buffers, we need to know the names of the input and output tensors.
+    // Note that indices are guaranteed to be less than IEngine::getNbBindings()
+    const int inputIndex = engine->getBindingIndex(yoloRT.INPUT_BLOB_NAME);
+    const int outputIndex = engine->getBindingIndex(yoloRT.OUTPUT_BLOB_NAME);
+    assert(inputIndex == 0);
+    assert(outputIndex == 1);
+    // Create GPU buffers on device
+    CUDA_CHECK(cudaMalloc(&buffers[inputIndex], BATCH_SIZE * 3 * yoloRT.INPUT_H * yoloRT.INPUT_W * sizeof(float)));
+    CUDA_CHECK(cudaMalloc(&buffers[outputIndex], BATCH_SIZE * yoloRT.OUTPUT_SIZE * sizeof(float)));
+    // Create stream
+    cudaStream_t stream;
+    CUDA_CHECK(cudaStreamCreate(&stream));
+
+//    if (yoloRT.initialize_engine(engine_name)) {
+//	    std::cout << "engine init passed!\n";
+//    }
     sl::Mat img_sl;
     cv::Mat img_cv;
+    sl::ObjectData picture;
 	    
     if (!zed.openCamera()) {
         return EXIT_FAILURE;
@@ -22,13 +65,21 @@ int main() {
     if (zed.enableObjectDetection()) {
     }
 
+    int i = 0;
 
-    while(true) {
+    while(i <= 100) {
+	img_sl = zed.getLeftImage();
     	//zed.printPose(zed.getPose());
 	yoloRT.prepare_inference(img_sl, img_cv);
-	yoloRT.run_inference_and_convert_to_zed(img_cv);
+
+	yoloRT.run_inference_and_convert_to_zed(*context, stream, buffers, 0.0f, 1.0f, img_cv);
+	zed.inputCustomObjects(yoloRT.get_custom_obj_data());
+	picture = zed.getObjectFromId(0);
+	std::cout << picture.position << std::endl;
+	i++;
     }
 
+    yoloRT.kill();
     zed.close();
 
   
@@ -39,17 +90,9 @@ int main() {
 //
 //    Yolov5 yoloRT;
 //    sl::ObjectData object;
-//    std::string wts_name = "";
-//    std::string engine_name = "";
+//    std::string engine_name = "yolov5s.engine";
 //    bool is_p6 = false;
 //    float gd = 0.0f, gw = 0.0f;
-//    if (!yoloRT.parse_args(argc, argv, wts_name, engine_name, is_p6, gd, gw)) {
-//        std::cerr << "arguments not right!" << std::endl;
-//        std::cerr << "./yolov5 -s [.wts] [.engine] [s/m/l/x/s6/m6/l6/x6 or c/c6 gd gw]  // serialize model to plan file"
-//                  << std::endl;
-//        std::cerr << "./yolov5 -d [.engine] ZED_input_option  // deserialize plan file and run inference" << std::endl;
-//        return -1;
-//    }
 //
 //    /// Opening the ZED camera before the model deserialization to avoid cuda context issue
 //    sl::Camera zed;
@@ -62,7 +105,7 @@ int main() {
 //    // Open the camera
 //    auto returned_state = zed.open(init_parameters);
 //    if (returned_state != sl::ERROR_CODE::SUCCESS) {
-//        yoloRT.print("Camera Open", returned_state, "Exit program.");
+//        //yoloRT.print("Camera Open", returned_state, "Exit program.");
 //        return EXIT_FAILURE;
 //    }
 //    zed.enablePositionalTracking();
@@ -73,7 +116,7 @@ int main() {
 //    detection_parameters.detection_model = sl::DETECTION_MODEL::CUSTOM_BOX_OBJECTS;
 //    returned_state = zed.enableObjectDetection(detection_parameters);
 //    if (returned_state != sl::ERROR_CODE::SUCCESS) {
-//        yoloRT.print("enableObjectDetection", returned_state, "\nExit program.");
+//        //yoloRT.print("enableObjectDetection", returned_state, "\nExit program.");
 //        zed.close();
 //        return EXIT_FAILURE;
 //    }

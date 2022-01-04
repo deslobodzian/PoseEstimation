@@ -25,11 +25,15 @@ class Yolov5 {
 
 private:
     ICudaEngine* engine_;
+    IRuntime* runtime_;
     IExecutionContext* context_;
     cudaStream_t stream_;
     void* buffers_[2];
+    int inputIndex_;
+    int outputIndex_;
     int batch_ = 0;
     std::vector<sl::CustomBoxObjectData> objects_in_;
+
 
 public:
     static const int INPUT_H = Yolo::INPUT_H;
@@ -50,26 +54,18 @@ public:
 
     int get_depth(int x, float gd);
 
-    ICudaEngine* build_engine(unsigned int maxBatchSize, IBuilder *builder, IBuilderConfig *config, DataType dt, float &gd,
-                 float &gw, std::string &wts_name);
-
-    ICudaEngine* build_engine_p6(unsigned int maxBatchSize, IBuilder *builder, IBuilderConfig *config, DataType dt, float &gd,
-                    float &gw, std::string &wts_name);
-
-    void APIToModel(unsigned int maxBatchSize, IHostMemory **modelStream, bool &is_p6, float &gd, float &gw,
-                    std::string &wts_name);
-
-    void doInference(IExecutionContext &context, cudaStream_t &stream, void **buffers, float *input, float *output,
-                     int batchSize);
+    void doInference(IExecutionContext &context, cudaStream_t &stream, void **buffers, float *input, float *output, int batchSize);
 
     std::vector<sl::uint2> cvt(const cv::Rect &bbox_in);
     void print(std::string msg_prefix, sl::ERROR_CODE err_code, std::string msg_suffix);
     bool parse_args(int argc, char** argv, std::string& wts, std::string& engine, bool& is_p6, float& gd, float& gw);
     bool initialize_engine(std::string& engine_engine);
     bool prepare_inference(sl::Mat img_sl, cv::Mat& img_cv_rgb);
-    void run_inference_and_convert_to_zed(cv::Mat& img_cv_rgb);
+    void run_inference_and_convert_to_zed(IExecutionContext &context, cudaStream_t &stream, void **buffers, float *input, float *output, int batchSize, cv::Mat& img_cv_rgb);
     template <typename T>
     void convert_for_zed_sdk(T& res, cv::Mat& img_cv_rgb);
-    std::vector<sl::CustomBoxObjectData> get_custom_obj_data() {
+    std::vector<sl::CustomBoxObjectData> get_custom_obj_data();
+
+    void kill();
 
 };

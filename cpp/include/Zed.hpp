@@ -13,6 +13,7 @@ private:
      Pose pose_;
      Mat image_;
      InitParameters init_params_;
+     RuntimeParameters runtime_params_;
      ObjectDetectionParameters detection_params_;
      ObjectDetectionRuntimeParameters objectTracker_params_rt_;
      Objects objects_;
@@ -21,31 +22,35 @@ private:
      SensorsData::IMUData imu_data_;
      CameraInformation camera_infos_;
 
-     bool successfulGrab() {
-         return (zed_.grab() == ERROR_CODE::SUCCESS);
+     float left_offset_to_center_;
+
+     bool successful_grab() {
+         return (zed_.grab(runtime_params_) == ERROR_CODE::SUCCESS);
      }
 
 public:
     Zed() {
-	// Initial Parameters
+	    // Initial Parameters
         init_params_.camera_resolution = RESOLUTION::HD1080;
-	init_params_.sdk_verbose = true;
+	    init_params_.sdk_verbose = true;
         init_params_.coordinate_system = COORDINATE_SYSTEM::RIGHT_HANDED_Z_UP;
         init_params_.coordinate_units = UNIT::METER;
-	// Obeject Detection Parameteres 
-	detection_params_.enable_tracking = true;
-	detection_params_.enable_mask_output = false;
-	detection_params_.detection_model = sl::DETECTION_MODEL::CUSTOM_BOX_OBJECTS;
+
+        runtime_params_.measure3D_reference_frame = REFERENCE_FRAME::WORLD;
+	    // Object Detection Parameters
+	    detection_params_.enable_tracking = true;
+	    detection_params_.enable_mask_output = false;
+	    detection_params_.detection_model = sl::DETECTION_MODEL::CUSTOM_BOX_OBJECTS;
     }
     ~Zed(){}
 
-    // Opend the zed camera with initial parameters.
+    // Open the zed camera with initial parameters.
     // init_params_ defined in Zed contructor 
-    bool openCamera() {
+    bool open_camera() {
          return (zed_.open(init_params_) == ERROR_CODE::SUCCESS);
     }
 
-    bool enableTracking() {
+    bool enable_tracking() {
         PositionalTrackingParameters tracking_params;
         if (!zed_.isOpened()) {
             std::cout << "ERROR: opening camera failed\n";
@@ -59,33 +64,56 @@ public:
         zed_.enablePositionalTracking(tracking_params);
         return true;
     }
-    bool enableObjectDetection() {
+
+    bool enable_object_detection() {
 	    if (zed_.enableObjectDetection(detection_params_) != sl::ERROR_CODE::SUCCESS) {
 		    std::cout << "ERROR: enabling OD failed\n";
+            return false;
 	    }
+        return true;
     }
 
-    void inputCustomObjects(std::vector<sl::CustomBoxObjectData> objects_in) {
+    void input_custom_objects(std::vector<sl::CustomBoxObjectData> objects_in) {
 	    zed_.ingestCustomBoxObjects(objects_in);
     }
 
-    ObjectData getObjectFromId(int id) {
+    ObjectData get_object_from_id(int id) {
 	    ObjectData tmp;
 	    zed_.retrieveObjects(objects_, objectTracker_params_rt_);
 	    objects_.getObjectDataFromId(tmp, id);
 	    return tmp;
     }
 
-    Pose getPose() {
-        if (successfulGrab()) {
+    // Basic euclidean distance equation.
+    float center_cam_distance_from_object(ObjectData& object) {
+        x_pose = pose_.getTranslation().tx;
+        y_pose = pose_.getTranslation().ty;
+        z_pose = pose_.getTranslation().tz;
+        x = pow(object.position.x - x_pose, 2);
+        y = pow(object.position.y - y_pose, 2);
+        z = pow(object.position.z - z_pose, 2);
+        return sqrt(x + y + z);
+    }
+
+    Pose get_pose() {
+        if (successful_grab()) {
             auto state = zed_.getPosition(pose_, REFERENCE_FRAME::WORLD);
             return pose_;
         }
         return Pose();
     }
 
-    float getLinearVelocityX() {
-        if (successfulGrab()) {
+    void transform_pose(Transform &pose, float tx, float ty, float tz) {
+        Transform tmpTransform;
+        tmpTransform.setIdentity();
+        tmpTransform.tx = tx;
+        tmpTransform.ty = ty;
+        tmpTransform.tz = tz;
+        pose = Transform::inverse(tmpTransform) * pose * tmpTransform;
+    }
+
+    float get_linear_velocity_x() {
+        if (successful_grab()) {
             zed_.getSensorsData(sensors_data_, TIME_REFERENCE::IMAGE);
             imu_data_ = sensors_data_.imu;
             return imu_data_.linear_acceleration.tx;
@@ -93,8 +121,8 @@ public:
         return 0;
     }
 
-    float getLinearVelocityY() {
-        if (successfulGrab()) {
+    float get_linear_velocity_y() {
+        if (successful_grab()) {
             zed_.getSensorsData(sensors_data_, TIME_REFERENCE::IMAGE);
             imu_data_ = sensors_data_.imu;
             return imu_data_.linear_acceleration.ty;
@@ -102,8 +130,8 @@ public:
         return 0;
     }
 
-    sl::Mat getLeftImage() {
-        if (successfulGrab()) {
+    sl::Mat get_left_image() {
+        if (successful_grab()) {
 	    sl::Mat im;
             zed_.retrieveImage(im, VIEW::LEFT);
 	    return im;
@@ -111,8 +139,8 @@ public:
         return sl::Mat();
     }
 
-    sl::Mat getRightImage() {
-        if (successfulGrab()) {
+    sl::Mat get_right_image() {
+        if (successful_grab()) {
             sl::Mat im;
             zed_.retrieveImage(im, VIEW::RIGHT, MEM::GPU);
             return im;
@@ -121,14 +149,14 @@ public:
     }
 
     //default left camera.
-    const sl::CameraParameters getCameraParameters(std::string side) const {
+    const sl::CameraParameters get_camera_parameters(std::string side) const {
         if (side == "right") {
             return camera_infos_.camera_configuration.calibration_parameters.right_cam;
         }
         return camera_infos_.camera_configuration.calibration_parameters.left_cam;
     }
 
-    void printPose(Pose pose) {
+    void print_pose(Pose& pose) {
         printf("Translation: x: %.3f, y: %.3f, z: %.3f, timestamp: %llu\r",
                pose.getTranslation().tx, pose.getTranslation().ty, pose.getTranslation().tz, pose.timestamp.getMilliseconds());
     }

@@ -69,16 +69,13 @@ bool Yolov5::initialize_engine(std::string& engine_name) {
 
 void Yolov5::doInference(IExecutionContext& context, cudaStream_t& stream, void **buffers, float* input, float* output, int batchSize) {
     // DMA input batch data to device, infer on the batch asynchronously, and DMA output back to host
-    CUDA_CHECK(cudaMemcpyAsync(buffers[0], input, batchSize * 3 * INPUT_H * INPUT_W * sizeof (float), cudaMemcpyHostToDevice, stream));
+    CUDA_CHECK(cudaMemcpyAsync(buffers[0], input, batchSize * 3 * INPUT_H * INPUT_W * sizeof (float), cudaMemcpyHostToDevice, stream_));
 
-    std::cout << "Batch Size: " << batchSize << std::endl;
-    std::cout << "Buffers: " << buffers << std::endl;
-    std::cout << "Stream: " << stream << std::endl;
-    if(!context.enqueue(batchSize, buffers, stream, nullptr)) {
+    if(!context.enqueue(batchSize, buffers, stream_, nullptr)) {
 	    std::cout << "error\n";
     }
-    CUDA_CHECK(cudaMemcpyAsync(output, buffers[1], batchSize * OUTPUT_SIZE * sizeof (float), cudaMemcpyDeviceToHost, stream));
-    cudaStreamSynchronize(stream);
+    CUDA_CHECK(cudaMemcpyAsync(output, buffers[1], batchSize * OUTPUT_SIZE * sizeof (float), cudaMemcpyDeviceToHost, stream_));
+    cudaStreamSynchronize(stream_);
 }
 
 bool Yolov5::prepare_inference(sl::Mat img_sl, cv::Mat& img_cv_rgb) {
@@ -99,8 +96,8 @@ bool Yolov5::prepare_inference(sl::Mat img_sl, cv::Mat& img_cv_rgb) {
 	}
 }
 
-void Yolov5::run_inference_and_convert_to_zed(IExecutinoContext &context, cudaStream_t stream, void **buffers, float *input, float *output, cv::Mat& img_cv_rgb) {
-	doInference(context, stream, buffers, data, prob, BATCH_SIZE);
+void Yolov5::run_inference_and_convert_to_zed(cv::Mat& img_cv_rgb) {
+	doInference(*context_, stream_, buffers_, data, prob, BATCH_SIZE);
 	std::vector<std::vector<Yolo::Detection>> batch_res(BATCH_SIZE);
 	auto& res = batch_res[batch_];
 	nms(res, &prob[batch_ * OUTPUT_SIZE], CONF_THRESH, NMS_THRESH);

@@ -6,16 +6,9 @@
 #include "Zed.hpp"
 
 int main() {
-
-
     Zed zed;
     Yolov5 yoloRT;
-    cudaSetDevice(DEVICE);
 
-    std::string engine_name = "yolov5s.engine";
-    if (yoloRT.initialize_engine(engine_name)) {
-	    std::cout << "engine init passed!\n";
-    }
     sl::Mat img_sl;
     cv::Mat img_cv;
     sl::ObjectData picture;
@@ -30,6 +23,9 @@ int main() {
     }
 
     int i = 0;
+
+    std::string engine_name = "yolov5s.engine";
+    yoloRT.initialize_engine(engine_name);
 
     while(i <= 100) {
 	img_sl = zed.getLeftImage();

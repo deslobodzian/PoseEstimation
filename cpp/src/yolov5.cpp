@@ -39,13 +39,11 @@ bool Yolov5::initialize_engine(std::string& engine_name) {
 	assert(trtModelStream);
 	file.read(trtModelStream, size);
 	file.close();
-	std::cout << trtModelStream << std::endl;
 
 	//prepare input data
 	runtime_ = createInferRuntime(gLogger);
 	assert(runtime_ != nullptr);
 	engine_ = runtime_->deserializeCudaEngine(trtModelStream, size);
-	std::cout << engine_->getNbBindings() << std::endl;
 	assert(engine_ != nullptr);
 	context_ = engine_->createExecutionContext();
 	context_->setName("Testing");
@@ -62,7 +60,6 @@ bool Yolov5::initialize_engine(std::string& engine_name) {
 	CUDA_CHECK(cudaMalloc(&buffers_[outputIndex_], BATCH_SIZE * OUTPUT_SIZE * sizeof (float)));
 
 	CUDA_CHECK(cudaStreamCreate(&stream_));
-	std::cout << &stream_ << std::endl;
 	assert(BATCH_SIZE == 1);
 	return true;
 }
@@ -134,7 +131,6 @@ std::vector<sl::CustomBoxObjectData> Yolov5::get_custom_obj_data() {
 }
 
 void Yolov5::kill() {
-	cudaStreamDestroy(stream_);
 	CUDA_CHECK(cudaFree(buffers_[inputIndex_]))
 	CUDA_CHECK(cudaFree(buffers_[outputIndex_]))
 	context_->destroy();

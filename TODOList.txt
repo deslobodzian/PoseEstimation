@@ -1,10 +1,5 @@
-[] Import Eigen Lib
-[] Create Kalman Filter
-[] Test KF
-[] Determin state variables
-[] Define Motion Model
-[] Define Observation Sensors
+[x] Get Object Detection to work on zed.
+[x] Get distance from observed landmark.
+[] Define Motion Mode : should be relatively simple since we have control of vx, vy, and w
 [] Define Observation Model
-[] Create Uncented Kalman Filter(UFK)
-[]
-[]
+[] Particle Filter?

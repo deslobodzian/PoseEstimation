@@ -86,12 +86,12 @@ public:
 
     // Basic euclidean distance equation.
     float center_cam_distance_from_object(ObjectData& object) {
-        x_pose = pose_.getTranslation().tx;
-        y_pose = pose_.getTranslation().ty;
-        z_pose = pose_.getTranslation().tz;
-        x = pow(object.position.x - x_pose, 2);
-        y = pow(object.position.y - y_pose, 2);
-        z = pow(object.position.z - z_pose, 2);
+        float x_pose = pose_.getTranslation().tx;
+        float y_pose = pose_.getTranslation().ty;
+        float z_pose = pose_.getTranslation().tz;
+        float x = pow(object.position.x - x_pose, 2);
+        float y = pow(object.position.y - y_pose, 2);
+        float z = pow(object.position.z - z_pose, 2);
         return sqrt(x + y + z);
     }
 

@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\src\calibrator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\src\yolov5.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\include\UDPServer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\include\Zed.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\include\calibrator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\include\common.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\include\cuda_utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\include\logging.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\include\utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\include\utils.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\include\yololayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\include\yolov5.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\src\yololayer.cu">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="C:\Users\DSlobodzian\Documents\Projects\PoseEstimation\cpp\build\CMakeFiles\pose.dir\src\$(Configuration)\pose_generated_yololayer.cu.obj">
+      <Filter>Object Files</Filter>
+    </Object>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{FB40629E-2862-3055-A713-59EBFF9C84F2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object Files">
+      <UniqueIdentifier>{9E5339E1-1DFA-3119-BC65-1D5E5068C443}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{B05508B1-864D-3844-9BBC-97D71D639AB1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

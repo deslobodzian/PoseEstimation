@@ -61,6 +61,7 @@ public:
     bool parse_args(int argc, char** argv, std::string& wts, std::string& engine, bool& is_p6, float& gd, float& gw);
     bool initialize_engine(std::string& engine_engine);
     bool prepare_inference(sl::Mat img_sl, cv::Mat& img_cv_rgb);
+    bool prepare_inference(cv::Mat& img_cv_rgb);
     void run_inference_and_convert_to_zed(cv::Mat& img_cv_rgb);
     template <typename T>
     void convert_for_zed_sdk(T& res, cv::Mat& img_cv_rgb);

@@ -4,6 +4,7 @@
 #include "yolov5.hpp"
 #include "utils.hpp"
 #include "Zed.hpp"
+#include "ParticleFilter.hpp"
 
 int main() {
     Zed zed;
@@ -28,7 +29,6 @@ int main() {
 
     while(i <= 100) {
 	img_sl = zed.get_left_image();
-    	//zed.printPose(zed.getPose());
 	yoloRT.prepare_inference(img_sl, img_cv);
 
 	yoloRT.run_inference_and_convert_to_zed(img_cv);

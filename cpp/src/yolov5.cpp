@@ -75,22 +75,25 @@ void Yolov5::doInference(IExecutionContext& context, cudaStream_t& stream, void 
     cudaStreamSynchronize(stream_);
 }
 
+bool Yolov5::prepare_inference(cv::Mat& img_cv_rgb) {
+    if (img_cv_rgb.empty()) return false;
+    cv::Mat pr_img = preprocess_img(img_cv_rgb, INPUT_W, INPUT_H);
+    int i = 0;
+    for (int row = 0; row < INPUT_H; ++row) {
+        uchar* uc_pixel = pr_img.data + row * pr_img.step;
+        for (int col = 0; col < INPUT_W; ++col) {
+            data[batch_ * 3 * INPUT_H * INPUT_W + i] = (float) uc_pixel[2] / 255.0;
+            data[batch_ * 3 * INPUT_H * INPUT_W + i + INPUT_H * INPUT_W] = (float) uc_pixel[1] / 255.0;
+            data[batch_ * 3 * INPUT_H * INPUT_W + i + 2 * INPUT_H * INPUT_W] = (float) uc_pixel[0] / 255.0;
+            uc_pixel += 3;
+            ++i;
+        }
+    }
+}
 bool Yolov5::prepare_inference(sl::Mat img_sl, cv::Mat& img_cv_rgb) {
 	cv::Mat left_cv_rgba = slMat2cvMat(img_sl);
 	cv::cvtColor(left_cv_rgba, img_cv_rgb, cv::COLOR_BGRA2BGR);
-	if (img_cv_rgb.empty()) return false;
-	cv::Mat pr_img = preprocess_img(img_cv_rgb, INPUT_W, INPUT_H);
-	int i = 0;
-	for (int row = 0; row < INPUT_H; ++row) {
-		uchar* uc_pixel = pr_img.data + row * pr_img.step;
-		for (int col = 0; col < INPUT_W; ++col) {
-			data[batch_ * 3 * INPUT_H * INPUT_W + i] = (float) uc_pixel[2] / 255.0;
-			data[batch_ * 3 * INPUT_H * INPUT_W + i + INPUT_H * INPUT_W] = (float) uc_pixel[1] / 255.0;
-			data[batch_ * 3 * INPUT_H * INPUT_W + i + 2 * INPUT_H * INPUT_W] = (float) uc_pixel[0] / 255.0;
-			uc_pixel += 3;
-			++i;
-		}
-	}
+    prepare_inference(img_cv_rgb);
 }
 
 void Yolov5::run_inference_and_convert_to_zed(cv::Mat& img_cv_rgb) {

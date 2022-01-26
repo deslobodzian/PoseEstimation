@@ -7,18 +7,13 @@
 ParticleFilter::ParticleFilter(std::vector<Landmark> map) {
     Particle zero;
     Eigen::Vector3d pose;
-    zero.x = pose;
     zero.weight = 1.0/NUM_PARTICLES;
     X_.assign(NUM_PARTICLES, zero);
-//    pose << 10, 0, 0;
-//    zero.x = pose;
+    x_est_ = Eigen::Vector3d::Zero();
     for (int i = 0; i < NUM_PARTICLES; ++i) {
         pose << random(9, 11), random(-1, 1), 0;
         X_.at(i).x = pose;
     }
-
-//    zero.weight = 1.0/NUM_PARTICLES;
-//    X_.assign(NUM_PARTICLES, zero);
     map_ = map;
 }
 
@@ -44,17 +39,19 @@ double ParticleFilter::zero_mean_gaussian(double x, double sigma) {
 // for now assume feature is [range, bearing]
 double ParticleFilter::sample_measurement_model(Eigen::Vector3d feature, Eigen::Vector3d x, Landmark landmark) {
 //    std::cout << "Feature: " << feature << "\n";
-//    std::cout << "x: " << x << "\n";
+//    std::cout << "x: " << x.transpose() << "\n";
 //    std::cout << "Landmark Sample: " << landmark.x << " " << landmark.y << " " << landmark.id << "\n";
     double q = 0;
 
     if (feature(2, 0) == landmark.id) {
+
         double range = hypot(landmark.x - x(0,0), landmark.y - x(1, 0));
         double bearing = atan2(
                 landmark.y - x(1, 0),
                 landmark.x - x(0, 0)
         ) - x(2, 0);
-//        std::cout << "Feature is: " << feature(1,0) << "\n";
+//        std::cout << "Landmark is: " << landmark.x << " " << landmark.y << " " << landmark.id << "\n";
+//        std::cout << "Feature is: " << feature.transpose() << "\n";
 //        std::cout << "Range is: " << range << "\n";
 //        std::cout << "Bearing is: " << bearing << "\n";
 //        std::cout << "Guass is: " << zero_mean_gaussian(feature(0,0) - range, 0.01) << "\n";
@@ -77,9 +74,10 @@ Eigen::Vector3d ParticleFilter::sample_motion_model(std::vector<Eigen::Vector3d>
 //    std::cout << "dy: " << dy << "\n";
     double dTheta = u.at(1)(2, 0) - u.at(0)(2,0);
 //    std::cout << "dTheta: " << dTheta << "\n";
-    double noise_dx = dx + sample_triangle_distribution(abs(dx * ALPHA_TRANSLATION));
-    double noise_dy = dy + sample_triangle_distribution(abs(dy * ALPHA_TRANSLATION));
-    double noise_dTheta = dTheta + sample_triangle_distribution(abs(dTheta * ALPHA_TRANSLATION));
+    double noise_dx = dx + sample_triangle_distribution(fabs(dx * ALPHA_TRANSLATION));
+//    std::cout << "Sample noise dx: " << sample_triangle_distribution(abs(dx * ALPHA_TRANSLATION)) << "\n";
+    double noise_dy = dy + sample_triangle_distribution(fabs(dy * ALPHA_TRANSLATION));
+    double noise_dTheta = dTheta + sample_triangle_distribution(fabs(dTheta * ALPHA_TRANSLATION));
 
 //    std::cout << noise_del_translation <<"\n";
     double x_prime = x(0,0) + noise_dx;
@@ -129,12 +127,13 @@ std::vector<Particle> ParticleFilter::low_variance_sampler(std::vector<Particle>
     double r = random(0, 1.0 / NUM_PARTICLES);
     double c = X.at(0).weight;
     int i = 0;
-    for (int particle = 0; particle < NUM_PARTICLES; ++particle) {
+    for (int particle = 1; particle <= NUM_PARTICLES; ++particle) {
         double u = r + (double)(particle - 1) * (1.0 / NUM_PARTICLES);
         while (u > c) {
             i = i + 1;
             c = c + X.at(i).weight;
         }
+//        std::cout << "Adding at index: " << i << "\n";
         X_bar.emplace_back(X.at(i));
     }
     return X_bar;
@@ -146,6 +145,7 @@ ParticleFilter::monte_carlo_localization(std::vector<Eigen::Vector3d> u,
                                          std::vector<Eigen::Vector3d> z) {
     std::vector<Particle> X_bar;
     double sum = 0;
+    Eigen::MatrixXd x_set(3, X_.size());
     for (int particle = 0; particle < NUM_PARTICLES; ++particle) {
         Eigen::Vector3d x = sample_motion_model(u, X_.at(particle).x);
         double weight = calculate_weight(z, x, X_.at(particle).weight, map_);
@@ -161,8 +161,11 @@ ParticleFilter::monte_carlo_localization(std::vector<Eigen::Vector3d> u,
 //        std::cout << "original weight is" << X_bar.at(i).weight << "\n";
 //        std::cout << "normalized weight is" << X_bar.at(i).weight/sum << "\n";
         X_bar.at(i).weight = X_bar.at(i).weight / sum;
+        x_set.col(i) = X_bar.at(i).x;
         weights(i,0) = X_bar.at(i).weight;
     }
+
+    x_est_ = x_set * weights;
 
     double effective_particles = 1.0 / (weights.transpose() * weights)(0,0);
     if (effective_particles < RESAMPLE_PARTICLES) {
@@ -170,7 +173,6 @@ ParticleFilter::monte_carlo_localization(std::vector<Eigen::Vector3d> u,
     } else {
         X_ = X_bar;
     }
-
     return X_;
 }
 std::vector<Particle> ParticleFilter::get_particle_set() {
@@ -178,15 +180,5 @@ std::vector<Particle> ParticleFilter::get_particle_set() {
 }
 
 Eigen::Vector3d ParticleFilter::get_estimated_pose() {
-    Eigen::MatrixXd x_set(3, X_.size());
-    Eigen::VectorXd weights(X_.size());
-    for (int i = 0; i < X_.size(); ++i) {
-//        std::cout << "X is: " << X_.at(i).x.transpose() << "\n";
-        x_set.col(i) = X_.at(i).x;
-//        std::cout << "Weight is: " << X_.at(i).weight << "\n";
-        weights(i) = X_.at(i).weight;
-    }
-//    std::cout << "Shape of x is: " << x_set.rows() << ", " << x_set.cols() << "\n";
-//    std::cout << "Shape of weights is: " << weights.rows() << ", " << weights.cols() << "\n";
-    return x_set * weights;
+    return x_est_;
 }

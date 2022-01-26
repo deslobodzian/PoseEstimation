@@ -1,3 +1,0 @@
-C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/cmake-build-debug/CMakeFiles/pose_estimation.dir
-C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/DSlobodzian/Documents/Projects/PoseEstimation/cpp/cmake-build-debug/CMakeFiles/rebuild_cache.dir

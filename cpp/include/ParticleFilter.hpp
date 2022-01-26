@@ -1,15 +1,18 @@
 //
 // Created by DSlobodzian on 1/4/2022.
 //
-#ifndef PARTICLE_FILTER_HPP
-#define PARTICLE_FILTER_HPP
+//
+// Created by DSlobodzian on 1/4/2022.
+//
+#pragma once
 
 #define DT 0.05
 #define ALPHA_ROTATION 0.0002
-#define ALPHA_TRANSLATION 0.05
-#define NUM_PARTICLES 500
-#define RESAMPLE_PARTICLES 250
+#define ALPHA_TRANSLATION 0.5
+#define NUM_PARTICLES 200
+#define RESAMPLE_PARTICLES 100
 #define _USE_MATH_DEFINES
+
 
 #include <vector>
 #include <iostream>
@@ -34,6 +37,7 @@ class ParticleFilter {
 private:
     std::vector<Particle> X_; // particle set for filter
     std::vector<Landmark> map_;
+    Eigen::Vector3d x_est_;
     static double random(double min, double max);
     static double sample_triangle_distribution(double b);
     static double zero_mean_gaussian(double x, double sigma);
@@ -51,5 +55,3 @@ public:
     std::vector<Particle> get_particle_set();
     Eigen::Vector3d get_estimated_pose();
 };
-
-#endif PARTICLE_FILTER_HPP

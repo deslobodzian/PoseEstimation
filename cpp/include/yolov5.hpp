@@ -13,6 +13,7 @@
 #include "utils.hpp"
 #include "calibrator.h"
 
+#include "monocular_camera.hpp"
 #include <sl/Camera.hpp>
 
 #define USE_FP16  // set USE_INT8 or USE_FP16 or USE_FP32
@@ -33,6 +34,7 @@ private:
     int outputIndex_;
     int batch_ = 0;
     std::vector<sl::CustomBoxObjectData> objects_in_;
+    std::vector<tracked_object> monocular_objects_in;
 
 
 public:
@@ -63,9 +65,11 @@ public:
     bool prepare_inference(sl::Mat img_sl, cv::Mat& img_cv_rgb);
     bool prepare_inference(cv::Mat& img_cv_rgb);
     void run_inference_and_convert_to_zed(cv::Mat& img_cv_rgb);
+    void run_inference(cv::Mat& img_cv_rgb);
     template <typename T>
     void convert_for_zed_sdk(T& res, cv::Mat& img_cv_rgb);
     std::vector<sl::CustomBoxObjectData> get_custom_obj_data();
+    std::vector<tracked_object> get_monocular_obj_data();
 
     void kill();
 

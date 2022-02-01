@@ -114,6 +114,19 @@ void Yolov5::run_inference_and_convert_to_zed(cv::Mat& img_cv_rgb) {
 		objects_in_.push_back(tmp);
 	}
 }
+
+void Yolov5::run_inference(cv::Mat& img_cv_rgb) {
+    doInference(*context_, stream_, buffers_, data, prob, BATCH_SIZE);
+    std::vector<std::vector<Yolo::Detection>> batch_res(BATCH_SIZE);
+    auto& res = batch_res[batch_];
+    nms(res, &prob[batch_ * OUTPUT_SIZE], CONF_THRESH, NMS_THRESH);
+    for (auto &it : res) {
+        cv::Rect r = get_rect(img_cv_rgb, it.bbox);
+        tracked_object temp(r, it.class_id);
+        monocular_objects_in.push_back(temp);
+    }
+}
+
 template <typename T>
 void Yolov5::convert_for_zed_sdk(T& res, cv::Mat& img_cv_rgb) {
 	for (auto &it : res) {
@@ -131,6 +144,10 @@ void Yolov5::convert_for_zed_sdk(T& res, cv::Mat& img_cv_rgb) {
 
 std::vector<sl::CustomBoxObjectData> Yolov5::get_custom_obj_data() {
 	return objects_in_;
+}
+
+std::vector<tracked_object> Yolov5::get_monocular_obj_data() {
+    return monocular_objects_in;
 }
 
 void Yolov5::kill() {

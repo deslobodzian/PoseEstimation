@@ -34,7 +34,6 @@ private:
     int inputIndex_;
     int outputIndex_;
     int batch_ = 0;
-    std::mutex mtx_;
     std::vector<sl::CustomBoxObjectData> objects_in_;
     std::vector<tracked_object> monocular_objects_in_;
 
@@ -52,7 +51,7 @@ public:
     const char *INPUT_BLOB_NAME = "data";
     const char *OUTPUT_BLOB_NAME = "prob";
 
-    Yolov5();
+    Yolov5() = default;
     ~Yolov5();
     
     Logger gLogger;

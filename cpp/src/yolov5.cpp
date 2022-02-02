@@ -1,9 +1,5 @@
 #include "yolov5.hpp"
 
-Yolov5::Yolov5() {}
-Yolov5::~Yolov5() {
-    kill();
-}
 
 int Yolov5::get_width(int x, float gw, int divisor) {
     return int(ceil((x * gw) / divisor)) * divisor;

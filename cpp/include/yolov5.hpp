@@ -52,7 +52,7 @@ public:
     const char *OUTPUT_BLOB_NAME = "prob";
 
     Yolov5() = default;
-    ~Yolov5();
+    ~Yolov5() = default;
     
     Logger gLogger;
 

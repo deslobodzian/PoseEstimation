@@ -16,7 +16,7 @@ private:
     int num_cameras_;
     std::vector<std::thread> inference_treads_;
     std::vector<MonocularCamera> monocular_cameras_;
-    Yolov5 yoloRT_;
+    std::vector<Yolov5> inference_engines_;
 public:
     PoseEstimator() = default;
     PoseEstimator(int usb_cameras);

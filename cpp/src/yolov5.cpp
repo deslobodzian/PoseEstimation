@@ -1,5 +1,10 @@
 #include "yolov5.hpp"
 
+Yolov5::Yolov5() {}
+Yolov5::~Yolov5() {
+    kill();
+}
+
 int Yolov5::get_width(int x, float gw, int divisor) {
     return int(ceil((x * gw) / divisor)) * divisor;
 }
@@ -115,58 +120,25 @@ void Yolov5::run_inference_and_convert_to_zed(cv::Mat& img_cv_rgb) {
 	}
 }
 
-void Yolov5::run_inference(cv::Mat& img_cv_rgb, int camera_id) {
-    if (camera_id == 0) {
-	monocular_objects_in_one.clear();
-    } else if (camera_id == 1) {
-	monocular_objects_in_two.clear();
-    }
+void Yolov5::run_inference(cv::Mat& img_cv_rgb) {
+    monocular_objects_in_.clear();
     doInference(*context_, stream_, buffers_, data, prob, BATCH_SIZE);
     std::vector<std::vector<Yolo::Detection>> batch_res(BATCH_SIZE);
     auto& res = batch_res[batch_];
     nms(res, &prob[batch_ * OUTPUT_SIZE], CONF_THRESH, NMS_THRESH);
-    int i = 0;
     for (auto &it : res) {
-    	std::cout << "Camera: " << camera_id << "has :" << i << "\n";
-
         cv::Rect r = get_rect(img_cv_rgb, it.bbox);
         tracked_object temp(r, it.class_id);
-	if (camera_id == 0) {
-		monocular_objects_in_one.push_back(temp);
-	} else if (camera_id == 1) {
-		monocular_objects_in_two.push_back(temp);
-	}
-	i++;
+        monocular_objects_in_.push_back(temp);
     }
-    std::cout << "Camera: " << camera_id << "has :" << i << "\n";
-    
-}
-
-template <typename T>
-void Yolov5::convert_for_zed_sdk(T& res, cv::Mat& img_cv_rgb) {
-	for (auto &it : res) {
-		sl::CustomBoxObjectData tmp;
-		cv::Rect r = get_rect(img_cv_rgb, it.bbox);
-
-		tmp.unique_object_id = sl::generate_unique_id();
-		tmp.probability = it.conf;
-		tmp.label = (int) it.class_id;
-		tmp.bounding_box_2d = cvt(r);
-
-		objects_in_.push_back(tmp);
-	}
 }
 
 std::vector<sl::CustomBoxObjectData> Yolov5::get_custom_obj_data() {
 	return objects_in_;
 }
 
-std::vector<tracked_object> Yolov5::get_monocular_obj_data(int camera_id) {
-	if (camera_id == 0) {
-		return monocular_objects_in_one;
-	} else if (camera_id == 1) {
-		return monocular_objects_in_two;
-	}
+std::vector<tracked_object> Yolov5::get_monocular_obj_data() {
+    return monocular_objects_in_;
 }
 
 void Yolov5::kill() {

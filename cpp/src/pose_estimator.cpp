@@ -7,14 +7,17 @@
 
 PoseEstimator::PoseEstimator(int usb_cameras) {
     num_cameras_ = usb_cameras;
-    std::string engine_name = "../yolov5s.engine";
-    yoloRT_.initialize_engine(engine_name);
     std::cout << "Constructor starting\n";
     for (int i = 0; i < num_cameras_; ++i) {
-	std::cout << "i value is: " << i << "\n";
         camera_config config = camera_config(fov(62.2, 48.8), resolution(640, 480), 30);
         monocular_cameras_.emplace_back(MonocularCamera(i, config));
         monocular_cameras_.at(i).open_camera();
+        Yolov5 temp;
+        inference_engines_.emplace_back(temp);
+    }
+    std::string engine_name = "../yolov5s.engine";
+    for (auto &engine : inference_engines_) {
+        engine.initialize_engine(engine_name);
     }
     std::cout << "Constructor complete!\n";
 }
@@ -29,9 +32,9 @@ void PoseEstimator::run_inference(MonocularCamera& camera) {
     while (true) {
         camera.read_frame();
         cv::Mat image = camera.get_frame();
-        yoloRT_.prepare_inference(image);
-        yoloRT_.run_inference(image, camera.get_id());
-        camera.add_tracked_objects(yoloRT_.get_monocular_obj_data(camera.get_id()));
+        inference_engines_.at(camera.get_id()).prepare_inference(image);
+        inference_engines_.at(camera.get_id()).run_inference(image);
+        camera.add_tracked_objects(inference_engines_.at(camera.get_id()).get_monocular_obj_data());
 	//std::cout << 
 	//	"Size[" << camera.get_id() << "] is "  <<
 	//       	yoloRT_.get_monocular_obj_data(camera.get_id()).size()

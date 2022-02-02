@@ -36,8 +36,7 @@ private:
     int batch_ = 0;
     std::mutex mtx_;
     std::vector<sl::CustomBoxObjectData> objects_in_;
-    std::vector<tracked_object> monocular_objects_in_one;
-    std::vector<tracked_object> monocular_objects_in_two;
+    std::vector<tracked_object> monocular_objects_in_;
 
 
 public:
@@ -52,6 +51,9 @@ public:
 
     const char *INPUT_BLOB_NAME = "data";
     const char *OUTPUT_BLOB_NAME = "prob";
+
+    Yolov5();
+    ~Yolov5();
     
     Logger gLogger;
 
@@ -68,11 +70,11 @@ public:
     bool prepare_inference(sl::Mat img_sl, cv::Mat& img_cv_rgb);
     bool prepare_inference(cv::Mat& img_cv_rgb);
     void run_inference_and_convert_to_zed(cv::Mat& img_cv_rgb);
-    void run_inference(cv::Mat& img_cv_rgb, int camera_id);
+    void run_inference(cv::Mat& img_cv_rgb);
     template <typename T>
     void convert_for_zed_sdk(T& res, cv::Mat& img_cv_rgb);
     std::vector<sl::CustomBoxObjectData> get_custom_obj_data();
-    std::vector<tracked_object> get_monocular_obj_data(int camera_id);
+    std::vector<tracked_object> get_monocular_obj_data();
 
     void kill();
 

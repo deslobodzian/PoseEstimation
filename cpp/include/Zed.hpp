@@ -11,7 +11,7 @@ class Zed {
 private:
      Camera zed_;
      Pose pose_;
-     Mat image_;
+     sl::Mat image_;
      InitParameters init_params_;
      RuntimeParameters runtime_params_;
      ObjectDetectionParameters detection_params_;

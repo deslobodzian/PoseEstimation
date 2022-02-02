@@ -8,23 +8,26 @@
 #include "particle_filter.hpp"
 
 int main() {
-    Zed zed;
+//    Zed zed;
 //    Yolov5 yoloRT;
     PoseEstimator estimator(2);
 
     sl::Mat img_sl;
     cv::Mat img_cv;
     sl::ObjectData picture;
+	
 	    
-    if (!zed.open_camera()) {
-        return EXIT_FAILURE;
-    }
-    if (zed.enable_tracking()) {}
-    if (zed.enable_object_detection()) {}
+//    if (!zed.open_camera()) {
+//        return EXIT_FAILURE;
+//    }
+//    if (zed.enable_tracking()) {}
+//    if (zed.enable_object_detection()) {}
     estimator.init();
     int i = 0;
-    while (i < 100) {
-        estimator.print_measurements(0);
+    while ((char)cv::waitKey(5) != 27) {
+	//estimator.display_frame(0);
+	//estimator.display_frame(1);
+//       estimator.print_measurements(0);
         i++;
     }
 
@@ -45,9 +48,9 @@ int main() {
 
     // destroy objects after use in program
 //    yoloRT.kill();
-    zed.close();
+//    zed.close();
 
   
-    std::cout << "Cam open and closed" << std::endl;
+//    std::cout << "Cam open and closed" << std::endl;
 }
 

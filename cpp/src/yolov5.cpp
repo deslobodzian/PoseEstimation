@@ -115,16 +115,31 @@ void Yolov5::run_inference_and_convert_to_zed(cv::Mat& img_cv_rgb) {
 	}
 }
 
-void Yolov5::run_inference(cv::Mat& img_cv_rgb) {
+void Yolov5::run_inference(cv::Mat& img_cv_rgb, int camera_id) {
+    if (camera_id == 0) {
+	monocular_objects_in_one.clear();
+    } else if (camera_id == 1) {
+	monocular_objects_in_two.clear();
+    }
     doInference(*context_, stream_, buffers_, data, prob, BATCH_SIZE);
     std::vector<std::vector<Yolo::Detection>> batch_res(BATCH_SIZE);
     auto& res = batch_res[batch_];
     nms(res, &prob[batch_ * OUTPUT_SIZE], CONF_THRESH, NMS_THRESH);
+    int i = 0;
     for (auto &it : res) {
+    	std::cout << "Camera: " << camera_id << "has :" << i << "\n";
+
         cv::Rect r = get_rect(img_cv_rgb, it.bbox);
         tracked_object temp(r, it.class_id);
-        monocular_objects_in.push_back(temp);
+	if (camera_id == 0) {
+		monocular_objects_in_one.push_back(temp);
+	} else if (camera_id == 1) {
+		monocular_objects_in_two.push_back(temp);
+	}
+	i++;
     }
+    std::cout << "Camera: " << camera_id << "has :" << i << "\n";
+    
 }
 
 template <typename T>
@@ -146,8 +161,12 @@ std::vector<sl::CustomBoxObjectData> Yolov5::get_custom_obj_data() {
 	return objects_in_;
 }
 
-std::vector<tracked_object> Yolov5::get_monocular_obj_data() {
-    return monocular_objects_in;
+std::vector<tracked_object> Yolov5::get_monocular_obj_data(int camera_id) {
+	if (camera_id == 0) {
+		return monocular_objects_in_one;
+	} else if (camera_id == 1) {
+		return monocular_objects_in_two;
+	}
 }
 
 void Yolov5::kill() {

@@ -26,4 +26,5 @@ public:
     void init();
 
     void print_measurements(int camera_id);
+    void display_frame(int camera_id);
 };

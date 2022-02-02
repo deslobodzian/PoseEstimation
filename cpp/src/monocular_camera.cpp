@@ -66,8 +66,25 @@ void MonocularCamera::draw_crosshair(tracked_object obj) {
     draw_crosshair(obj.object);
 }
 
+void MonocularCamera::draw_tracked_objects() {
+	for (auto& i : objects_) {
+		draw_rect(i.object);
+		draw_crosshair(i.object);
+	}
+}
+
 tracked_object MonocularCamera::get_object(int id) {
+    if (objects_.empty()) {
+	    cv::Rect r(Point(0,0), Point(1,1));
+	    tracked_object x(r, 5);
+	    return x;
+    }
+
     return objects_.at(id);
+}
+
+int MonocularCamera::get_id() {
+	return device_id_;
 }
 
 

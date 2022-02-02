@@ -65,6 +65,7 @@ public:
 
     bool open_camera();
     bool read_frame();
+    int get_id();
 
     Mat get_frame();
     int coordinate_change(Point p);
@@ -75,6 +76,7 @@ public:
     double yaw_angle_to_object(tracked_object obj);
     double pitch_angle_to_object(tracked_object obj);
     tracked_object get_object(int id);
+    void draw_tracked_objects();
 };
 
 #endif //PARTICLE_FILTER_MONOCULARCAMERA_HPP

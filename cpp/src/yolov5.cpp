@@ -118,7 +118,11 @@ void Yolov5::run_inference_and_convert_to_zed(cv::Mat& img_cv_rgb) {
 
 void Yolov5::run_inference(cv::Mat& img_cv_rgb) {
     monocular_objects_in_.clear();
+    auto start = std::chrono::high_resolution_clock::now();
     doInference(*context_, stream_, buffers_, data, prob, BATCH_SIZE);
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chorno::microseconds>(end - start);
+    std::cout << "Inference time of: " <<  duration.count() << "\n";
     std::vector<std::vector<Yolo::Detection>> batch_res(BATCH_SIZE);
     auto& res = batch_res[batch_];
     nms(res, &prob[batch_ * OUTPUT_SIZE], CONF_THRESH, NMS_THRESH);

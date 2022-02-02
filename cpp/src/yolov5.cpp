@@ -122,11 +122,14 @@ void Yolov5::run_inference(cv::Mat& img_cv_rgb) {
     std::vector<std::vector<Yolo::Detection>> batch_res(BATCH_SIZE);
     auto& res = batch_res[batch_];
     nms(res, &prob[batch_ * OUTPUT_SIZE], CONF_THRESH, NMS_THRESH);
+    int i = 0;
     for (auto &it : res) {
         cv::Rect r = get_rect(img_cv_rgb, it.bbox);
         tracked_object temp(r, it.class_id);
         monocular_objects_in_.push_back(temp);
+        i++;
     }
+    std::cout << "Has " << i << " objects found.\n";
 }
 
 std::vector<sl::CustomBoxObjectData> Yolov5::get_custom_obj_data() {

@@ -16,6 +16,7 @@ private:
     int num_monocular_cameras_;
     int num_zed_cameras_;
     Zed zed_;
+    //Yolov5 rt_;
     std::vector<std::thread> inference_threads_;
     std::vector<MonocularCamera> monocular_cameras_;
     std::vector<Yolov5> inference_engines_;

@@ -8,7 +8,7 @@
 #include "particle_filter.hpp"
 
 int main() {
-    PoseEstimator estimator(2, 1);
+    PoseEstimator estimator(0, 1);
 
     sl::Mat img_sl;
     cv::Mat img_cv;

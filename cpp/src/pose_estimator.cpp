@@ -99,7 +99,7 @@ void PoseEstimator::print_zed_measurements(int object_id) {
     std::cout << "[Debug] ZED camera measurement { Object [" <<
         object_id << "], Distance [" <<
         zed_.center_cam_distance_from_object(data) <<
-        "] meters.";
+        "] meters.\n";
 }
 
 void PoseEstimator::display_frame(int camera_id) {

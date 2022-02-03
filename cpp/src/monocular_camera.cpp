@@ -14,6 +14,12 @@ MonocularCamera::~MonocularCamera() {
 }
 
 bool MonocularCamera::open_camera() {
+    //std::string c = 
+//	    "v4l2src device=/dev/video" + std::to_string(device_id_) +
+//	    " ! video/x-raw, width=" + std::to_string(config_.camera_resolution.width) +
+//	    ", height=" + std::to_string(config_.camera_resolution.height) +
+//	    ", framerate="+ std::to_string(config_.frames_per_second) + 
+//	    "/1 ! videoconvert ! appsink";
     cap_.open(device_id_);
     cap_.set(CAP_PROP_FRAME_WIDTH, config_.camera_resolution.width);
     cap_.set(CAP_PROP_FRAME_HEIGHT, config_.camera_resolution.height);

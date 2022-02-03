@@ -10,7 +10,7 @@
 int main() {
 //    Zed zed;
 //    Yolov5 yoloRT;
-    PoseEstimator estimator(2);
+    PoseEstimator estimator(3);
 
     sl::Mat img_sl;
     cv::Mat img_cv;
@@ -27,6 +27,7 @@ int main() {
     while ((char)cv::waitKey(5) != 27) {
 	//estimator.display_frame(0);
 	//estimator.display_frame(1);
+	//estimator.display_frame(2);
 //       estimator.print_measurements(0);
         i++;
     }

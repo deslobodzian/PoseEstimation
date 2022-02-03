@@ -36,7 +36,7 @@ public:
         init_params_.coordinate_system = COORDINATE_SYSTEM::RIGHT_HANDED_Z_UP;
         init_params_.coordinate_units = UNIT::METER;
 
-        runtime_params_.measure3D_reference_frame = REFERENCE_FRAME::WORLD;
+        runtime_params_.measure3D_reference_frame = REFERENCE_FRAME::CAMERA;
 	    // Object Detection Parameters
 	    detection_params_.enable_tracking = true;
 	    detection_params_.enable_mask_output = false;

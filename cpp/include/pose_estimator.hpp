@@ -13,16 +13,20 @@
 
 class PoseEstimator {
 private:
-    int num_cameras_;
+    int num_monocular_cameras_;
+    int num_zed_cameras_;
     std::vector<std::thread> inference_treads_;
     std::vector<MonocularCamera> monocular_cameras_;
+    std::vector<Zed> zed_cameras_;
     std::vector<Yolov5> inference_engines_;
 public:
     PoseEstimator() = default;
-    PoseEstimator(int usb_cameras);
+    PoseEstimator(int num_monocular_cameras);
+    PoseEstimator(int num_monocular_cameras, int num_zed_cameras);
     ~PoseEstimator();
 
     void run_inference(MonocularCamera& camera);
+    void run_inference(Zed& camera);
     void init();
 
     void print_measurements(int camera_id);

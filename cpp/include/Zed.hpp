@@ -9,7 +9,6 @@ using namespace sl;
 
 class Zed {
 private:
-     int id_;
      Camera zed_;
      Pose pose_;
      sl::Mat image_;
@@ -30,10 +29,8 @@ private:
      }
 
 public:
-    Zed() = default;
-    Zed(int id) {
+    Zed() {
 	    // Initial Parameters
-        id_ = id;
         init_params_.camera_resolution = RESOLUTION::HD1080;
 	    init_params_.sdk_verbose = true;
         init_params_.coordinate_system = COORDINATE_SYSTEM::RIGHT_HANDED_Z_UP;

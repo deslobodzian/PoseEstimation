@@ -17,7 +17,7 @@ private:
     int num_zed_cameras_;
     std::vector<std::thread> inference_treads_;
     std::vector<MonocularCamera> monocular_cameras_;
-    std::vector<Zed> zed_cameras_;
+    Zed zed_;
     std::vector<Yolov5> inference_engines_;
 public:
     PoseEstimator() = default;

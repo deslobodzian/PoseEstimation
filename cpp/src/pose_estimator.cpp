@@ -33,15 +33,12 @@ PoseEstimator::PoseEstimator(int num_monocular_cameras, int num_zed_cameras) {
     }
     std::cout << "Finished creating " << monocular_cameras_.size() << " monocular cameras.\n";
     std::cout << "Starting zed cameras.\n";
-    for (int i = 0; i < num_zed_cameras_; ++i) {
-        zed_cameras_.emplace_back(Zed(i));
-        zed_cameras_.at(i).open_camera();
-        zed_cameras_.at(i).enable_tracking();
-        zed_cameras_.at(i).enable_object_detection();
-        Yolov5 temp;
-        inference_engines_.emplace_back(temp);
-    }
-    std::cout << "Finished creating " << zed_cameras_.size() << " zed cameras.\n";
+    zed_.open_camera();
+    zed_.enable_tracking();
+    zed_.enable_object_detection();
+    Yolov5 temp;
+    inference_engines_.emplace_back(temp);
+    std::cout << "Finished creating zed camera.\n";
 
     std::cout << "Starting inference engines.\n";
     std::string engine_name = "../yolov5s.engine";
@@ -94,7 +91,7 @@ void PoseEstimator::init() {
         std::thread(
                 &PoseEstimator::run_inference_zed,
                 this,
-                std::ref(zed_cameras_.at(i))
+                std::ref(zed_)
         );
     }
     std::cout << "ending init\n";

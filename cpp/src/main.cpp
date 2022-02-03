@@ -16,16 +16,12 @@ int main() {
 	
     estimator.init();
     int i = 0;
-    while ((char)cv::waitKey(5) != 27) {
-	    //estimator.display_frame(0);
-	    //estimator.display_frame(1);
-	    //estimator.display_frame(2);
-        i++;
-    }
 
 //    yoloRT.initialize_engine(engine_name);
 //
-//    while(i <= 100) {
+    while(i <= 1000) {
+        i++;
+    }
 //	img_sl = zed.get_left_image();
 //	yoloRT.prepare_inference(img_sl, img_cv);
 //

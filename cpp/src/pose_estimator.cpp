@@ -62,6 +62,7 @@ void PoseEstimator::run_inference_zed(Zed& camera) {
     	cv::Mat temp;
     	yoloRT.prepare_inference(temp);
     	yoloRT.run_inference_and_convert_to_zed(temp);
+        camera.input_custom_objects(yoloRT.get_custom_obj_data());
     }
 }
 
@@ -91,6 +92,14 @@ void PoseEstimator::print_measurements(int camera_id) {
     double measurement = monocular_cameras_.at(camera_id).yaw_angle_to_object(obj);
     std::cout << "Camera[" << camera_id << "] has found object: " <<
     obj.class_id << " with angle {" << measurement << "}\n";
+}
+
+void PoseEstimator::print_zed_measurements(int object_id) {
+    sl::ObjectData data = zed_.get_object_from_id(object_id);
+    std::cout << "[Debug] ZED camera measurement { Object [" <<
+        object_id << "], Distance [" <<
+        zed_.center_cam_distance_from_object(data) <<
+        "] meters.";
 }
 
 void PoseEstimator::display_frame(int camera_id) {

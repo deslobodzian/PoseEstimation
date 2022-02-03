@@ -14,13 +14,13 @@ PoseEstimator::PoseEstimator(int num_monocular_cameras) {
         Yolov5 temp;
         inference_engines_.emplace_back(temp);
     }
-    std::string engine_name = "../yolov5s.engine";
+    std::string engine_name = "yolov5s.engine";
     for (auto &engine : inference_engines_) {
         engine.initialize_engine(engine_name);
     }
 }
 
-PoseEstimator::PoseEstimator(int num_monocular_cameras, int num_zed_cameras) {
+PoseEstimator::PoseEstimator(int num_monocular_cameras, Zed& zed) {
     num_monocular_cameras_ = num_monocular_cameras;
     num_zed_cameras_ = num_zed_cameras;
     std::cout << "Starting monocular cameras.\n";
@@ -33,15 +33,13 @@ PoseEstimator::PoseEstimator(int num_monocular_cameras, int num_zed_cameras) {
     }
     std::cout << "Finished creating " << monocular_cameras_.size() << " monocular cameras.\n";
     std::cout << "Starting zed cameras.\n";
-    zed_.open_camera();
-    zed_.enable_tracking();
-    zed_.enable_object_detection();
-    Yolov5 temp;
-    inference_engines_.emplace_back(temp);
+    for (int i = 0; i < num_zed_cameras_; ++i) {
+    	Yolov5 zed;
+    	inference_engines_.emplace_back(zed);
+    }
     std::cout << "Finished creating zed camera.\n";
-
     std::cout << "Starting inference engines.\n";
-    std::string engine_name = "../yolov5s.engine";
+    std::string engine_name = "yolov5s.engine";
     for (auto &engine : inference_engines_) {
         engine.initialize_engine(engine_name);
     }
@@ -49,51 +47,63 @@ PoseEstimator::PoseEstimator(int num_monocular_cameras, int num_zed_cameras) {
 }
 
 PoseEstimator::~PoseEstimator(){
-    for (auto& i : inference_treads_) {
+    for (auto& i : inference_threads_) {
         i.join();
     }
 }
 
+void PoseEstimator::run_zed() {
+    zed_.open_camera();
+    zed_.enable_tracking();
+    zed_.enable_object_detection();
+}
+
 void PoseEstimator::run_inference(MonocularCamera& camera) {
     while (true) {
-        camera.read_frame();
-        cv::Mat image = camera.get_frame();
-        inference_engines_.at(camera.get_id()).prepare_inference(image);
-        inference_engines_.at(camera.get_id()).run_inference(image);
-        camera.add_tracked_objects(inference_engines_.at(camera.get_id()).get_monocular_obj_data());
+   	camera.read_frame();
+    	cv::Mat image = camera.get_frame();
+    	inference_engines_.at(camera.get_id()).prepare_inference(image);
+    	inference_engines_.at(camera.get_id()).run_inference(image);
+    	camera.add_tracked_objects(inference_engines_.at(camera.get_id()).get_monocular_obj_data());
 	//std::cout << 
 	//	"Size[" << camera.get_id() << "] is "  <<
 	//       	yoloRT_.get_monocular_obj_data(camera.get_id()).size()
 	//       	<< "\n";
+	//       	}
     }
 }
+
 void PoseEstimator::run_inference_zed(Zed& camera) {
     while (true) {
-        sl::Mat image = camera.get_left_image();
-        cv::Mat temp;
-        inference_engines_.at(0).prepare_inference(image, temp);
-        inference_engines_.at(0).run_inference_and_convert_to_zed(temp);
+    	sl::Mat image = camera.get_left_image();
+    	cv::Mat temp;
+    	inference_engines_.at(2).prepare_inference(temp);
+    	inference_engines_.at(2).run_inference_and_convert_to_zed(temp);
     }
 }
 
 
-void PoseEstimator::init() {
+bool PoseEstimator::init() {
     std::cout << "starting init\n";
+    inference_threads_.push_back(
+            std::thread(
+                &PoseEstimator::run_inference_zed,
+                this,
+                std::ref(zed_)
+            ));
     for (int i = 0; i < num_monocular_cameras_; ++i) {
-        inference_treads_.push_back(
+        inference_threads_.push_back(
 			std::thread(
 				&PoseEstimator::run_inference,
 			       	this,
 			       	std::ref(monocular_cameras_.at(i))
 			));
     }
-    inference_treads_.push_back(
-            std::thread(
-                &PoseEstimator::run_inference_zed,
-                this,
-                std::ref(zed_)
-            ));
     std::cout << "ending init\n";
+    if (inference_threads_.size() == num_monocular_cameras_){
+	    return true;
+    }
+    return false;
 }
 
 void PoseEstimator::print_measurements(int camera_id) {

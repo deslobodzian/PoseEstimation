@@ -70,7 +70,7 @@ void Yolov5::doInference(IExecutionContext& context, cudaStream_t& stream, void 
     CUDA_CHECK(cudaMemcpyAsync(buffers[0], input, batchSize * 3 * INPUT_H * INPUT_W * sizeof (float), cudaMemcpyHostToDevice, stream_));
 
     if(!context.enqueue(batchSize, buffers, stream_, nullptr)) {
-	    std::cout << "error\n";
+	    std::cout << "conext error\n";
     }
     CUDA_CHECK(cudaMemcpyAsync(output, buffers[1], batchSize * OUTPUT_SIZE * sizeof (float), cudaMemcpyDeviceToHost, stream_));
     cudaStreamSynchronize(stream_);
@@ -92,31 +92,25 @@ bool Yolov5::prepare_inference(cv::Mat& img_cv_rgb) {
     }
 }
 bool Yolov5::prepare_inference(sl::Mat img_sl, cv::Mat& img_cv_rgb) {
-	cv::Mat left_cv_rgba = slMat2cvMat(img_sl);
-	cv::cvtColor(left_cv_rgba, img_cv_rgb, cv::COLOR_BGRA2BGR);
+    cv::Mat left_cv_rgba = slMat2cvMat(img_sl);
+    cv::cvtColor(left_cv_rgba, img_cv_rgb, cv::COLOR_BGRA2BGR);
     prepare_inference(img_cv_rgb);
 }
 
 void Yolov5::run_inference_and_convert_to_zed(cv::Mat& img_cv_rgb) {
-    auto start = std::chrono::high_resolution_clock::now();
     doInference(*context_, stream_, buffers_, data, prob, BATCH_SIZE);
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-    std::cout << "Inference Zed time of: " <<  duration.count() << "\n";
-	std::vector<std::vector<Yolo::Detection>> batch_res(BATCH_SIZE);
-	auto& res = batch_res[batch_];
-	nms(res, &prob[batch_ * OUTPUT_SIZE], CONF_THRESH, NMS_THRESH);
+    std::vector<std::vector<Yolo::Detection>> batch_res(BATCH_SIZE);
+    auto& res = batch_res[batch_];
+    nms(res, &prob[batch_ * OUTPUT_SIZE], CONF_THRESH, NMS_THRESH);
+    for (auto &it : res) {
+	sl::CustomBoxObjectData tmp;
+	cv::Rect r = get_rect(img_cv_rgb, it.bbox);
+	tmp.unique_object_id = sl::generate_unique_id();
+	tmp.probability = it.conf;
+	tmp.label = (int) it.class_id;
+	tmp.bounding_box_2d = cvt(r);
 
-	for (auto &it : res) {
-		sl::CustomBoxObjectData tmp;
-		cv::Rect r = get_rect(img_cv_rgb, it.bbox);
-
-		tmp.unique_object_id = sl::generate_unique_id();
-		tmp.probability = it.conf;
-		tmp.label = (int) it.class_id;
-		tmp.bounding_box_2d = cvt(r);
-
-		objects_in_.push_back(tmp);
+	objects_in_.push_back(tmp);
 	}
 }
 
@@ -146,6 +140,8 @@ std::vector<sl::CustomBoxObjectData> Yolov5::get_custom_obj_data() {
 
 std::vector<tracked_object> Yolov5::get_monocular_obj_data() {
     return monocular_objects_in_;
+}
+Yolov5::~Yolov5() {
 }
 
 void Yolov5::kill() {

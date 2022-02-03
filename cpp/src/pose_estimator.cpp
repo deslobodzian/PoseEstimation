@@ -11,18 +11,16 @@ PoseEstimator::PoseEstimator(int num_monocular_cameras) {
         camera_config config = camera_config(fov(62.2, 48.8), resolution(640, 480), 30);
         monocular_cameras_.emplace_back(MonocularCamera(i, config));
         monocular_cameras_.at(i).open_camera();
-        Yolov5 temp;
-        inference_engines_.emplace_back(temp);
-    }
-    std::string engine_name = "yolov5s.engine";
-    for (auto &engine : inference_engines_) {
-        engine.initialize_engine(engine_name);
     }
 }
 
 PoseEstimator::PoseEstimator(int num_monocular_cameras, int num_zed_cameras) {
     num_monocular_cameras_ = num_monocular_cameras;
     num_zed_cameras_ = num_zed_cameras;
+    for (int i = 0; i < num_monocular_cameras_; ++i) { camera_config config = camera_config(fov(62.2, 48.8), resolution(640, 480), 30);
+        monocular_cameras_.emplace_back(MonocularCamera(i, config));
+        monocular_cameras_.at(i).open_camera();
+    }
 }
 
 
@@ -39,12 +37,14 @@ void PoseEstimator::run_zed() {
 }
 
 void PoseEstimator::run_inference(MonocularCamera& camera) {
+    Yolov5 yoloRT;
+    yoloRT.initialize_engine(engine_name_);
     while (true) {
-   	camera.read_frame();
+   	    camera.read_frame();
     	cv::Mat image = camera.get_frame();
-    	inference_engines_.at(camera.get_id()).prepare_inference(image);
-    	inference_engines_.at(camera.get_id()).run_inference(image);
-    	camera.add_tracked_objects(inference_engines_.at(camera.get_id()).get_monocular_obj_data());
+    	yoloRT.prepare_inference(image);
+    	yoloRT.run_inference(image);
+    	camera.add_tracked_objects(yoloRT.get_monocular_obj_data());
 	//std::cout << 
 	//	"Size[" << camera.get_id() << "] is "  <<
 	//       	yoloRT_.get_monocular_obj_data(camera.get_id()).size()
@@ -55,46 +55,26 @@ void PoseEstimator::run_inference(MonocularCamera& camera) {
 
 void PoseEstimator::run_inference_zed(Zed& camera) {
     run_zed();
-    std::string engine_name = "yolov5s.engine";
-    Yolov5 run;
-    run.initialize_engine(engine_name);
+    Yolov5 yoloRT;
+    yoloRT.initialize_engine(engine_name_);
     while (true) {
     	sl::Mat image = camera.get_left_image();
     	cv::Mat temp;
-    	run.prepare_inference(temp);
-    	run.run_inference_and_convert_to_zed(temp);
+    	yoloRT.prepare_inference(temp);
+    	yoloRT.run_inference_and_convert_to_zed(temp);
     }
 }
 
 
 void PoseEstimator::init() {
+    std::cout << "[INFO] Starting ZED Camera thread.\n";
     inference_threads_.push_back(
             std::thread(
                 &PoseEstimator::run_inference_zed,
                 this,
                 std::ref(zed_)
             ));
-    std::cout << "Starting monocular cameras.\n";
-    std::string engine_name = "yolov5s.engine";
-    for (int i = 0; i < num_monocular_cameras_; ++i) { camera_config config = camera_config(fov(62.2, 48.8), resolution(640, 480), 30);
-        monocular_cameras_.emplace_back(MonocularCamera(i, config));
-        monocular_cameras_.at(i).open_camera();
-        Yolov5 temp;
-        inference_engines_.emplace_back(temp);
-    }
-    std::cout << "Finished creating " << monocular_cameras_.size() << " monocular cameras.\n";
-    std::cout << "Starting inference engines.\n";
-    for (auto &engine : inference_engines_) {
-        engine.initialize_engine(engine_name);
-    }
-    std::cout << "Inference engines started!\n";
-    std::cout << "starting init\n";
-    inference_threads_.push_back(
-            std::thread(
-                &PoseEstimator::run_inference_zed,
-                this,
-                std::ref(zed_)
-            ));
+    std::cout << "[INFO] Starting Monocular Camera threads.\n";
     for (int i = 0; i < num_monocular_cameras_; ++i) {
         inference_threads_.push_back(
 			std::thread(
@@ -103,7 +83,7 @@ void PoseEstimator::init() {
 			       	std::ref(monocular_cameras_.at(i))
 			));
     }
-    std::cout << "ending init\n";
+    std::cout << "[INFO] Threads Started!\n";
 }
 
 void PoseEstimator::print_measurements(int camera_id) {
@@ -120,7 +100,7 @@ void PoseEstimator::display_frame(int camera_id) {
 	if (!frame.empty()) {
 		cv::imshow(id, monocular_cameras_.at(camera_id).get_frame());
 	} else {
-		std::cout << "frame empty\n";
+		std::cout << "[ERROR] Frame empty in camera [" << camera_id << "]\n";
 	}
 }
 

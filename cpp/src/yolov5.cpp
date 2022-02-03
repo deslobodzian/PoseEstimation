@@ -28,7 +28,7 @@ bool Yolov5::initialize_engine(std::string& engine_name) {
 	// deserialize the .engine and run inference
 	std::ifstream file(engine_name,  std::ios::binary);
 	if (!file.good()) {
-		std::cout << "Error reading engine name!\n";
+		std::cout << "[ERROR]: Cannot read engine name!\n";
 		return false;
 	}
 	char *trtModelStream = nullptr;
@@ -47,7 +47,6 @@ bool Yolov5::initialize_engine(std::string& engine_name) {
 	engine_ = runtime_->deserializeCudaEngine(trtModelStream, size);
 	assert(engine_ != nullptr);
 	context_ = engine_->createExecutionContext();
-	context_->setName("Testing");
 	assert(context_ != nullptr);
 	delete[] trtModelStream;
 	assert(engine_->getNbBindings() == 2);
@@ -98,44 +97,32 @@ bool Yolov5::prepare_inference(sl::Mat img_sl, cv::Mat& img_cv_rgb) {
 }
 
 void Yolov5::run_inference_and_convert_to_zed(cv::Mat& img_cv_rgb) {
-    auto start = std::chrono::high_resolution_clock::now();
     doInference(*context_, stream_, buffers_, data, prob, BATCH_SIZE);
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-    std::cout << "Inference Zed time of: " <<  duration.count() << "\n";
     std::vector<std::vector<Yolo::Detection>> batch_res(BATCH_SIZE);
     auto& res = batch_res[batch_];
     nms(res, &prob[batch_ * OUTPUT_SIZE], CONF_THRESH, NMS_THRESH);
     for (auto &it : res) {
-	sl::CustomBoxObjectData tmp;
-	cv::Rect r = get_rect(img_cv_rgb, it.bbox);
-	tmp.unique_object_id = sl::generate_unique_id();
-	tmp.probability = it.conf;
-	tmp.label = (int) it.class_id;
-	tmp.bounding_box_2d = cvt(r);
-
-	objects_in_.push_back(tmp);
+	    sl::CustomBoxObjectData tmp;
+	    cv::Rect r = get_rect(img_cv_rgb, it.bbox);
+	    tmp.unique_object_id = sl::generate_unique_id();
+	    tmp.probability = it.conf;
+	    tmp.label = (int) it.class_id;
+	    tmp.bounding_box_2d = cvt(r);
+	    objects_in_.push_back(tmp);
 	}
 }
 
 void Yolov5::run_inference(cv::Mat& img_cv_rgb) {
     monocular_objects_in_.clear();
-    auto start = std::chrono::high_resolution_clock::now();
     doInference(*context_, stream_, buffers_, data, prob, BATCH_SIZE);
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-    std::cout << "Inference time of: " <<  duration.count() << "\n";
     std::vector<std::vector<Yolo::Detection>> batch_res(BATCH_SIZE);
     auto& res = batch_res[batch_];
     nms(res, &prob[batch_ * OUTPUT_SIZE], CONF_THRESH, NMS_THRESH);
-    int i = 0;
     for (auto &it : res) {
         cv::Rect r = get_rect(img_cv_rgb, it.bbox);
         tracked_object temp(r, it.class_id);
         monocular_objects_in_.push_back(temp);
-        i++;
     }
-   // std::cout << "Has " << i << " objects found.\n";
 }
 
 std::vector<sl::CustomBoxObjectData> Yolov5::get_custom_obj_data() {
@@ -146,6 +133,7 @@ std::vector<tracked_object> Yolov5::get_monocular_obj_data() {
     return monocular_objects_in_;
 }
 Yolov5::~Yolov5() {
+    kill();
 }
 
 void Yolov5::kill() {

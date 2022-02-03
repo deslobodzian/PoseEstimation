@@ -14,24 +14,15 @@ int main() {
     cv::Mat img_cv;
     sl::ObjectData picture;
 	
-	    
-//    if (!zed.open_camera()) {
-//        return EXIT_FAILURE;
-//    }
-//    if (zed.enable_tracking()) {}
-//
-//    if (zed.enable_object_detection()) {}
     estimator.init();
     int i = 0;
     while ((char)cv::waitKey(5) != 27) {
-	//estimator.display_frame(0);
-	//estimator.display_frame(1);
-	//estimator.display_frame(2);
-//       estimator.print_measurements(0);
+	    //estimator.display_frame(0);
+	    //estimator.display_frame(1);
+	    //estimator.display_frame(2);
+        estimator.print_measurements(0);
         i++;
     }
-
-    std::string engine_name = "yolov5s.engine";
 
 //    yoloRT.initialize_engine(engine_name);
 //

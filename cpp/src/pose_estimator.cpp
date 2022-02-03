@@ -20,8 +20,10 @@ PoseEstimator::PoseEstimator(int num_monocular_cameras) {
     }
 }
 
-PoseEstimator::PoseEstimator(int num_monocular_cameras, Zed& zed) {
+PoseEstimator::PoseEstimator(int num_monocular_cameras, int num_zed_cameras) {
+    run_zed();
     num_monocular_cameras_ = num_monocular_cameras;
+    num_zed_cameras_ = num_zed_cameras;
     std::cout << "Starting monocular cameras.\n";
     for (int i = 0; i < num_monocular_cameras_; ++i) {
         camera_config config = camera_config(fov(62.2, 48.8), resolution(640, 480), 30);
@@ -33,8 +35,8 @@ PoseEstimator::PoseEstimator(int num_monocular_cameras, Zed& zed) {
     std::cout << "Finished creating " << monocular_cameras_.size() << " monocular cameras.\n";
     std::cout << "Starting zed cameras.\n";
     for (int i = 0; i < num_zed_cameras_; ++i) {
-    	Yolov5 temp;
-    	inference_engines_.emplace_back(temp);
+    	Yolov5 zed;
+    	inference_engines_.emplace_back(zed);
     }
     std::cout << "Finished creating zed camera.\n";
     std::cout << "Starting inference engines.\n";
@@ -49,6 +51,12 @@ PoseEstimator::~PoseEstimator(){
     for (auto& i : inference_threads_) {
         i.join();
     }
+}
+
+void PoseEstimator::run_zed() {
+    zed_.open_camera();
+    //zed_.enable_tracking();
+    //zed_.enable_object_detection();
 }
 
 void PoseEstimator::run_inference(MonocularCamera& camera) {
@@ -78,6 +86,12 @@ void PoseEstimator::run_inference_zed(Zed& camera) {
 
 void PoseEstimator::init() {
     std::cout << "starting init\n";
+    inference_threads_.push_back(
+            std::thread(
+                &PoseEstimator::run_inference_zed,
+                this,
+                std::ref(zed_)
+            ));
     for (int i = 0; i < num_monocular_cameras_; ++i) {
         inference_threads_.push_back(
 			std::thread(
@@ -87,15 +101,6 @@ void PoseEstimator::init() {
 			));
     }
     std::cout << "ending init\n";
-}
-void PoseEstimator::init(Zed& camera) {
-    inference_threads_.push_back(
-            std::thread(
-                    &PoseEstimator::run_inference_zed,
-                    this,
-                    std::ref(camera)
-            ));
-    init();
 }
 
 void PoseEstimator::print_measurements(int camera_id) {

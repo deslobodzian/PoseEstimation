@@ -60,7 +60,7 @@ void PoseEstimator::run_inference_zed(Zed& camera) {
     while (true) {
     	sl::Mat image = camera.get_left_image();
     	cv::Mat temp;
-    	yoloRT.prepare_inference(temp);
+    	yoloRT.prepare_inference(image, temp);
     	yoloRT.run_inference_and_convert_to_zed(temp);
         camera.input_custom_objects(yoloRT.get_custom_obj_data());
         print_zed_measurements(0);

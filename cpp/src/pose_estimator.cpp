@@ -113,6 +113,12 @@ void PoseEstimator::display_frame(int camera_id) {
 		std::cout << "[ERROR] Frame empty in camera [" << camera_id << "]\n";
 	}
 }
+void PoseEstimator::kill() {
+    for (auto& i : inference_threads_) {
+        i.join();
+    }
+    zed_.close();
+}
 
 
 

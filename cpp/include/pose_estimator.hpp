@@ -30,6 +30,7 @@ public:
     void run_inference(MonocularCamera& camera);
     void run_inference_zed(Zed& camera);
     void init();
+    void kill();
 
     void print_measurements(int camera_id);
     void print_zed_measurements(int object_id);

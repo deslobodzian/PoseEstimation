@@ -87,13 +87,12 @@ void PoseEstimator::init() {
 			       	std::ref(monocular_cameras_.at(i))
 			));
     }
-    for (int i = 0; i < num_zed_cameras_; ++i) {
-        std::thread(
+    inference_treads_.push_back(
+            std::thread(
                 &PoseEstimator::run_inference_zed,
                 this,
                 std::ref(zed_)
-        );
-    }
+            ));
     std::cout << "ending init\n";
 }
 

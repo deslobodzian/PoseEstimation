@@ -32,6 +32,6 @@ public:
     void init();
 
     void print_measurements(int camera_id);
-    void print_zed_measurements(int camera_id);
+    void print_zed_measurements(int object_id);
     void display_frame(int camera_id);
 };

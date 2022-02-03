@@ -20,7 +20,6 @@ int main() {
 	    //estimator.display_frame(0);
 	    //estimator.display_frame(1);
 	    //estimator.display_frame(2);
-        estimator.print_zed_measurements(0);
         i++;
     }
 

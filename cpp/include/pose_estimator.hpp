@@ -26,7 +26,7 @@ public:
     ~PoseEstimator();
 
     void run_inference(MonocularCamera& camera);
-    void run_inference(Zed& camera);
+    void run_inference_zed(Zed& camera);
     void init();
 
     void print_measurements(int camera_id);

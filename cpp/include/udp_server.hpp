@@ -30,8 +30,6 @@ private:
 
 public:
     Server(const std::string& host, int host_port, const std::string& client, int client_port) {
-        const char *h = host.c_str();
-        const char *c = client.c_str();
         host_port_ = host_port;
         client_port_ = client_port;
 
@@ -49,7 +47,7 @@ public:
 
         bzero((char* ) &serverAddr_, sizeof(serverAddr_));
         serverAddr_.sin_family = AF_INET;
-        serverAddr_.sin_addr.s_addr = inet_addr(h);
+        serverAddr_.sin_addr.s_addr = inet_addr(host.c_str());
         serverAddr_.sin_port = htons((unsigned short)host_port_);
 
         if (bind(socket_, ((struct sockaddr *) &serverAddr_), sizeof(serverAddr_)) < 0) {
@@ -58,7 +56,7 @@ public:
 
         bzero((char* ) &clientAddr_, sizeof(clientAddr_));
         clientAddr_.sin_family = AF_INET;
-        clientAddr_.sin_addr.s_addr = inet_addr(c);
+        clientAddr_.sin_addr.s_addr = inet_addr(client.c_str());
         clientAddr_.sin_port = htons((unsigned short)client_port_);
         clientLength_ = sizeof(clientAddr_);
     }

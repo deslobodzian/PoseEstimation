@@ -9,7 +9,7 @@
 #include "particle_filter.hpp"
 
 int main() {
-    Server server("10.56.87.2", 27001);
+    Server server("10.56.87.2", 27002);
     PoseEstimator estimator(0, 1);
     estimator.init();
     int i = 0;

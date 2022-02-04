@@ -33,8 +33,7 @@ struct frame {
     std::string to_udp_string() {
         std::string value = std::to_string(millis) + ";" +
                 std::to_string(est_x) + ";" +
-                std::to_string(est_x) + ";" +
-                std::to_string(est_x) + ";" +
+                std::to_string(est_y) + ";" +
                 std::to_string(est_heading) +  ";" +
                 std::to_string(has_target) +  ";" +
                 std::to_string(goal_distance) +  ";" +
@@ -114,7 +113,7 @@ public:
         return sendto(socket_, buf, strlen(buf), 0, (struct sockaddr*) &clientAddr_, clientLength_);
     }
     int send(frame &frame) {
-        send(frame.to_udp_string());
+        return send(frame.to_udp_string());
     }
 
     std::string get_message() {

@@ -26,7 +26,7 @@ int main() {
 
     while (true) {
 	    //std::cout << "Sending data\n";
-	    //server.send("1;1;1");
+	    client.send_message("1;1;1");
         client.receive_message();
     }
 //	img_sl = zed.get_left_image();

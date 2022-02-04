@@ -42,11 +42,11 @@ public:
         bzero(buf, BUFFER_SIZE);
         msg.copy(buf, BUFFER_SIZE);
         server_length_ = sizeof(server_address_);
-        return !(sendto(socket_, buf, strlen(buf), 0, &server_address_, server_length_) < 0);
+        return !(sendto(socket_, buf, strlen(buf), 0, (struct sockaddr*) &server_address_, server_length_) < 0);
     }
 
     bool receive_message() {
-        int n = recvfrom(socket_, buf, strlen(buf), 0, &server_address_, &server_length_);
+        int n = recvfrom(socket_, buf, strlen(buf), 0, (struct sockaddr*) &server_address_, &server_length_);
         if (n < 0) {
             return false;
         }

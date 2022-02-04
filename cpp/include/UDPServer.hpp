@@ -52,7 +52,7 @@ public:
 
         clientLength_ = sizeof(clientAddr_);
     }
-    ~Server();
+    ~Server() = default;
 
     int receive() {
         while (true) {

@@ -34,6 +34,7 @@ public:
         server_address_.sin_addr.s_addr = inet_addr(server_address);
         server_address_.sin_port = htons(port_);
     }
+    ~Client() = default;
 
     bool send_message(std::string msg) {
         bzero(buf, BUFFER_SIZE);
@@ -51,4 +52,4 @@ public:
         return true;
     }
 
-}
+};

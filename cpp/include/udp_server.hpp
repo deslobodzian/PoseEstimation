@@ -26,7 +26,8 @@ private:
     char buf[BUFFER_SIZE];
     char *hostAddrp_;
     int optval;
-    int n; //message byte size
+    int n; 
+
 
 public:
     Server(const std::string& host, int host_port, const std::string& client, int client_port) {

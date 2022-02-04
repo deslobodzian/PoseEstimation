@@ -46,7 +46,7 @@ public:
         serverAddr_.sin_addr.s_addr = htonl(INADDR_ANY);
         serverAddr_.sin_port = htons((unsigned short)port_);
 
-        if (bind(socket_, ((struct sockaddr *) &serverAddr_), sizeof(serverAddr_) < 0) {
+        if (bind(socket_, ((struct sockaddr *) &serverAddr_), sizeof(serverAddr_) < 0)) {
             std::cout << "ERROR: Couldn't bind socket" << std::endl;
         }
 

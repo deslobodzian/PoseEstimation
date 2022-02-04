@@ -27,7 +27,7 @@ private:
 
 public:
     Server(const std::string& addr, int port) {
-        port_ = atoi(port);
+        port_ = atoi(addr);
 
         socket_ = socket(AF_INET, SOCK_DGRAM, 0);
         if (socket_ < 0) {
@@ -44,9 +44,9 @@ public:
         bzero((char* ) &serverAddr_, sizeof(serverAddr_));
         serverAddr_.sin_family = AF_INET;
         serverAddr_.sin_addr.s_addr = htonl(INADDR_ANY);
-        serverAddr_.sin_port = htons((unsigned short)portno);
+        serverAddr_.sin_port = htons((unsigned short)port_);
 
-        if (bind(socket_, (struct sockaddr *) &serverAddr_), sizeof(serverAddr_) < 0) {
+        if (bind(socket_, ((struct sockaddr *) &serverAddr_), sizeof(serverAddr_) < 0) {
             std::cout << "ERROR: Couldn't bind socket" << std::endl;
         }
 

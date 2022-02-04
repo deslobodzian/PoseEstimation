@@ -29,7 +29,11 @@ private:
     int n; //message byte size
 
 public:
-    Server(const char& host, int host_port, const char& client, int client_port) {
+    Server(const std::string& host, int host_port, const std::string& client, int client_port) {
+        char h[BUFFER_SIZE];
+        host.copy(h, host.length()+1);
+        char c[BUFFER_SIZE];
+        client.copy(c, client.length()+1);
         host_port_ = host_port;
         client_port_ = client_port;
 
@@ -47,7 +51,7 @@ public:
 
         bzero((char* ) &serverAddr_, sizeof(serverAddr_));
         serverAddr_.sin_family = AF_INET;
-        serverAddr_.sin_addr.s_addr = inet_addr(host);
+        serverAddr_.sin_addr.s_addr = inet_addr(h);
         serverAddr_.sin_port = htons((unsigned short)host_port_);
 
         if (bind(socket_, ((struct sockaddr *) &serverAddr_), sizeof(serverAddr_)) < 0) {
@@ -56,7 +60,7 @@ public:
 
         bzero((char* ) &clientAddr_, sizeof(clientAddr_));
         clientAddr_.sin_family = AF_INET;
-        clientAddr_.sin_addr.s_addr = inet_addr(client);
+        clientAddr_.sin_addr.s_addr = inet_addr(c);
         clientAddr_.sin_port = htons((unsigned short)client_port_);
         clientLength_ = sizeof(clientAddr_);
     }

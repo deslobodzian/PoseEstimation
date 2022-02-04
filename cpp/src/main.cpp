@@ -10,7 +10,7 @@
 
 
 int main() {
-    Server server("", 0);
+    Server server("10.56.87.59", 27002, "10.56.87.2", 27001);
     //PoseEstimator estimator(0, 1);
     //estimator.init();
 //    yoloRT.initialize_engine(engine_name);

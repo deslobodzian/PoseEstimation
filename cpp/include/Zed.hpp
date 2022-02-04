@@ -161,6 +161,11 @@ public:
                pose.getTranslation().tx, pose.getTranslation().ty, pose.getTranslation().tz, pose.timestamp.getMilliseconds());
     }
 
+    double get_distance_to_object(int id) {
+         ObjectData obj = get_object_from_id(id);
+         return center_cam_distance_from_object(obj);
+    }
+
     void close() {
         zed_.close();
     }

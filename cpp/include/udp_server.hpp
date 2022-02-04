@@ -54,6 +54,7 @@ private:
     struct sockaddr_in clientAddr_;
     struct hostent *hostp_; // Host info
     char buf[BUFFER_SIZE];
+    char receive_buf[BUFFER_SIZE];
     char *hostAddrp_;
     int optval;
     int n; 
@@ -95,15 +96,13 @@ public:
     ~Server() = default;
 
     int receive() {
-        bzero(buf, BUFFER_SIZE);
+        bzero(receive_buf, BUFFER_SIZE);
         n = recvfrom(socket_,
-                     buf,
+                     receive_buf,
                      BUFFER_SIZE,
                      0,
                      (struct sockaddr*) &clientAddr_,
                      &clientLength_);
-	    std::string s(buf, sizeof(buf));
-	    std::cout << s << "\n";
         if (n < 0) {
             std::cout << "ERROR: Couldn't receive from client." << std::endl;
         }
@@ -114,9 +113,13 @@ public:
         msg.copy(buf, BUFFER_SIZE);
         return sendto(socket_, buf, strlen(buf), 0, (struct sockaddr*) &clientAddr_, clientLength_);
     }
-
     int send(frame &frame) {
         send(frame.to_udp_string());
+    }
+
+    std::string get_message() {
+        std::string s(receive_buf, sizeof(receive_buf));
+        return s;
     }
 
 };

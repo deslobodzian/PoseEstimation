@@ -1,6 +1,7 @@
 //
 // Created by DSlobodzian on 1/2/2022.
 //
+#include <chrono>
 #include "yolov5.hpp"
 #include "utils.hpp"
 #include "Zed.hpp"
@@ -11,13 +12,15 @@
 
 int main() {
     Server server("10.56.87.59", 27002, "10.56.87.2", 27001);
-    //PoseEstimator estimator(0, 1);
+    PoseEstimator estimator(0, 1);
     //estimator.init();
 //    yoloRT.initialize_engine(engine_name);
 //
 
     while (true) {
-        server.send("0;1;1");
+        auto time = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now().time_since_epoch()).count();
+        frame frame(time, 0, 0, 0, 0, estimator.get_zed().get_distance_to_object(0), 0);
+        server.send(frame);
         server.receive();
 	    //std::cout << "Sending data\n";
     }

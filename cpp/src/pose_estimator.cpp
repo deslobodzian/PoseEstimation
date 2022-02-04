@@ -103,6 +103,10 @@ void PoseEstimator::print_zed_measurements(int object_id) {
         "] meters.\n";
 }
 
+Zed& PoseEstimator::get_zed() {
+    return zed_;
+}
+
 void PoseEstimator::display_frame(int camera_id) {
 	monocular_cameras_.at(camera_id).draw_tracked_objects();
 	cv::Mat frame = monocular_cameras_.at(camera_id).get_frame();

@@ -59,7 +59,6 @@ public:
     ~Server() = default;
 
     int receive() {
-        while (true) {
             bzero(buf, 1024);
             n = recvfrom(socket_,
                          buf,
@@ -73,11 +72,10 @@ public:
                 std::cout << "ERROR: Couldn't receive from client." << std::endl;
                 break;
             }
-        }
     }
     int send(std::string msg) {
-        bzero(buf, BUFFER_SIZE);
-        msg.copy(buf, BUFFER_SIZE);
+        bzero(buf, 1024);
+        msg.copy(buf, 1024);
         return sendto(socket_, buf, strlen(buf), 0, (struct sockaddr*) &clientAddr_, clientLength_);
     }
 };

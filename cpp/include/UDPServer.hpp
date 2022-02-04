@@ -27,7 +27,7 @@ private:
 
 public:
     Server(const std::string& addr, int port) {
-        port_ = atoi(addr);
+        port_ = port;
 
         socket_ = socket(AF_INET, SOCK_DGRAM, 0);
         if (socket_ < 0) {

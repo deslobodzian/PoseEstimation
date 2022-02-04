@@ -25,7 +25,7 @@ private:
 
 
 public:
-    Client(std::string& server_address, int port) {
+    Client(const std::string& server_address, int port) {
         port_ = port;
         socket_ = socket(AF_INET, SOCK_DGRAM, 0);
 

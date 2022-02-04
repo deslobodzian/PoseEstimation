@@ -18,7 +18,7 @@ private:
     int socket_;
     int port_;
     int data_;
-    struct socklen_t server_length_;
+    socklen_t server_length_;
     struct sockaddr_in server_address_;
     char *hostname_;
     char buf[BUFFER_SIZE];

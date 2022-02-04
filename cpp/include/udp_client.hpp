@@ -27,11 +27,13 @@ private:
 public:
     Client(const std::string& server_address, int port) {
         port_ = port;
+        char ar[BUFFER_SIZE];
+        server_address.copy(ar, BUFFER_SIZE);
         socket_ = socket(AF_INET, SOCK_DGRAM, 0);
 
         bzero((char *) &server_address_, sizeof(server_address_));
         server_address_.sin_family = AF_INET;
-        server_address_.sin_addr.s_addr = inet_addr(server_address);
+        server_address_.sin_addr.s_addr = inet_addr(ar);
         server_address_.sin_port = htons(port_);
     }
     ~Client() = default;

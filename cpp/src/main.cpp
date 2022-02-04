@@ -8,15 +8,29 @@
 #include "UDPServer.hpp"
 #include "particle_filter.hpp"
 
+
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <string.h>
+#include <unistd.h>
+
+
+#define PORT 27002
+#define BUFFER 1024
+
 int main() {
-    Server server("10.56.87.2", 27002);
-    PoseEstimator estimator(0, 1);
-    estimator.init();
-    int i = 0;
+    Server server("", 27001);
+    //PoseEstimator estimator(0, 1);
+    //estimator.init();
 //    yoloRT.initialize_engine(engine_name);
 //
-    while(true) {
-        server.send("0;1.0;1.0");
+
+    while (true) {
+	    //std::cout << "Sending data\n";
+	    //server.send("1;1;1");
+	    server.receive();
     }
 //	img_sl = zed.get_left_image();
 //	yoloRT.prepare_inference(img_sl, img_cv);

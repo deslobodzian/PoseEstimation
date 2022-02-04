@@ -43,10 +43,10 @@ public:
 
         bzero((char* ) &serverAddr_, sizeof(serverAddr_));
         serverAddr_.sin_family = AF_INET;
-        serverAddr_.sin_addr.s_addr = htonl(INADDR_ANY);
-        serverAddr_.sin_port = htons((unsigned short)port_);
+        serverAddr_.sin_addr.s_addr = inet_addr("10.56.87.2");
+        serverAddr_.sin_port = htons((unsigned short)27002);
 
-        if (bind(socket_, ((struct sockaddr *) &serverAddr_), sizeof(serverAddr_) < 0)) {
+        if (bind(socket_, ((struct sockaddr *) &serverAddr_), sizeof(serverAddr_)) < 0) {
             std::cout << "ERROR: Couldn't bind socket" << std::endl;
         }
 
@@ -63,6 +63,8 @@ public:
                          0,
                          (struct sockaddr*) &clientAddr_,
                          &clientLength_);
+	    std::string s(buf, sizeof(buf));
+	    std::cout << s << "\n";
             if (n < 0) {
                 std::cout << "ERROR: Couldn't receive from client." << std::endl;
                 break;

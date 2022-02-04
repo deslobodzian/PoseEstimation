@@ -43,13 +43,17 @@ public:
 
         bzero((char* ) &serverAddr_, sizeof(serverAddr_));
         serverAddr_.sin_family = AF_INET;
-        serverAddr_.sin_addr.s_addr = inet_addr("10.56.87.2");
+        serverAddr_.sin_addr.s_addr = inet_addr("10.56.87.59");
         serverAddr_.sin_port = htons((unsigned short)27002);
 
         if (bind(socket_, ((struct sockaddr *) &serverAddr_), sizeof(serverAddr_)) < 0) {
             std::cout << "ERROR: Couldn't bind socket" << std::endl;
         }
 
+        bzero((char* ) &clientAddr_, sizeof(clientAddr_));
+        clientAddr_.sin_family = AF_INET;
+        clientAddr_.sin_addr.s_addr = inet_addr("10.56.87.2");
+        clientAddr_.sin_port = htons((unsigned short)27001);
         clientLength_ = sizeof(clientAddr_);
     }
     ~Server() = default;
@@ -69,19 +73,11 @@ public:
                 std::cout << "ERROR: Couldn't receive from client." << std::endl;
                 break;
             }
-            hostp_ = gethostbyaddr((const char*) &clientAddr_.sin_addr,
-                                   sizeof(clientAddr_.sin_addr.s_addr),
-                                   AF_INET);
-            if (hostp_ == NULL) {
-                std::cout << "ERROR: Couldn't get host by address." << std::endl;
-            }
-            hostAddrp_ = inet_ntoa(clientAddr_.sin_addr);
-            if (hostAddrp_ == NULL) {
-                std::cout << "ERROR: Couldn't get hostAddrp_." << std::endl;
-            }
         }
     }
     int send(std::string msg) {
+        bzero(buf, BUFFER_SIZE);
+        msg.copy(buf, BUFFER_SIZE);
         return sendto(socket_, buf, strlen(buf), 0, (struct sockaddr*) &clientAddr_, clientLength_);
     }
 };

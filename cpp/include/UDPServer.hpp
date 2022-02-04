@@ -26,8 +26,8 @@ private:
     int n; //message byte size
 
 public:
-    udpServer(const std::string& addr, int port) {
-        port_ = atoi(addr);
+    Server(const std::string& addr, int port) {
+        port_ = atoi(port);
 
         socket_ = socket(AF_INET, SOCK_DGRAM, 0);
         if (socket_ < 0) {
@@ -52,7 +52,7 @@ public:
 
         clientLength_ = sizeof(clientAddr_);
     }
-    ~udpServer();
+    ~Server();
 
     int receive() {
         while (true) {

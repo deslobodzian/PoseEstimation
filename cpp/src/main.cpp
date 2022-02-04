@@ -5,22 +5,18 @@
 #include "utils.hpp"
 #include "Zed.hpp"
 #include "pose_estimator.hpp"
+#include "UDPServer.hpp"
 #include "particle_filter.hpp"
 
 int main() {
+    Server server("10.56.87.2", 27001);
     PoseEstimator estimator(0, 1);
-
-    sl::Mat img_sl;
-    cv::Mat img_cv;
-    sl::ObjectData picture;
-	
     estimator.init();
     int i = 0;
-
 //    yoloRT.initialize_engine(engine_name);
 //
-    while(i <= 1000) {
-        i++;
+    while(true) {
+        server.send("0;1.0;1.0");
     }
 //	img_sl = zed.get_left_image();
 //	yoloRT.prepare_inference(img_sl, img_cv);

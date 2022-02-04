@@ -5,7 +5,7 @@
 #include "utils.hpp"
 #include "Zed.hpp"
 #include "pose_estimator.hpp"
-#include "UDPServer.hpp"
+#include "udp_client.hpp"
 #include "particle_filter.hpp"
 
 
@@ -17,11 +17,8 @@
 #include <unistd.h>
 
 
-#define PORT 27002
-#define BUFFER 1024
-
 int main() {
-    Server server("", 27001);
+    Client client("10.56.87.2", 27001);
     //PoseEstimator estimator(0, 1);
     //estimator.init();
 //    yoloRT.initialize_engine(engine_name);
@@ -30,7 +27,7 @@ int main() {
     while (true) {
 	    //std::cout << "Sending data\n";
 	    //server.send("1;1;1");
-	    server.receive();
+        client.receive();
     }
 //	img_sl = zed.get_left_image();
 //	yoloRT.prepare_inference(img_sl, img_cv);

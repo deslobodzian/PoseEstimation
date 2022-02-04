@@ -62,7 +62,7 @@ public:
                          1024,
                          0,
                          (struct sockaddr*) &clientAddr_,
-                         &clientAddr_);
+                         &clientLength_);
             if (n < 0) {
                 std::cout << "ERROR: Couldn't receive from client." << std::endl;
                 break;

@@ -27,7 +27,7 @@ int main() {
     while (true) {
 	    //std::cout << "Sending data\n";
 	    //server.send("1;1;1");
-        client.receive();
+        client.receive_message();
     }
 //	img_sl = zed.get_left_image();
 //	yoloRT.prepare_inference(img_sl, img_cv);

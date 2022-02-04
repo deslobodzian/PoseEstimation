@@ -1,9 +1,7 @@
 //
 // Created by DSlobodzian on 2/4/2022.
 //
-
-#ifndef POSE_ESTIMATION_UDP_CLIENT_HPP
-#define POSE_ESTIMATION_UDP_CLIENT_HPP
+#pragma once
 
 #define BUFFER_SIZE 1024
 
@@ -53,5 +51,3 @@ public:
     }
 
 }
-
-#endif //POSE_ESTIMATION_UDP_CLIENT_HPP

@@ -70,7 +70,6 @@ public:
 	    std::cout << s << "\n";
             if (n < 0) {
                 std::cout << "ERROR: Couldn't receive from client." << std::endl;
-                break;
             }
     }
     int send(std::string msg) {

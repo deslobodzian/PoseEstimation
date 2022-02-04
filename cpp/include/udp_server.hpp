@@ -13,6 +13,36 @@
 
 #define BUFFER_SIZE 1024
 
+struct frame {
+    long millis;
+    double est_x;
+    double est_y;
+    double est_heading;
+    bool has_target;
+    double goal_distance;
+    double goal_angle;
+    frame(long m, double x, double y, double heading, bool target, double goal_dist, double goal_ang) {
+        millis = m;
+        est_x = x;
+        est_y = y;
+        est_heading = heading;
+        has_target = target;
+        goal_distance = goal_dist;
+        goal_angle = goal_ang;
+    }
+    std::string to_udp_string() {
+        std::string value = std::to_string(millis) + ";" +
+                std::to_string(est_x) + ";" +
+                std::to_string(est_x) + ";" +
+                std::to_string(est_x) + ";" +
+                std::to_string(est_heading) +  ";" +
+                std::to_string(has_target) +  ";" +
+                std::to_string(goal_distance) +  ";" +
+                std::to_string(goal_angle);
+        return value;
+    }
+};
+
 class Server {
 
 private:
@@ -83,4 +113,9 @@ public:
         msg.copy(buf, BUFFER_SIZE);
         return sendto(socket_, buf, strlen(buf), 0, (struct sockaddr*) &clientAddr_, clientLength_);
     }
+
+    int send(frame &frame) {
+        send(frame.to_udp_string());
+    }
+
 };

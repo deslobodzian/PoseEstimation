@@ -16,7 +16,7 @@ class Server {
 private:
     int socket_;
     int port_;
-    int clientLength_;
+    socklen_t clientLength_;
     struct sockaddr_in serverAddr_;
     struct sockaddr_in clientAddr_;
     struct hostent *hostp_; // Host info

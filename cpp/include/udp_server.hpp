@@ -45,6 +45,7 @@ struct output_frame {
 struct input_frame{
     long millis;
     double u[3]; //odometry [dx, dy, dTheta]
+    input_frame() {};
     input_frame(std::vector<std::string> values) {
         millis = atof(values.at(0).c_str());
         u[0] = atof(values.at(1).c_str());

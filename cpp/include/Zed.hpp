@@ -79,11 +79,17 @@ public:
     }
 
     ObjectData get_object_from_id(int id) {
-	    ObjectData tmp;
+	   ObjectData tmp;
+	   zed_.retrieveObjects(objects_, objectTracker_params_rt_);
+	   objects_.getObjectDataFromId(tmp, id);
+	   return tmp;
+    }
+
+    void print_objects() {
 	    zed_.retrieveObjects(objects_, objectTracker_params_rt_);
-        std::cout << "Objects size: {"<< objects_.object_list.size() << "}\n";
-	    objects_.getObjectDataFromId(tmp, id);
-	    return tmp;
+	    for (auto object : objects_.object_list) {
+		    std::cout << "Object label {" << object.raw_label << "} with id {" << object.id << "}\n";
+	    }
     }
 
     // Basic euclidean distance equation.

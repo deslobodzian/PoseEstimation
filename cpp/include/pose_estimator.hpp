@@ -32,7 +32,7 @@ public:
     void run_zed();
     void run_inference(MonocularCamera& camera);
     void run_inference_zed(Zed& camera);
-    void add_measurements(std::vector<Eigen::Vector3d> z);
+    void add_measurements(std::vector<Eigen::Vector3d> &z);
     void estimate_pose(double *u, std::vector<Eigen::Vector3d> z);
     void init();
     void kill();

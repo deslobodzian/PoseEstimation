@@ -110,7 +110,7 @@ void Yolov5::run_inference_and_convert_to_zed(cv::Mat& img_cv_rgb) {
 	    tmp.probability = it.conf;
         std::cout << "confidence {" << it.conf << "}\n";
 	    tmp.label = (int) it.class_id;
-        std::cout << "label {" << it.class_id << "}\n"
+        std::cout << "label {" << it.class_id << "}\n";
 	    tmp.bounding_box_2d = cvt(r);
 	    objects_in_.push_back(tmp);
 	}

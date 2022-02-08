@@ -24,7 +24,7 @@ int main() {
     map.emplace_back(l4);
     map.emplace_back(l5);
     //Server server("10.56.87.59", 27002, "10.56.87.2", 27001);
-    PoseEstimator estimator(0, 1, map);
+    PoseEstimator estimator(2, 1, map);
     estimator.init();
     std::vector<Eigen::Vector3d> z;
     //server.start_thread();

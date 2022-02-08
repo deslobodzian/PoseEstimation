@@ -109,7 +109,7 @@ void Yolov5::run_inference_and_convert_to_zed(cv::Mat& img_cv_rgb) {
 	    tmp.unique_object_id = sl::generate_unique_id();
 	    tmp.probability = it.conf;
 	    tmp.label = (int) it.class_id;
-	    //tmp.bounding_box_2d = cvt(r);
+	    tmp.bounding_box_2d = cvt(r);
 	    objects_in_.push_back(tmp);
 	}
 }

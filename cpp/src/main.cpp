@@ -26,8 +26,8 @@ int main() {
     Server server("10.56.87.59", 27002, "10.56.87.2", 27001);
     PoseEstimator estimator(2, 1, map);
     estimator.init();
-    std::vector<Eigen::Vector3d> z;
-    server.start_thread();
+//    std::vector<Eigen::Vector3d> z;
+//    server.start_thread();
     while (true) {
         if (estimator.threads_started()) {
 //            z.clear();

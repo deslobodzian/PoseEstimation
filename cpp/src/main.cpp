@@ -34,8 +34,8 @@ int main() {
 //            estimator.add_measurements(z);
             auto time = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now().time_since_epoch()).count();
 //            std::cout << "[INFO] Number of measurements is {" << z.size() << "}\n";
-//            output_frame frame(time, 0, 0, 0, 0, estimator.get_zed().get_distance_to_object_label(0), 0);
-//            if (server.send(frame) < 0 ) { std::cout << "[ERROR] Couldn't send frame!"; }
+            output_frame frame(time, 0, 0, 0, 0, estimator.get_zed().get_distance_to_object_label(0), 0);
+            if (server.send(frame) < 0 ) { std::cout << "[ERROR] Couldn't send frame!"; }
         }
         //std::cout << "Sending data\n";
     }

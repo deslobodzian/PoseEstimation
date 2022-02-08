@@ -97,7 +97,6 @@ bool Yolov5::prepare_inference(sl::Mat img_sl, cv::Mat& img_cv_rgb) {
 }
 
 void Yolov5::run_inference_and_convert_to_zed(cv::Mat& img_cv_rgb) {
-    std::cout << "[INFO] zed image size: " << img_cv_rgb.size << "\n";
     objects_in_.clear();
     doInference(*context_, stream_, buffers_, data, prob, BATCH_SIZE);
     std::vector<std::vector<Yolo::Detection>> batch_res(BATCH_SIZE);

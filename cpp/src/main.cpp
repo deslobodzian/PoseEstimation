@@ -23,19 +23,19 @@ int main() {
     map.emplace_back(l3);
     map.emplace_back(l4);
     map.emplace_back(l5);
-    //Server server("10.56.87.59", 27002, "10.56.87.2", 27001);
+    Server server("10.56.87.59", 27002, "10.56.87.2", 27001);
     PoseEstimator estimator(2, 1, map);
     estimator.init();
     std::vector<Eigen::Vector3d> z;
-    //server.start_thread();
+    server.start_thread();
     while (true) {
         if (estimator.threads_started()) {
-            z.clear();
-            estimator.add_measurements(z);
+//            z.clear();
+//            estimator.add_measurements(z);
             auto time = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now().time_since_epoch()).count();
-            std::cout << "[INFO] Number of measurements is {" << z.size() << "}\n";
-            //output_frame frame(time, 0, 0, 0, 0, estimator.get_zed().get_distance_to_object(0), 0);
-            //if (server.send(frame) < 0 ) { std::cout << "[ERROR] Couldn't send frame!"; }
+//            std::cout << "[INFO] Number of measurements is {" << z.size() << "}\n";
+            output_frame frame(time, 0, 0, 0, 0, estimator.get_zed().get_distance_to_object_label(0), 0);
+            if (server.send(frame) < 0 ) { std::cout << "[ERROR] Couldn't send frame!"; }
         }
         //std::cout << "Sending data\n";
     }

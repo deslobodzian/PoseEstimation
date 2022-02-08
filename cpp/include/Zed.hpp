@@ -195,6 +195,14 @@ public:
          ObjectData obj = get_object_from_id(id);
          return center_cam_distance_from_object(obj);
     }
+    double get_distance_to_object_label(int label) {
+        std::vector<ObjectData> tmp = get_objects_from_label(label);
+        if (tmp.empty()) {
+            return -1;
+        } else {
+            return get_distance_to_object(tmp.at(0).id);
+        }
+     }
     double get_angle_to_object(int id) {
         ObjectData obj = get_object_from_id(id);
         return center_cam_phi_angle_to_object(obj);

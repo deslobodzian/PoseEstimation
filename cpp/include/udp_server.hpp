@@ -158,6 +158,7 @@ public:
     }
 
     void receive_frame() {
+        receive();
         input_frame incoming_frame = get_new_frame();
         if (incoming_frame.millis > latest_frame_.millis) {
             prev_frame_ = latest_frame_;

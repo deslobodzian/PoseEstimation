@@ -13,7 +13,7 @@
 
 #define BUFFER_SIZE 1024
 
-struct frame {
+struct output_frame {
     long millis;
     double est_x;
     double est_y;
@@ -21,7 +21,7 @@ struct frame {
     bool has_target;
     double goal_distance;
     double goal_angle;
-    frame(long m, double x, double y, double heading, bool target, double goal_dist, double goal_ang) {
+    output_frame(long m, double x, double y, double heading, bool target, double goal_dist, double goal_ang) {
         millis = m;
         est_x = x;
         est_y = y;
@@ -42,6 +42,18 @@ struct frame {
     }
 };
 
+struct input_frame{
+    long millis;
+    double u[3]; //odometry [dx, dy, dTheta]
+    input_frame(std::vector<std::string> values) {
+        millis = atof(values.at(0).c_str());
+        u[0] = atof(values.at(1).c_str());
+        u[1] = atof(values.at(2).c_str());
+        u[2] = atof(values.at(3).c_str());
+    }
+};
+
+
 class Server {
 
 private:
@@ -56,8 +68,11 @@ private:
     char receive_buf[BUFFER_SIZE];
     char *hostAddrp_;
     int optval;
-    int n; 
+    int n;
+    input_frame latest_frame_;
+    input_frame prev_frame_;
 
+    std::thread data_thread_;
 
 public:
     Server(const std::string& host, int host_port, const std::string& client, int client_port) {
@@ -112,13 +127,51 @@ public:
         msg.copy(buf, BUFFER_SIZE);
         return sendto(socket_, buf, strlen(buf), 0, (struct sockaddr*) &clientAddr_, clientLength_);
     }
-    int send(frame &frame) {
+
+    std::vector<std::string> split( const std::string& str, char delimiter = ';' ) {
+        std::vector<std::string> result ;
+        std::istringstream stm(str) ;
+        std::string fragment ;
+        while( std::getline( stm, fragment, delimiter ) ) result.push_back(fragment) ;
+        return result ;
+    }
+
+    int send(output_frame &frame) {
         return send(frame.to_udp_string());
     }
 
     std::string get_message() {
         std::string s(receive_buf, sizeof(receive_buf));
+        std::vector<std::string> values = split(s);
         return s;
     }
+    input_frame get_new_frame() {
+        std::string s(receive_buf, sizeof(receive_buf));
+        std::vector<std::string> values = split(s);
+        return input_frame(values);
+    }
 
+    void receive_frame() {
+        input_frame incoming_frame = get_new_frame();
+        if (incoming_frame.millis > latest_frame_.millis) {
+            prev_frame_ = latest_frame_;
+            latest_frame_ = incoming_frame;
+            double dt = latest_frame_.millis - prev_frame_.millis;
+            std::cout << "[INFO] Frame DT {" << dt << "}\n";
+        }
+    }
+
+    input_frame get_latest_frame() {
+        return latest_frame_;
+    }
+
+    void data_processing_thread() {
+        while (true) {
+            receive_frame();
+        }
+    }
+
+    void start_thread() {
+        data_thread_ = std::thread(&Server::data_processing_thread, this);
+    }
 };

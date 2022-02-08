@@ -14,9 +14,13 @@ PoseEstimator::PoseEstimator(int num_monocular_cameras) {
     }
 }
 
-PoseEstimator::PoseEstimator(int num_monocular_cameras, int num_zed_cameras) {
+PoseEstimator::PoseEstimator(int num_monocular_cameras, int num_zed_cameras, std::vector<Landmark> landmarks) {
+    filter_ = ParticleFilter(landmarks);
     num_monocular_cameras_ = num_monocular_cameras;
     num_zed_cameras_ = num_zed_cameras;
+    for (int i = 0; i < num_zed_cameras + num_monocular_cameras; ++i) {
+        threads_started_.push_back(false);
+    }
     for (int i = 0; i < num_monocular_cameras_; ++i) { camera_config config = camera_config(fov(62.2, 48.8), resolution(640, 480), 30);
         monocular_cameras_.emplace_back(MonocularCamera(i, config));
         monocular_cameras_.at(i).open_camera();
@@ -39,6 +43,7 @@ void PoseEstimator::run_zed() {
 void PoseEstimator::run_inference(MonocularCamera& camera) {
     Yolov5 yoloRT;
     yoloRT.initialize_engine(engine_name_);
+    threads_started_.at(camera.get_id()) = true;
     while (true) {
    	    camera.read_frame();
     	cv::Mat image = camera.get_frame();
@@ -57,13 +62,21 @@ void PoseEstimator::run_inference_zed(Zed& camera) {
     run_zed();
     Yolov5 yoloRT;
     yoloRT.initialize_engine(engine_name_);
+    threads_started_.back() = true;
     while (true) {
     	sl::Mat image = camera.get_left_image();
     	cv::Mat temp;
     	yoloRT.prepare_inference(image, temp);
     	yoloRT.run_inference_and_convert_to_zed(temp);
         camera.input_custom_objects(yoloRT.get_custom_obj_data());
-        print_zed_measurements(0);
+    }
+}
+
+void PoseEstimator::estimate_pose(double *u, std::vector<Eigen::Vector3d> z) {
+    while (true) {
+        auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(50);
+        filter_.monte_carlo_localization(u, z);
+        std::this_thread::sleep_until(x);
     }
 }
 
@@ -117,6 +130,16 @@ void PoseEstimator::display_frame(int camera_id) {
 		std::cout << "[ERROR] Frame empty in camera [" << camera_id << "]\n";
 	}
 }
+
+bool PoseEstimator::threads_started(){
+    for (bool i : threads_started_) {
+        if (!i) {
+            return false;
+        }
+    }
+    return true;
+}
+
 void PoseEstimator::kill() {
     for (auto& i : inference_threads_) {
         i.join();

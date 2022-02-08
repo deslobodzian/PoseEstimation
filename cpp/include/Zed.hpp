@@ -4,6 +4,7 @@
 #pragma once
 
 #include <sl/Camera.hpp>
+#include <Eigen/Dense>
 
 using namespace sl;
 
@@ -80,6 +81,7 @@ public:
     ObjectData get_object_from_id(int id) {
 	    ObjectData tmp;
 	    zed_.retrieveObjects(objects_, objectTracker_params_rt_);
+        std::cout << "Objects size: {"<< objects_.object_list.size() << "}\n";
 	    objects_.getObjectDataFromId(tmp, id);
 	    return tmp;
     }
@@ -165,6 +167,8 @@ public:
          ObjectData obj = get_object_from_id(id);
          return center_cam_distance_from_object(obj);
     }
+
+    Eigen::Vector3d get_measurement(int id) {}
 
     void close() {
         zed_.close();

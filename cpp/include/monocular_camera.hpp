@@ -4,8 +4,12 @@
 
 #ifndef PARTICLE_FILTER_MONOCULARCAMERA_HPP
 #define PARTICLE_FILTER_MONOCULARCAMERA_HPP
+#define USE_MATH_DEFINES_
 
+
+#include <cmath>
 #include <opencv2/opencv.hpp>
+#include <Eigen/Dense>
 
 using namespace cv;
 
@@ -75,6 +79,7 @@ public:
     void add_tracked_objects(std::vector<tracked_object> objs);
     double yaw_angle_to_object(tracked_object obj);
     double pitch_angle_to_object(tracked_object obj);
+    Eigen::Vector3d get_measurement(tracked_object obj);
     tracked_object get_object(int id);
     void draw_tracked_objects();
 };

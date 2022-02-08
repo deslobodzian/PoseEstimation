@@ -43,7 +43,7 @@ double ParticleFilter::sample_measurement_model(Eigen::Vector3d feature, Eigen::
 //    std::cout << "Landmark Sample: " << landmark.x << " " << landmark.y << " " << landmark.id << "\n";
     double q = 0;
 
-    if (feature(2, 0) == landmark.id) {
+    if (feature(2, 0) == landmark.game_element) {
 
         double range = hypot(landmark.x - x(0,0), landmark.y - x(1, 0));
         double bearing = atan2(
@@ -64,15 +64,12 @@ double ParticleFilter::sample_measurement_model(Eigen::Vector3d feature, Eigen::
     return q;
 }
 
-Eigen::Vector3d ParticleFilter::sample_motion_model(std::vector<Eigen::Vector3d> u, Eigen::Vector3d x) {
-//    std::cout << "Current Pose: " << u.at(0) << "\n";
-//    std::cout << "Prev Pose: " << u.at(1) << "\n";
-
-    double dx = u.at(0)(0,0) - u.at(1)(0,0);
+Eigen::Vector3d ParticleFilter::sample_motion_model(double *u, Eigen::Vector3d x) {
+    double dx = u[0];
 //    std::cout << "dx: " << dx << "\n";
-    double dy = u.at(0)(1,0) - u.at(1)(1,0);
+    double dy = u[1];
 //    std::cout << "dy: " << dy << "\n";
-    double dTheta = u.at(1)(2, 0) - u.at(0)(2,0);
+    double dTheta = u[2];
 //    std::cout << "dTheta: " << dTheta << "\n";
     double noise_dx = dx + sample_triangle_distribution(fabs(dx * ALPHA_TRANSLATION));
 //    std::cout << "Sample noise dx: " << sample_triangle_distribution(abs(dx * ALPHA_TRANSLATION)) << "\n";
@@ -90,7 +87,6 @@ Eigen::Vector3d ParticleFilter::sample_motion_model(std::vector<Eigen::Vector3d>
 
 std::vector<Eigen::Vector3d> ParticleFilter::measurement_model(Eigen::Vector3d x) {
     std::vector<Eigen::Vector3d> z_vec;
-//    std::cout << "Real Pose: " << x << "\n";
     for (Landmark landmark : map_) {
         double range = hypot(
                 landmark.x - x(0, 0),
@@ -99,7 +95,7 @@ std::vector<Eigen::Vector3d> ParticleFilter::measurement_model(Eigen::Vector3d x
                 landmark.y - x(1, 0),
                 landmark.x - x(0, 0)) - x(2, 0);
         Eigen::Vector3d z;
-        z << range, bearing, landmark.id;
+        z << range, bearing, landmark.game_element;
         z_vec.emplace_back(z);
     }
     return z_vec;
@@ -110,7 +106,7 @@ double ParticleFilter::calculate_weight(std::vector<Eigen::Vector3d> z, Eigen::V
 //        std::cout << "Reading landmark {x: " << landmark.x << ", y: " << landmark.y << ", id: " << landmark.id << "\n";
         for (auto & i : z) {
 //            std::cout << "Reading measurement {range: " << i(0,0) << ", bearing: " << i(1, 0) << ", id: " << i(2,0) << "\n";
-            if (i(2,0) == landmark.id) {
+            if (i(2,0) == landmark.game_element) {
 //                std::cout << "Weight of landmark " << landmark.x << ", " << landmark.y << ", " << landmark.id
 //                << ": " << sample_measurement_model(i, x, landmark) << "\n";
                 weight = weight * sample_measurement_model(i, x, landmark);
@@ -133,7 +129,6 @@ std::vector<Particle> ParticleFilter::low_variance_sampler(std::vector<Particle>
             i = i + 1;
             c = c + X.at(i).weight;
         }
-//        std::cout << "Adding at index: " << i << "\n";
         X_bar.emplace_back(X.at(i));
     }
     return X_bar;
@@ -141,8 +136,7 @@ std::vector<Particle> ParticleFilter::low_variance_sampler(std::vector<Particle>
 
 
 std::vector<Particle>
-ParticleFilter::monte_carlo_localization(std::vector<Eigen::Vector3d> u,
-                                         std::vector<Eigen::Vector3d> z) {
+ParticleFilter::monte_carlo_localization(double *u, std::vector<Eigen::Vector3d> z) {
     std::vector<Particle> X_bar;
     double sum = 0;
     Eigen::MatrixXd x_set(3, X_.size());

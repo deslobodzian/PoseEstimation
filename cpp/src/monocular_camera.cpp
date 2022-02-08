@@ -1,9 +1,7 @@
 //
 // Created by DSlobodzian on 1/27/2022.
 //
-#define _USE_MATH_DEFINES
 #include "monocular_camera.hpp"
-#include "cmath"
 
 MonocularCamera::MonocularCamera(int device_id, camera_config config) {
     device_id_ = device_id;
@@ -48,6 +46,10 @@ double MonocularCamera::pitch_angle_to_object(tracked_object obj) {
     Point center(config_.camera_resolution.height / 2.0, config_.camera_resolution.height / 2.0);
     double focal_length = config_.camera_resolution.height / (2.0 * tan(config_.field_of_view.vertical / 2.0));
     return atan((center - object_center).x / focal_length);
+}
+
+Eigen::Vector3d MonocularCamera::get_measurement(tracked_object obj) {
+    return Eigen::Vector3d{-1, yaw_angle_to_object(obj), obj.class_id};
 }
 
 void MonocularCamera::draw_rect(Rect rect) {

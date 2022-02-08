@@ -48,8 +48,10 @@ double MonocularCamera::pitch_angle_to_object(tracked_object obj) {
     return atan((center - object_center).x / focal_length);
 }
 
-Eigen::Vector3d MonocularCamera::get_measurement(tracked_object obj) {
-    return Eigen::Vector3d{-1, yaw_angle_to_object(obj), obj.class_id};
+void MonocularCamera::add_measurements(std::vector<Eigen::Vector3d> z) {
+    for (auto object : objects_) {
+        z.push_back(Eigen::Vector3d{-1, yaw_angle_to_object(object), object.class_id});
+    }
 }
 
 void MonocularCamera::draw_rect(Rect rect) {

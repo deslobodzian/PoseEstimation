@@ -85,11 +85,28 @@ public:
 	   return tmp;
     }
 
-    void print_objects() {
-	    zed_.retrieveObjects(objects_, objectTracker_params_rt_);
-	    for (auto object : objects_.object_list) {
-		    std::cout << "Object label {" << object.raw_label << "} with id {" << object.id << "}\n";
-	    }
+    std::vector<ObjectData> get_objects_from_label(int label) {
+         std::vector<ObjectData> tmp;
+         zed_.retrieveObjects(objects_, objectTracker_params_rt_);
+         for (auto object : objects_.object_list) {
+             if (object.raw_label == label) {
+                 tmp.push_back(object);
+             }
+//		        std::cout << "Object label {" << object.raw_label << "} with id {" << object.id << "}\n";
+         }
+         return tmp;
+    }
+
+    void print_object(int label) {
+         for (auto object : get_objects_from_label(label)) {
+		        std::cout << "Object label {" << object.raw_label << "} with id {" << object.id << "}\n";
+         }
+    }
+
+    void add_measurements(std::vector<Eigen::Vector3d> z, int label) {
+         for (auto object : get_objects_from_label(label)) {
+             Eigen::Vector3d temp{get_distance_to_object(object.id), get_angle_to_object(object.id), label};
+         }
     }
 
     // Basic euclidean distance equation.
@@ -103,9 +120,14 @@ public:
         return sqrt(x + y + z);
     }
 
+    float center_cam_phi_angle_to_object(ObjectData& object) {
+        float x_pose = pose_.getTranslation().tx;
+        float y_pose = pose_.getTranslation().ty;
+        return atan2(object.position.y - y_pose, object.position.x - x_pose);
+    }
+
     Pose get_pose() {
         if (successful_grab()) {
-            auto state = zed_.getPosition(pose_, REFERENCE_FRAME::WORLD);
             return pose_;
         }
         return Pose();
@@ -173,8 +195,10 @@ public:
          ObjectData obj = get_object_from_id(id);
          return center_cam_distance_from_object(obj);
     }
-
-    Eigen::Vector3d get_measurement(int id) {}
+    double get_angle_to_object(int id) {
+        ObjectData obj = get_object_from_id(id);
+        return center_cam_phi_angle_to_object(obj);
+    }
 
     void close() {
         zed_.close();

@@ -72,6 +72,13 @@ void PoseEstimator::run_inference_zed(Zed& camera) {
     }
 }
 
+void PoseEstimator::add_measurements(std::vector<Eigen::Vector3d> z) {
+    for (auto &camera : monocular_cameras_) {
+        camera.add_measurements(z);
+    }
+    zed_.add_measurements(z, 0);
+}
+
 void PoseEstimator::estimate_pose(double *u, std::vector<Eigen::Vector3d> z) {
     while (true) {
         auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(50);

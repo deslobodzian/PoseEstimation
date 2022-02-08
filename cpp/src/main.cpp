@@ -27,7 +27,7 @@ int main() {
     PoseEstimator estimator(2, 1, map);
     estimator.init();
 //    std::vector<Eigen::Vector3d> z;
-    server.start_thread();
+    //server.start_thread();
     while (true) {
         if (estimator.threads_started()) {
 //            z.clear();

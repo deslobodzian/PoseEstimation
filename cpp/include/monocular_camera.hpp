@@ -16,10 +16,15 @@ using namespace cv;
 struct fov {
     double horizontal;
     double vertical;
+    double diagonal;
     fov() = default;
     fov(double h, double v) {
         horizontal = h * M_PI / 180.0;
         vertical = v * M_PI / 180.0;
+    }
+    fov(double h, double v, bool rad) {
+        horizontal = h;
+        vertical = v;
     }
 };
 
@@ -38,6 +43,15 @@ struct camera_config {
     int frames_per_second;
     resolution camera_resolution;
     camera_config() = default;
+    camera_config(double df, resolution res, int fps) {
+        double dFov = df * M_PI / 180.0;
+        double aspect = hypot(res.width, res.height);
+        double hFov = atan(tan(dFov / 2.0) * (res.width / aspect)) * 2;
+        double vFov = atan(tan(dFov / 2.0) * (res.height / aspect)) * 2;
+        field_of_view = fov(hFov, vFov, false);
+        camera_resolution = res;
+        frames_per_second = fps;
+    }
     camera_config(fov f, resolution res, int fps) {
         field_of_view = f;
         camera_resolution = res;

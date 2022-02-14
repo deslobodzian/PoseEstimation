@@ -114,7 +114,7 @@ public:
          return tmp;
     }
     std::vector<ObjectData> get_objects_from_element(game_elements element) {
-         return get_object_from_id(element);
+         return get_objects_from_label(element);
     }
 
     double get_distance_to_object(int id) {

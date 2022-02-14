@@ -22,7 +22,6 @@ private:
      bool has_area_map_ = false;
      SensorsData sensors_data_;
      SensorsData::IMUData imu_data_;
-     CameraInformation camera_infos_;
 
      float left_offset_to_center_;
 
@@ -58,7 +57,6 @@ public:
             std::cout << "ERROR: opening camera failed\n";
             return false;
         }
-        camera_infos_ = zed_.getCameraInformation();
         if (has_area_map_) {
            tracking_params.area_file_path = "map.area";
         }
@@ -206,12 +204,12 @@ public:
     }
 
     //default left camera.
-    const sl::CameraParameters get_camera_parameters(std::string side) const {
-        if (side == "right") {
-            return camera_infos_.camera_configuration.calibration_parameters.right_cam;
-        }
-        return camera_infos_.camera_configuration.calibration_parameters.left_cam;
-    }
+//    const sl::CameraParameters get_camera_parameters(std::string side) const {
+//        if (side == "right") {
+//            return camera_infos_.camera_configuration.calibration_parameters.right_cam;
+//        }
+//        return camera_infos_.camera_configuration.calibration_parameters.left_cam;
+//    }
 
     void print_pose(Pose& pose) {
         printf("Translation: x: %.3f, y: %.3f, z: %.3f, timestamp: %llu\r",

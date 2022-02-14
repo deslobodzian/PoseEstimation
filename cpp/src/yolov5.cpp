@@ -102,15 +102,14 @@ void Yolov5::run_inference_and_convert_to_zed(cv::Mat& img_cv_rgb) {
     std::vector<std::vector<Yolo::Detection>> batch_res(BATCH_SIZE);
     auto& res = batch_res[batch_];
     nms(res, &prob[batch_ * OUTPUT_SIZE], CONF_THRESH, NMS_THRESH);
+    cv::Rect bounds = cv::Rect(0, 0, img_cv_rgb.size().width, img_cv_rgb.size().height);
     for (auto &it : res) {
 	    sl::CustomBoxObjectData tmp;
 	    cv::Rect r = get_rect(img_cv_rgb, it.bbox);
-//        std::cout << "bbox {" << it.bbox[0] << ", " << it.bbox[1] << ", " << it.bbox[2] << ", " << it.bbox[3] << "}\n";
+        r = bounds & r;
 	    tmp.unique_object_id = sl::generate_unique_id();
 	    tmp.probability = it.conf;
-//        std::cout << "confidence {" << it.conf << "}\n";
 	    tmp.label = (int) it.class_id;
-//        std::cout << "label {" << it.class_id << "}\n";
 	    tmp.bounding_box_2d = cvt(r);
 	    objects_in_.push_back(tmp);
 	}

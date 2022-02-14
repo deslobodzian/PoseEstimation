@@ -21,7 +21,7 @@ PoseEstimator::PoseEstimator(int num_monocular_cameras, int num_zed_cameras, std
     for (int i = 0; i < num_zed_cameras + num_monocular_cameras; ++i) {
         threads_started_.push_back(false);
     }
-    for (int i = 0; i < num_monocular_cameras_; ++i) { camera_config config = camera_config(fov(62.2, 48.8), resolution(640, 480), 30);
+    for (int i = 0; i < num_monocular_cameras_; ++i) { camera_config config = camera_config(78, resolution(1920, 1080), 30);
         monocular_cameras_.emplace_back(MonocularCamera(i, config));
         monocular_cameras_.at(i).open_camera();
     }

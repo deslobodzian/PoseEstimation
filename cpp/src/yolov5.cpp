@@ -106,6 +106,7 @@ void Yolov5::run_inference_and_convert_to_zed(cv::Mat& img_cv_rgb) {
     for (auto &it : res) {
 	    sl::CustomBoxObjectData tmp;
 	    cv::Rect r = get_rect(img_cv_rgb, it.bbox);
+        // make sure our detected object bounds fit within the image frame.
         r = bounds & r;
 	    tmp.unique_object_id = sl::generate_unique_id();
 	    tmp.probability = it.conf;

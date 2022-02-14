@@ -5,6 +5,7 @@
 
 #include <sl/Camera.hpp>
 #include <Eigen/Dense>
+#include "map.hpp"
 
 using namespace sl;
 
@@ -74,6 +75,23 @@ public:
         return true;
     }
 
+    // Basic euclidean distance equation.
+    float center_cam_distance_from_object(ObjectData& object) {
+        float x_pose = pose_.getTranslation().tx;
+        float y_pose = pose_.getTranslation().ty;
+        float z_pose = pose_.getTranslation().tz;
+        float x = pow(object.position.x - x_pose, 2);
+        float y = pow(object.position.y - y_pose, 2);
+        float z = pow(object.position.z - z_pose, 2);
+        return sqrt(x + y + z);
+    }
+
+    float center_cam_phi_angle_to_object(ObjectData& object) {
+        float x_pose = pose_.getTranslation().tx;
+        float y_pose = pose_.getTranslation().ty;
+        return atan2(object.position.y - y_pose, object.position.x - x_pose);
+    }
+
     void input_custom_objects(std::vector<sl::CustomBoxObjectData> objects_in) {
 	    zed_.ingestCustomBoxObjects(objects_in);
     }
@@ -92,9 +110,34 @@ public:
              if (object.raw_label == label) {
                  tmp.push_back(object);
              }
-//		        std::cout << "Object label {" << object.raw_label << "} with id {" << object.id << "}\n";
          }
          return tmp;
+    }
+    std::vector<ObjectData> get_objects_from_element(game_elements element) {
+         return get_object_from_id(element);
+    }
+
+    double get_distance_to_object(int id) {
+        ObjectData obj = get_object_from_id(id);
+        return center_cam_distance_from_object(obj);
+    }
+
+    double get_distance_to_object_label(int label) {
+        std::vector<ObjectData> tmp = get_objects_from_label(label);
+        if (tmp.empty()) {
+            return -1;
+        } else {
+            return get_distance_to_object(tmp.at(0).id);
+        }
+    }
+
+    double get_distance_from_object(game_elements element) {
+        return get_distance_to_object_label(element);
+    }
+
+    double get_angle_to_object(int id) {
+        ObjectData obj = get_object_from_id(id);
+        return center_cam_phi_angle_to_object(obj);
     }
 
     void print_object(int label) {
@@ -109,22 +152,6 @@ public:
          }
     }
 
-    // Basic euclidean distance equation.
-    float center_cam_distance_from_object(ObjectData& object) {
-        float x_pose = pose_.getTranslation().tx;
-        float y_pose = pose_.getTranslation().ty;
-        float z_pose = pose_.getTranslation().tz;
-        float x = pow(object.position.x - x_pose, 2);
-        float y = pow(object.position.y - y_pose, 2);
-        float z = pow(object.position.z - z_pose, 2);
-        return sqrt(x + y + z);
-    }
-
-    float center_cam_phi_angle_to_object(ObjectData& object) {
-        float x_pose = pose_.getTranslation().tx;
-        float y_pose = pose_.getTranslation().ty;
-        return atan2(object.position.y - y_pose, object.position.x - x_pose);
-    }
 
     Pose get_pose() {
         if (successful_grab()) {
@@ -191,22 +218,6 @@ public:
                pose.getTranslation().tx, pose.getTranslation().ty, pose.getTranslation().tz, pose.timestamp.getMilliseconds());
     }
 
-    double get_distance_to_object(int id) {
-         ObjectData obj = get_object_from_id(id);
-         return center_cam_distance_from_object(obj);
-    }
-    double get_distance_to_object_label(int label) {
-        std::vector<ObjectData> tmp = get_objects_from_label(label);
-        if (tmp.empty()) {
-            return -1;
-        } else {
-            return get_distance_to_object(tmp.at(0).id);
-        }
-     }
-    double get_angle_to_object(int id) {
-        ObjectData obj = get_object_from_id(id);
-        return center_cam_phi_angle_to_object(obj);
-    }
 
     void close() {
         zed_.close();

@@ -67,31 +67,26 @@ void PoseEstimator::run_inference_zed(Zed& camera) {
     }
 }
 
-void PoseEstimator::add_measurements(std::vector<Eigen::Vector3d> &z) {
+void PoseEstimator::update_measurements() {
     for (auto &camera : monocular_cameras_) {
-        camera.add_measurements(z);
+        camera.add_measurements(z_);
     }
-    zed_.add_measurements(z, 0);
+    zed_.add_measurements(z_, blue_plate);
+    zed_.add_measurements(z_, red_plate);
+    zed_.add_measurements(z_, goal);
 }
 
-void PoseEstimator::estimate_pose(double *u, std::vector<Eigen::Vector3d> z) {
+void PoseEstimator::estimate_pose() {
     while (true) {
         auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(50);
-        filter_.monte_carlo_localization(u, z);
+        update_measurement();
+        filter_.monte_carlo_localization(server.get_latest_frame(), z_);
         std::this_thread::sleep_until(x);
     }
 }
 
 
-void PoseEstimator::init(Eigen::Vector3d init_pose) {
-    double x = init_pose(0);
-    double y = init_pose(1);
-    double theta = init_pose(2);
-    info("Initializing filter with pose: [" +
-            std::to_string(x) + ", " +
-            std::to_string(y) + ", " +
-            std::to_string(theta) + "]");
-    filter_.init_particle_filter(init_pose);
+void PoseEstimator::init() {
     info("Starting ZED camera thread.");
     inference_threads_.push_back(
             std::thread(
@@ -108,6 +103,34 @@ void PoseEstimator::init(Eigen::Vector3d init_pose) {
 			       	std::ref(monocular_cameras_.at(i))
 			));
     }
+    info("Starting UDP Server thread");
+    server.start_thread();
+    info("Waiting for initial pose");
+    bool exit_init = false;
+    while (!exit_init) {
+        // dummy frame so RoboRIO can gran the IP of the Jetson.
+        output_frame frame(0, 0, 0, 0, 0, 0, 0);
+        server.send(frame);
+        // Wait till server has received the initial pose from the RoboRio.
+        if (server.received_init_pose()) {
+            Eigen::Vector3d init{
+                    server.get_init_pose_frame().init_pose[0],
+                    server.get_init_pose_frame().init_pose[1],
+                    server.get_init_pose_frame().init_pose[2],
+            };
+            // initialize our estimator with the initial pose.
+            exit_init = true;
+            info("Set initial pose");
+        }
+    }
+    double x = init(0);
+    double y = init(1);
+    double theta = init(2);
+    info("Initializing filter with pose: [" +
+         std::to_string(x) + ", " +
+         std::to_string(y) + ", " +
+         std::to_string(theta) + "]");
+    filter_.init_particle_filter(init);
     info("Threads started!");
 }
 
@@ -151,6 +174,7 @@ bool PoseEstimator::threads_started(){
     }
     return true;
 }
+
 
 void PoseEstimator::kill() {
     for (auto& i : inference_threads_) {

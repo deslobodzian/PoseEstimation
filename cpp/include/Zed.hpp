@@ -153,9 +153,9 @@ public:
          }
     }
 
-    void add_measurements(std::vector<Eigen::Vector3d> &z, int label) {
-         for (auto &object : get_objects_from_label(label)) {
-             z.push_back(Eigen::Vector3d{get_distance_to_object(object.id), get_angle_to_object(object.id), label});
+    void add_measurements(std::vector<Eigen::Vector3d> &z, game_elements element) {
+         for (auto &object : get_objects_from_element(element)) {
+             z.push_back(Eigen::Vector3d{get_distance_to_object(object.id), get_angle_to_object(object.id), element});
          }
     }
 

@@ -6,6 +6,8 @@
 #include <iostream>
 #include <vector>
 
+#define FIELD_LENGTH
+
 enum game_elements {
     blue_ball = 0,
     rad_ball = 1,
@@ -31,7 +33,7 @@ private:
     std::vector<Landmark> landmarks_;
 
 public:
-    Map(std::vector<Landmark> landmarks);
+    Map() = default;
     ~Map() = default;
 
     std::vector<Landmark> get_landmarks();

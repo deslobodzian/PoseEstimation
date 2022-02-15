@@ -41,7 +41,7 @@ double ParticleFilter::zero_mean_gaussian(double x, double sigma) {
     return probability;
 }
 
-// for now assume feature is [range, bearing]
+// for now assume feature is [range, bearing, element]
 double ParticleFilter::sample_measurement_model(Eigen::Vector3d feature, Eigen::Vector3d x, Landmark landmark) {
 //    std::cout << "Feature: " << feature << "\n";
 //    std::cout << "x: " << x.transpose() << "\n";

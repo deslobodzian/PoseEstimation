@@ -1,16 +1,13 @@
 //
 // Created by DSlobodzian on 1/4/2022.
 //
-//
-// Created by DSlobodzian on 1/4/2022.
-//
 #pragma once
 
 #define DT 0.05
 #define ALPHA_ROTATION 0.0002
 #define ALPHA_TRANSLATION 0.5
-#define NUM_PARTICLES 200
-#define RESAMPLE_PARTICLES 100
+#define NUM_PARTICLES 100
+#define RESAMPLE_PARTICLES 50
 #define _USE_MATH_DEFINES
 
 

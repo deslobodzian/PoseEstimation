@@ -45,8 +45,8 @@ struct output_frame {
 struct input_frame{
     int id;
     long millis;
-    double u[3]; //odometry [dx, dy, dTheta]
-    double init_pose[3];
+    double u[3]; // odometry [dx, dy, dTheta]
+    double init_pose[3]; // initial position [x, y, theta]
     input_frame() {
         id = -1;
         millis = 0;

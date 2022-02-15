@@ -10,14 +10,17 @@
 #include "particle_filter.hpp"
 #include "map.hpp"
 #include "Zed.hpp"
+#include "udp_server.hpp"
 #include "monocular_camera.hpp"
 
 class PoseEstimator {
 private:
     int num_monocular_cameras_;
     int num_zed_cameras_;
+    Eigen::Vector3d z_;
     Zed zed_;
     ParticleFilter filter_;
+    Server server("10.56.87.59", 27002, "10.56.87.2", 27001);
     std::string engine_name_ = "custom.engine";
     std::vector<std::thread> inference_threads_;
     std::vector<MonocularCamera> monocular_cameras_;
@@ -32,8 +35,8 @@ public:
     void run_zed();
     void run_inference(MonocularCamera& camera);
     void run_inference_zed(Zed& camera);
-    void add_measurements(std::vector<Eigen::Vector3d> &z);
-    void estimate_pose(double *u, std::vector<Eigen::Vector3d> z);
+    void update_measurements();
+    void estimate_pose(double *u, std::vector<Eigen::Vector3d> &z);
     void init(Eigen::Vector3d init_pose);
     void kill();
 
@@ -42,5 +45,6 @@ public:
     void display_frame(int camera_id);
 
     bool threads_started();
+    bool start_estimator();
     Zed& get_zed();
 };

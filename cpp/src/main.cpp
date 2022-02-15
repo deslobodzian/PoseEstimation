@@ -27,7 +27,8 @@ int main() {
     PoseEstimator estimator(0, 1, map);
 //    std::vector<Eigen::Vector3d> z;
     server.start_thread();
-    while (true) {
+    bool exit_init = false;
+    while (!exit_init) {
         debug("Looking for init_pose");
         server.receive_frame();
         if (server.received_init_pose()) {
@@ -37,7 +38,7 @@ int main() {
                     server.get_init_pose_frame().init_pose[2],
             };
             estimator.init(init);
-            break;
+            exit_init = true;
         }
     }
     while (true) {

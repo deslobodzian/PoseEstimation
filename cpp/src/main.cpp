@@ -28,6 +28,7 @@ int main() {
 //    std::vector<Eigen::Vector3d> z;
     server.start_thread();
     while (true) {
+        debug("Looking for init_pose");
         if (server.received_init_pose()) {
             Eigen::Vector3d init{
                     server.get_init_pose_frame().init_pose[0],

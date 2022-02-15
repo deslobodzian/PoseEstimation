@@ -54,7 +54,7 @@ public:
     bool enable_tracking() {
         PositionalTrackingParameters tracking_params;
         if (!zed_.isOpened()) {
-            std::cout << "ERROR: opening camera failed\n";
+            error("Opening camera failed");
             return false;
         }
         if (has_area_map_) {
@@ -67,7 +67,7 @@ public:
 
     bool enable_object_detection() {
 	    if (zed_.enableObjectDetection(detection_params_) != sl::ERROR_CODE::SUCCESS) {
-		    std::cout << "ERROR: enabling OD failed\n";
+            error("Object Detection Failed");
             return false;
 	    }
         return true;
@@ -137,6 +137,15 @@ public:
         ObjectData obj = get_object_from_id(id);
         return center_cam_phi_angle_to_object(obj);
     }
+
+    double get_angle_to_object_label(int label) {
+         std::vector<ObjectData> tmp = get_objects_from_label(label);
+         if (tmp.empty()) {
+             return NAN;
+         } else {
+             return get_distance_to_object(tmp.at(0).id);
+         }
+     }
 
     void print_object(int label) {
          for (auto object : get_objects_from_label(label)) {

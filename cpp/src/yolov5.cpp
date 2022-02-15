@@ -28,7 +28,7 @@ bool Yolov5::initialize_engine(std::string& engine_name) {
 	// deserialize the .engine and run inference
 	std::ifstream file(engine_name,  std::ios::binary);
 	if (!file.good()) {
-		std::cout << "[ERROR]: Cannot read engine name!\n";
+		error("Cannot read engine name!");
 		return false;
 	}
 	char *trtModelStream = nullptr;
@@ -69,7 +69,7 @@ void Yolov5::doInference(IExecutionContext& context, cudaStream_t& stream, void 
     CUDA_CHECK(cudaMemcpyAsync(buffers[0], input, batchSize * 3 * INPUT_H * INPUT_W * sizeof (float), cudaMemcpyHostToDevice, stream_));
 
     if(!context.enqueue(batchSize, buffers, stream_, nullptr)) {
-	    std::cout << "conext error\n";
+        error("TensorRT Context error");
     }
     CUDA_CHECK(cudaMemcpyAsync(output, buffers[1], batchSize * OUTPUT_SIZE * sizeof (float), cudaMemcpyDeviceToHost, stream_));
     cudaStreamSynchronize(stream_);

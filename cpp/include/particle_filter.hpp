@@ -40,6 +40,7 @@ public:
     ParticleFilter() = default;
     ParticleFilter(std::vector<Landmark> map);
     ~ParticleFilter();
+    void init_particle_filter(Eigen::Vector3d init_pose);
     Eigen::Vector3d sample_motion_model(double *u, Eigen::Vector3d x);
     std::vector<Eigen::Vector3d> measurement_model(Eigen::Vector3d x);
     double sample_measurement_model(Eigen::Vector3d feature, Eigen::Vector3d x, Landmark landmark);

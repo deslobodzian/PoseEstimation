@@ -4,6 +4,7 @@
 #include <math.h>
 
 #include <opencv2/opencv.hpp>
+#include <iostream>
 #include <sl/Camera.hpp>
 
 float const id_colors[5][3] = {
@@ -103,6 +104,15 @@ inline cv::Mat slMat2cvMat(sl::Mat& input) {
     }
 
     return cv::Mat(input.getHeight(), input.getWidth(), cv_type, input.getPtr<sl::uchar1>(sl::MEM::CPU));
+}
+inline void info(std::string msg) {
+    std::cout << "[INFO] " << msg << "\n";
+}
+inline void error(std::string msg) {
+    std::cout << "[ERROR] " << msg << "\n";
+}
+inline void debug(std::string msg) {
+    std::cout << "[DEBUG] " << msg << "\n";
 }
 
 

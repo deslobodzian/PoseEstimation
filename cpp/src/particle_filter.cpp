@@ -5,19 +5,24 @@
 
 
 ParticleFilter::ParticleFilter(std::vector<Landmark> map) {
+    map_ = map;
+}
+
+ParticleFilter::~ParticleFilter() {}
+
+void ParticleFilter::init_particle_filter(Eigen::Vector3d init_pose) {
     Particle zero;
     Eigen::Vector3d pose;
     zero.weight = 1.0/NUM_PARTICLES;
     X_.assign(NUM_PARTICLES, zero);
     x_est_ = Eigen::Vector3d::Zero();
     for (int i = 0; i < NUM_PARTICLES; ++i) {
-        pose << random(9, 11), random(-1, 1), 0;
+        pose << random(init_pose(0) - 1.0, init_pose(0) + 1.0),
+                random(init_pose(1) - 1.0,init_pose(1) + 1.0),
+                random(init_pose(2) - 0.01, init_pose(2) + 0.01);
         X_.at(i).x = pose;
     }
-    map_ = map;
 }
-
-ParticleFilter::~ParticleFilter() {}
 
 double ParticleFilter::random(double min, double max) {
     std::random_device rd;

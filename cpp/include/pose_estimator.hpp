@@ -34,7 +34,7 @@ public:
     void run_inference_zed(Zed& camera);
     void add_measurements(std::vector<Eigen::Vector3d> &z);
     void estimate_pose(double *u, std::vector<Eigen::Vector3d> z);
-    void init();
+    void init(Eigen::Vector3d init_pose);
     void kill();
 
     void print_measurements(int camera_id);

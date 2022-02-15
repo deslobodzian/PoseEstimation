@@ -50,11 +50,6 @@ void PoseEstimator::run_inference(MonocularCamera& camera) {
     	yoloRT.prepare_inference(image);
     	yoloRT.run_inference(image);
     	camera.add_tracked_objects(yoloRT.get_monocular_obj_data());
-	//std::cout << 
-	//	"Size[" << camera.get_id() << "] is "  <<
-	//       	yoloRT_.get_monocular_obj_data(camera.get_id()).size()
-	//       	<< "\n";
-	//       	}
     }
 }
 
@@ -88,15 +83,23 @@ void PoseEstimator::estimate_pose(double *u, std::vector<Eigen::Vector3d> z) {
 }
 
 
-void PoseEstimator::init() {
-    std::cout << "[INFO] Starting ZED Camera thread.\n";
+void PoseEstimator::init(Eigen::Vector3d init_pose) {
+    double x = init_pose(0);
+    double y = init_pose(1);
+    double theta = init_pose(2);
+    info("Initializing filter with pose: [" +
+            std::to_string(x) + ", " +
+            std::to_string(y) + ", " +
+            std::to_string(theta) + "]");
+    filter_.init_particle_filter(init_pose);
+    info("Starting ZED camera thread.");
     inference_threads_.push_back(
             std::thread(
                 &PoseEstimator::run_inference_zed,
                 this,
                 std::ref(zed_)
             ));
-    std::cout << "[INFO] Starting Monocular Camera threads.\n";
+    info("Starting monocular camera threads.");
     for (int i = 0; i < num_monocular_cameras_; ++i) {
         inference_threads_.push_back(
 			std::thread(
@@ -105,22 +108,24 @@ void PoseEstimator::init() {
 			       	std::ref(monocular_cameras_.at(i))
 			));
     }
-    std::cout << "[INFO] Threads Started!\n";
+    info("Threads started!");
 }
 
 void PoseEstimator::print_measurements(int camera_id) {
     tracked_object obj = monocular_cameras_.at(camera_id).get_object(0);
     double measurement = monocular_cameras_.at(camera_id).yaw_angle_to_object(obj);
-    std::cout << "Camera[" << camera_id << "] has found object: " <<
-    obj.class_id << " with angle {" << measurement << "}\n";
+    std::string message = "Camera[" + std::to_string(camera_id) + "] has found object: " +
+    std::to_string(obj.class_id) + " with angle {" + std::to_string(measurement);
+    info(message);
 }
 
-void PoseEstimator::print_zed_measurements(int object_id) {
-    sl::ObjectData data = zed_.get_object_from_id(object_id);
-    std::cout << "[Debug] ZED camera measurement { Object [" <<
-        object_id << "], Distance [" <<
-        zed_.center_cam_distance_from_object(data) <<
-        "] meters.\n";
+void PoseEstimator::print_zed_measurements(int label) {
+    std::string message =
+            "ZED camera measurement { Object [" + std::to_string(label) +
+            "]: Distance [" + std::to_string(zed_.get_distance_to_object_label(label)) +
+            "] meters, Angle [" + std::to_string(zed_.get_angle_to_object_label(label)) +
+            "] radians}";
+    debug(message);
 }
 
 Zed& PoseEstimator::get_zed() {
@@ -134,7 +139,7 @@ void PoseEstimator::display_frame(int camera_id) {
 	if (!frame.empty()) {
 		cv::imshow(id, monocular_cameras_.at(camera_id).get_frame());
 	} else {
-		std::cout << "[ERROR] Frame empty in camera [" << camera_id << "]\n";
+		error("Frame empty in camera [" + std::to_string(camera_id));
 	}
 }
 

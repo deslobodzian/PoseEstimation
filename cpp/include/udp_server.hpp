@@ -32,44 +32,30 @@ struct output_frame {
     }
     std::string to_udp_string() {
         std::string value = std::to_string(millis) + ";" +
-                std::to_string(est_x) + ";" +
-                std::to_string(est_y) + ";" +
-                std::to_string(est_heading) +  ";" +
-                std::to_string(has_target) +  ";" +
-                std::to_string(goal_distance) +  ";" +
-                std::to_string(goal_angle);
+                            std::to_string(est_x) + ";" +
+                            std::to_string(est_y) + ";" +
+                            std::to_string(est_heading) +  ";" +
+                            std::to_string(has_target) +  ";" +
+                            std::to_string(goal_distance) +  ";" +
+                            std::to_string(goal_angle);
         return value;
     }
 };
 
 struct input_frame{
-    int id;
     long millis;
     double u[3]; //odometry [dx, dy, dTheta]
-    double init_pose[3];
     input_frame() {
-	id = -1;
         millis = 0;
         u[0] = 0;
         u[1] = 0;
         u[2] = 0;
-        init_pose[0] = 0;
-        init_pose[1] = 0;
-        init_pose[2] = 0;
     };
     input_frame(std::vector<std::string> values) {
-        if (atof(values.at(0).c_str()) == 0) {
-            id = 0;
-            init_pose[0] = atof(values.at(1).c_str());
-            init_pose[1] = atof(values.at(2).c_str());
-            init_pose[2] = atof(values.at(3).c_str());
-        } else {
-            id = 1;
-            millis = atof(values.at(1).c_str());
-            u[0] = atof(values.at(2).c_str());
-            u[1] = atof(values.at(3).c_str());
-            u[2] = atof(values.at(4).c_str());
-        }
+        millis = atof(values.at(0).c_str());
+        u[0] = atof(values.at(1).c_str());
+        u[1] = atof(values.at(2).c_str());
+        u[2] = atof(values.at(3).c_str());
     }
 };
 
@@ -91,8 +77,6 @@ private:
     int n;
     input_frame latest_frame_;
     input_frame prev_frame_;
-    input_frame init_pose_;
-    bool has_init_pose_ = false;
 
     std::thread data_thread_;
 
@@ -170,23 +154,13 @@ public:
     input_frame get_new_frame() {
         std::string s(receive_buf, sizeof(receive_buf));
         std::vector<std::string> values = split(s);
-	debug(std::to_string(atof(values.at(0).c_str())));
-        if (atof(values.at(0).c_str()) == 0) {
-            init_pose_ = input_frame(values);
-            has_init_pose_ = true;
-            return input_frame();
-        } 
-	return input_frame(values);
+        return input_frame(values);
     }
 
     void receive_frame() {
         receive();
-	debug("running frame");
         input_frame incoming_frame = get_new_frame();
-	if (incoming_frame.id == 0) {
-		debug(std::to_string(incoming_frame.id));
-	}
-        if (incoming_frame.millis > latest_frame_.millis && incoming_frame.id == 1) {
+        if (incoming_frame.millis > latest_frame_.millis) {
             prev_frame_ = latest_frame_;
             latest_frame_ = incoming_frame;
             double dt = latest_frame_.millis - prev_frame_.millis;
@@ -196,13 +170,6 @@ public:
 
     input_frame get_latest_frame() {
         return latest_frame_;
-    }
-    input_frame get_init_pose_frame() {
-        return init_pose_;
-    }
-
-    bool received_init_pose() {
-        return has_init_pose_;
     }
 
     void data_processing_thread() {

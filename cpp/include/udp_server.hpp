@@ -48,6 +48,7 @@ struct input_frame{
     double u[3]; //odometry [dx, dy, dTheta]
     double init_pose[3];
     input_frame() {
+	id = -1;
         millis = 0;
         u[0] = 0;
         u[1] = 0;
@@ -169,23 +170,27 @@ public:
     input_frame get_new_frame() {
         std::string s(receive_buf, sizeof(receive_buf));
         std::vector<std::string> values = split(s);
+	debug(std::to_string(atof(values.at(0).c_str())));
         if (atof(values.at(0).c_str()) == 0) {
             init_pose_ = input_frame(values);
             has_init_pose_ = true;
             return input_frame();
-        } else {
-            return input_frame(values);
-        }
+        } 
+	return input_frame(values);
     }
 
     void receive_frame() {
         receive();
+	debug("running frame");
         input_frame incoming_frame = get_new_frame();
+	if (incoming_frame.id == 0) {
+		debug(std::to_string(incoming_frame.id));
+	}
         if (incoming_frame.millis > latest_frame_.millis && incoming_frame.id == 1) {
             prev_frame_ = latest_frame_;
             latest_frame_ = incoming_frame;
-//            double dt = latest_frame_.millis - prev_frame_.millis;
-//            std::cout << "[INFO] Frame DT {" << dt << "}\n";
+            double dt = latest_frame_.millis - prev_frame_.millis;
+            std::cout << "[INFO] Frame DT {" << dt << "}\n";
         }
     }
 

@@ -27,21 +27,21 @@ int main() {
     PoseEstimator estimator(0, 1, map);
 //    std::vector<Eigen::Vector3d> z;
     server.start_thread();
-    bool exit_init = false;
-    while (!exit_init) {
-        debug("Looking for init_pose");
-        server.receive_frame();
-        if (server.received_init_pose()) {
-            Eigen::Vector3d init{
-                    server.get_init_pose_frame().init_pose[0],
-                    server.get_init_pose_frame().init_pose[1],
-                    server.get_init_pose_frame().init_pose[2],
-            };
-            estimator.init(init);
-            exit_init = true;
-        }
-    }
+//    bool exit_init = false;
+//    while (!exit_init) {
+//        if (server.received_init_pose()) {
+//            Eigen::Vector3d init{
+//                    server.get_init_pose_frame().init_pose[0],
+//                    server.get_init_pose_frame().init_pose[1],
+//                    server.get_init_pose_frame().init_pose[2],
+//            };
+//            estimator.init(init);
+//            exit_init = true;
+//	    debug("Exiting init");
+//        }
+//    }
     while (true) {
+//	    debug("starting main thread");
         if (estimator.threads_started()) {
 //            z.clear();
 //            estimator.add_measurements(z);

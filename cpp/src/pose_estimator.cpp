@@ -128,9 +128,15 @@ void PoseEstimator::init() {
          std::to_string(init_pose_(1)) + ", " +
          std::to_string(init_pose_(2)) + "]");
     filter_.init_particle_filter(init_pose_);
-    if (threads_started()) {
-        info("Starting estimator");
-        pose_estimation_thread_ = std::thread(&PoseEstimator::estimate_pose, this);
+    bool start_estimator = false;
+    info("Waiting for odometry data");
+    while (!start_estimator) {
+        if (server_.real_data_started()) {
+            // initialize our estimator with the initial pose.
+            pose_estimation_thread_ = std::thread(&PoseEstimator::estimate_pose, this);
+            start_estimator = true;
+            info("Starting estimator");
+        }
     }
     info("Threads started!");
 }

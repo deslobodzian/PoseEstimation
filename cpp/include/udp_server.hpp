@@ -95,6 +95,7 @@ private:
     input_frame prev_frame_;
     input_frame init_pose_;
     bool has_init_pose_ = false;
+    bool real_data_started_ = false;
 
     std::thread data_thread_;
 
@@ -173,8 +174,10 @@ public:
             init_pose_ = input_frame(values);
             has_init_pose_ = true;
             return input_frame();
+        } else {
+            real_data_started_ = true;
+            return input_frame(values);
         }
-        return input_frame(values);
     }
 
     void receive_frame() {
@@ -201,6 +204,10 @@ public:
 
     bool received_init_pose() {
         return has_init_pose_;
+    }
+
+    bool real_data_started() {
+        return real_data_started_;
     }
 
     void data_processing_thread() {

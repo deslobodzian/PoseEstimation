@@ -18,17 +18,16 @@ int main() {
 
     while (true) {
         // wait until the estimator has started all threads before feeding data to the filter.
-        if (estimator.threads_started()) {
-            z.clear();
-            estimator.add_measurements(z);
-
-            auto time = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now().time_since_epoch()).count();
-
-	    std::cout << "Object distance is: " << estimator.get_zed().get_distance_to_object_label(0) << "\n";
+//        if (estimator.threads_started()) {
+//            z.clear();
+//            estimator.add_measurements(z);
+//
+//            auto time = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now().time_since_epoch()).count();
+//
+//	    std::cout << "Object distance is: " << estimator.get_zed().get_distance_to_object_label(0) << "\n";
 //            std::cout << "[INFO] Number of measurements is {" << z.size() << "}\n";
   //          output_frame frame(time, 0, 0, 0, 0, estimator.get_zed().get_distance_to_object_label(0), 0);
    //         if (server.send(frame) < 0 ) { std::cout << "[ERROR] Couldn't send frame!"; }
-        }
     }
 }
 

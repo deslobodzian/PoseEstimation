@@ -17,12 +17,14 @@ class PoseEstimator {
 private:
     int num_monocular_cameras_;
     int num_zed_cameras_;
-    Eigen::Vector3d z_;
+    std::vector<Eigen::Vector3d> z_;
+    Eigen::Vector3d init_pose_;
     Zed zed_;
     ParticleFilter filter_;
-    Server server("10.56.87.59", 27002, "10.56.87.2", 27001);
+    Server server_;
     std::string engine_name_ = "custom.engine";
     std::vector<std::thread> inference_threads_;
+    std::thread pose_estimation_thread_;
     std::vector<MonocularCamera> monocular_cameras_;
     std::vector<Yolov5> inference_engines_;
     std::vector<bool> threads_started_;
@@ -36,8 +38,8 @@ public:
     void run_inference(MonocularCamera& camera);
     void run_inference_zed(Zed& camera);
     void update_measurements();
-    void estimate_pose(double *u, std::vector<Eigen::Vector3d> &z);
-    void init(Eigen::Vector3d init_pose);
+    void estimate_pose();
+    void init();
     void kill();
 
     void print_measurements(int camera_id);

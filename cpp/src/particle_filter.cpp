@@ -22,6 +22,7 @@ void ParticleFilter::init_particle_filter(Eigen::Vector3d init_pose) {
                 random(init_pose(2) - 0.01, init_pose(2) + 0.01);
         X_.at(i).x = pose;
     }
+    info("Initialized particle filter");
 }
 
 double ParticleFilter::random(double min, double max) {
@@ -141,7 +142,7 @@ std::vector<Particle> ParticleFilter::low_variance_sampler(std::vector<Particle>
 
 
 std::vector<Particle>
-ParticleFilter::monte_carlo_localization(double *u, std::vector<Eigen::Vector3d> z) {
+ParticleFilter::monte_carlo_localization(double *u, std::vector<Eigen::Vector3d> &z) {
     std::vector<Particle> X_bar;
     double sum = 0;
     Eigen::MatrixXd x_set(3, X_.size());

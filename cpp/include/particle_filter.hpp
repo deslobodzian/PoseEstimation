@@ -17,6 +17,7 @@
 #include <cmath>
 #include <Eigen/Dense>
 #include "map.hpp"
+#include "utils.hpp"
 
 struct Particle {
     Eigen::Vector3d x;
@@ -42,7 +43,7 @@ public:
     std::vector<Eigen::Vector3d> measurement_model(Eigen::Vector3d x);
     double sample_measurement_model(Eigen::Vector3d feature, Eigen::Vector3d x, Landmark landmark);
     double calculate_weight(std::vector<Eigen::Vector3d> z, Eigen::Vector3d x, double weight, std::vector<Landmark> map);
-    std::vector<Particle> monte_carlo_localization(double *u, std::vector<Eigen::Vector3d> z);
+    std::vector<Particle> monte_carlo_localization(double *u, std::vector<Eigen::Vector3d> &z);
     std::vector<Particle> low_variance_sampler(std::vector<Particle> X);
     std::vector<Particle> get_particle_set();
     Eigen::Vector3d get_estimated_pose();

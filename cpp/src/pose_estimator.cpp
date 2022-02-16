@@ -108,7 +108,7 @@ void PoseEstimator::init() {
     info("Waiting for initial pose");
     bool exit_init = false;
     while (!exit_init) {
-        // dummy frame so RoboRIO can gran the IP of the Jetson.
+        // dummy frame so RoboRIO can grab the IP of the Jetson.
         output_frame frame(0, 0, 0, 0, 0, 0, 0);
         server_.send(frame);
         // Wait till server has received the initial pose from the RoboRio.

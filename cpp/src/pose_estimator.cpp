@@ -7,6 +7,7 @@
 
 PoseEstimator::PoseEstimator(int num_monocular_cameras) {
     server_ = Server("10.56.87.59", 27002, "10.56.87.2", 27001);
+    server_.init();
     num_monocular_cameras_ = num_monocular_cameras;
     for (int i = 0; i < num_monocular_cameras_; ++i) {
         camera_config config = camera_config(78, resolution(1920, 1080), 30);
@@ -17,6 +18,7 @@ PoseEstimator::PoseEstimator(int num_monocular_cameras) {
 
 PoseEstimator::PoseEstimator(int num_monocular_cameras, int num_zed_cameras, std::vector<Landmark> landmarks) {
     server_ = Server("10.56.87.59", 27002, "10.56.87.2", 27001);
+    server_.init();
     filter_ = ParticleFilter(landmarks);
     num_monocular_cameras_ = num_monocular_cameras;
     num_zed_cameras_ = num_zed_cameras;

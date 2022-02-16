@@ -89,6 +89,8 @@ private:
     char *hostAddrp_;
     int optval;
     int n;
+    std::string host_;
+    std::string client_;
     input_frame latest_frame_;
     input_frame prev_frame_;
     input_frame init_pose_;
@@ -101,36 +103,40 @@ public:
     Server(const std::string& host, int host_port, const std::string& client, int client_port) {
         host_port_ = host_port;
         client_port_ = client_port;
+        host_ = host;
+        client_ = client;
 
-        socket_ = socket(AF_INET, SOCK_DGRAM, 0);
+    }
+
+    ~Server() = default;
+    void init() {
+        socket_ = socket(af_inet, sock_dgram, 0);
         if (socket_ < 0) {
-            std::cout << "ERROR: Couldn't open socket." << std::endl;
+            error("Couldn't open socket");
         }
 
         optval = 1;
         setsockopt(socket_,
-                   SOL_SOCKET,
-                   SO_REUSEADDR,
+                   sol_socket,
+                   so_reuseaddr,
                    (const void*) &optval,
                    sizeof(int));
 
-        bzero((char* ) &serverAddr_, sizeof(serverAddr_));
-        serverAddr_.sin_family = AF_INET;
-        serverAddr_.sin_addr.s_addr = inet_addr(host.c_str());
-        serverAddr_.sin_port = htons((unsigned short)host_port_);
+        bzero((char* ) &serveraddr_, sizeof(serveraddr_));
+        serveraddr_.sin_family = af_inet;
+        serveraddr_.sin_addr.s_addr = inet_addr(host_.c_str());
+        serveraddr_.sin_port = htons((unsigned short)host_port_);
 
-        if (bind(socket_, ((struct sockaddr *) &serverAddr_), sizeof(serverAddr_)) < 0) {
-            std::cout << "ERROR: Couldn't bind socket" << std::endl;
+        if (bind(socket_, ((struct sockaddr *) &serveraddr_), sizeof(serveraddr_)) < 0) {
+            error("Couldn't bind socket");
         }
 
-        bzero((char* ) &clientAddr_, sizeof(clientAddr_));
-        clientAddr_.sin_family = AF_INET;
-        clientAddr_.sin_addr.s_addr = inet_addr(client.c_str());
-        clientAddr_.sin_port = htons((unsigned short)client_port_);
-        clientLength_ = sizeof(clientAddr_);
+        bzero((char* ) &clientaddr_, sizeof(clientaddr_));
+        clientaddr_.sin_family = af_inet;
+        clientaddr_.sin_addr.s_addr = inet_addr(client_.c_str());
+        clientaddr_.sin_port = htons((unsigned short)client_port_);
+        clientlength_ = sizeof(clientaddr_);
     }
-
-    ~Server() = default;
 
     int receive() {
         bzero(receive_buf, BUFFER_SIZE);

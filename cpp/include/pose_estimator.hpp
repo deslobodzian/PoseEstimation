@@ -21,7 +21,7 @@ private:
     Eigen::Vector3d init_pose_;
     Zed zed_;
     ParticleFilter filter_;
-    Server server_;
+    Server &server_;
     std::string engine_name_ = "custom.engine";
     std::vector<std::thread> inference_threads_;
     std::thread pose_estimation_thread_;

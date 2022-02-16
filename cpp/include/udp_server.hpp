@@ -97,6 +97,7 @@ private:
     std::thread data_thread_;
 
 public:
+    Server() = default;
     Server(const std::string& host, int host_port, const std::string& client, int client_port) {
         host_port_ = host_port;
         client_port_ = client_port;

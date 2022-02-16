@@ -105,37 +105,36 @@ public:
         client_port_ = client_port;
         host_ = host;
         client_ = client;
-
     }
 
     ~Server() = default;
     void init() {
-        socket_ = socket(af_inet, sock_dgram, 0);
+        socket_ = socket(AF_INET, SOCK_DGRAM, 0);
         if (socket_ < 0) {
-            error("Couldn't open socket");
+            std::cout << "ERROR: Couldn't open socket." << std::endl;
         }
 
         optval = 1;
         setsockopt(socket_,
-                   sol_socket,
-                   so_reuseaddr,
+                   SOL_SOCKET,
+                   SO_REUSEADDR,
                    (const void*) &optval,
                    sizeof(int));
 
-        bzero((char* ) &serveraddr_, sizeof(serveraddr_));
-        serveraddr_.sin_family = af_inet;
-        serveraddr_.sin_addr.s_addr = inet_addr(host_.c_str());
-        serveraddr_.sin_port = htons((unsigned short)host_port_);
+        bzero((char* ) &serverAddr_, sizeof(serverAddr_));
+        serverAddr_.sin_family = AF_INET;
+        serverAddr_.sin_addr.s_addr = inet_addr(host.c_str());
+        serverAddr_.sin_port = htons((unsigned short)host_port_);
 
-        if (bind(socket_, ((struct sockaddr *) &serveraddr_), sizeof(serveraddr_)) < 0) {
-            error("Couldn't bind socket");
+        if (bind(socket_, ((struct sockaddr *) &serverAddr_), sizeof(serverAddr_)) < 0) {
+            std::cout << "ERROR: Couldn't bind socket" << std::endl;
         }
 
-        bzero((char* ) &clientaddr_, sizeof(clientaddr_));
-        clientaddr_.sin_family = af_inet;
-        clientaddr_.sin_addr.s_addr = inet_addr(client_.c_str());
-        clientaddr_.sin_port = htons((unsigned short)client_port_);
-        clientlength_ = sizeof(clientaddr_);
+        bzero((char* ) &clientAddr_, sizeof(clientAddr_));
+        clientAddr_.sin_family = AF_INET;
+        clientAddr_.sin_addr.s_addr = inet_addr(client.c_str());
+        clientAddr_.sin_port = htons((unsigned short)client_port_);
+        clientLength_ = sizeof(clientAddr_);
     }
 
     int receive() {

@@ -15,6 +15,7 @@ int main() {
     Map map;
     PoseEstimator estimator(0, 1, map.get_landmarks());
     std::vector<Eigen::Vector3d> z;
+    estimator.init();
 
     while (true) {
         // wait until the estimator has started all threads before feeding data to the filter.

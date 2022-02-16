@@ -78,8 +78,8 @@ class Server {
 
 private:
     int socket_;
-    int host_port_;
-    int client_port_;
+    int host_port_ = 27002;
+    int client_port_ = 27001;
     socklen_t clientLength_;
     struct sockaddr_in serverAddr_;
     struct sockaddr_in clientAddr_;
@@ -89,8 +89,8 @@ private:
     char *hostAddrp_;
     int optval;
     int n;
-    std::string host_;
-    std::string client_;
+    std::string host_ = "10.56.87.59";
+    std::string client_ = "10.56.87.2";
     input_frame latest_frame_;
     input_frame prev_frame_;
     input_frame init_pose_;
@@ -99,16 +99,7 @@ private:
     std::thread data_thread_;
 
 public:
-    Server(const std::string& host, int host_port, const std::string& client, int client_port) {
-        host_port_ = host_port;
-        client_port_ = client_port;
-        host_ = host;
-        client_ = client;
-
-    }
-
-    ~Server() = default;
-    void init() {
+    Server() {
         socket_ = socket(AF_INET, SOCK_DGRAM, 0);
         if (socket_ < 0) {
             std::cout << "ERROR: Couldn't open socket." << std::endl;
@@ -136,6 +127,8 @@ public:
         clientAddr_.sin_port = htons((unsigned short)client_port_);
         clientLength_ = sizeof(clientAddr_);
     }
+
+    ~Server() = default;
 
     int receive() {
         bzero(receive_buf, BUFFER_SIZE);

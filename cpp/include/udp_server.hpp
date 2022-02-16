@@ -123,7 +123,7 @@ public:
 
         bzero((char* ) &serverAddr_, sizeof(serverAddr_));
         serverAddr_.sin_family = AF_INET;
-        serverAddr_.sin_addr.s_addr = inet_addr(host.c_str());
+        serverAddr_.sin_addr.s_addr = inet_addr(host_.c_str());
         serverAddr_.sin_port = htons((unsigned short)host_port_);
 
         if (bind(socket_, ((struct sockaddr *) &serverAddr_), sizeof(serverAddr_)) < 0) {
@@ -132,7 +132,7 @@ public:
 
         bzero((char* ) &clientAddr_, sizeof(clientAddr_));
         clientAddr_.sin_family = AF_INET;
-        clientAddr_.sin_addr.s_addr = inet_addr(client.c_str());
+        clientAddr_.sin_addr.s_addr = inet_addr(client_.c_str());
         clientAddr_.sin_port = htons((unsigned short)client_port_);
         clientLength_ = sizeof(clientAddr_);
     }

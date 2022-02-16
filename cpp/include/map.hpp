@@ -33,7 +33,7 @@ private:
     std::vector<Landmark> landmarks_;
 
 public:
-    Map() = default;
+    Map();
     ~Map() = default;
 
     std::vector<Landmark> get_landmarks();

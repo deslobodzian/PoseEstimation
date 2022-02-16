@@ -19,9 +19,9 @@ private:
     int num_zed_cameras_;
     std::vector<Eigen::Vector3d> z_;
     Eigen::Vector3d init_pose_;
+    Server server_;
     Zed zed_;
     ParticleFilter filter_;
-    const Server server_;
     std::string engine_name_ = "custom.engine";
     std::vector<std::thread> inference_threads_;
     std::thread pose_estimation_thread_;

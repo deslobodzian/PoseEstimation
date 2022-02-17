@@ -217,12 +217,13 @@ public:
         return real_data_started_;
     }
 
-    void set_data_frame(output_frame frame) {
-        send(frame);
+    void set_data_frame(output_frame &frame) {
+        data_frame_ = frame;
     }
 
     void data_processing_thread() {
         while (true) {
+            send(data_frame_);
 //            if (send(data_frame_) < 0) {
 //                error("message failed");
 //            } else {

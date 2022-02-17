@@ -164,6 +164,7 @@ public:
 
     input_frame get_new_frame() {
         std::string s(receive_buf, sizeof(receive_buf));
+        info(s);
         std::vector<std::string> values = split(s);
         if (atof(values.at(0).c_str()) == 0) {
             init_pose_ = input_frame(values);
@@ -209,7 +210,7 @@ public:
             if (receive() < 0) {
                 error("receive error");
             }
-            info(std::to_string(get_latest_frame().millis));
+//            info(std::to_string(get_latest_frame().millis));
 //            send_frame(data_frame_);
         }
     }

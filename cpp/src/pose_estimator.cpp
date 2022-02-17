@@ -158,17 +158,15 @@ void PoseEstimator::print_zed_measurements(int label) {
     debug(message);
 }
 void PoseEstimator::send_message() {
-    auto time = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now().time_since_epoch()).count();
-    output_frame frame(
-            time,
+    server_.set_data_frame(output_frame(
+            std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now().time_since_epoch()).count(),
             0,
             0,
             0,
             zed_.has_objects(0),
             zed_.get_distance_to_object_label(0),
             zed_.get_angle_to_object_label(0)
-            );
-    server_.set_data_frame(frame);
+            ));
 }
 
 Zed& PoseEstimator::get_zed() {

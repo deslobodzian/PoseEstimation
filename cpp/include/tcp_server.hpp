@@ -173,14 +173,14 @@ public:
             return input_frame(values);
         }
     }
-    int send(std::string msg) {
+    int send_msg(std::string msg) {
         bzero(buf, BUFFER_SIZE);
         msg.copy(buf, BUFFER_SIZE);
         return send(connfd_, buf, sizeof(buf), 0);
     }
 
-    int send(output_frame &frame) {
-        return send(frame.to_udp_string());
+    int send_frame(output_frame &frame) {
+        return send_msg(frame.to_udp_string());
     }
     input_frame get_latest_frame() {
         return latest_frame_;

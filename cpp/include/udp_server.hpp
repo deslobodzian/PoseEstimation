@@ -178,6 +178,7 @@ public:
         return s;
     }
     input_frame get_new_frame() {
+        receive();
         std::string s(buf, sizeof(buf));
         std::vector<std::string> values = split(s);
         if (atof(values.at(0).c_str()) == 0) {
@@ -191,7 +192,6 @@ public:
     }
 
     void receive_frame() {
-        receive();
 //        debug("running frame");
         input_frame incoming_frame = get_new_frame();
         if (incoming_frame.millis > latest_frame_.millis && incoming_frame.id == 1) {

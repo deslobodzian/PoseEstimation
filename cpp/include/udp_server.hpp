@@ -224,10 +224,10 @@ public:
     void data_processing_thread() {
         while (true) {
             send(data_frame_);
+            receive_frame();
 //            if (send(data_frame_) < 0) {
 //                error("message failed");
 //            } else {
-//                receive_frame();
 //            }
         }
     }

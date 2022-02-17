@@ -142,7 +142,7 @@ public:
     ~Server() = default;
 
     int receive() {
-        bzero(receive_buf, BUFFER_SIZE);
+        bzero(buf, BUFFER_SIZE);
         n = recvfrom(socket_,
                      receive_buf,
                      BUFFER_SIZE,

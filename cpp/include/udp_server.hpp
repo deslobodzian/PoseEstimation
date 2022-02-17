@@ -184,9 +184,6 @@ public:
         receive();
 //        debug("running frame");
         input_frame incoming_frame = get_new_frame();
-//        if (incoming_frame.id == 0) {
-//            debug(std::to_string(incoming_frame.id));
-//        }
         if (incoming_frame.millis > latest_frame_.millis && incoming_frame.id == 1) {
             prev_frame_ = latest_frame_;
             latest_frame_ = incoming_frame;

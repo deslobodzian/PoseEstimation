@@ -19,11 +19,13 @@ int main() {
 
     while (true) {
         // wait until the estimator has started all threads before feeding data to the filter.
-//        if (estimator.threads_started()) {
+        if (estimator.threads_started()) {
+            estimator.send_message();
 //            z.clear();
 //            estimator.add_measurements(z);
-//
+
 //            auto time = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now().time_since_epoch()).count();
+        }
 //
 //	    std::cout << "Object distance is: " << estimator.get_zed().get_distance_to_object_label(0) << "\n";
 //            std::cout << "[INFO] Number of measurements is {" << z.size() << "}\n";

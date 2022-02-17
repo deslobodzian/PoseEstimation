@@ -44,6 +44,7 @@ public:
 
     void print_measurements(int camera_id);
     void print_zed_measurements(int object_id);
+    void send_message();
     void display_frame(int camera_id);
 
     bool threads_started();

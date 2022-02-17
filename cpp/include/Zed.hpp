@@ -111,8 +111,13 @@ public:
          }
          return tmp;
     }
+
     std::vector<ObjectData> get_objects_from_element(game_elements element) {
          return get_objects_from_label(element);
+    }
+
+    bool has_objects(int label) {
+         return get_objects_from_label(label).empty();
     }
 
     double get_distance_to_object(int id) {

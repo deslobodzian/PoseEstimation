@@ -176,7 +176,7 @@ public:
     int send(std::string msg) {
         bzero(buf, BUFFER_SIZE);
         msg.copy(buf, BUFFER_SIZE);
-        return send(connfd_, buf, sizeof(buf));
+        return send(connfd_, buf, sizeof(buf),0);
     }
 
     int send(output_frame &frame) {

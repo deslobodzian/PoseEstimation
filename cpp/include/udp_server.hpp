@@ -237,7 +237,7 @@ public:
     }
     void data_processing_thread() {
         while (true) {
-//            send(data_frame_);
+            send(data_frame_);
 //            if (send(data_frame_) < 0) {
 //                error("message failed");
 //            } else {
@@ -246,7 +246,7 @@ public:
     }
 
     void start_thread() {
-//        data_thread_ = std::thread(&Server::data_processing_thread, this);
-        recv_thread_ = std::thread(&Server::receive_thread, this);
+        data_thread_ = std::thread(&Server::data_processing_thread, this);
+//        recv_thread_ = std::thread(&Server::receive_thread, this);
     }
 };

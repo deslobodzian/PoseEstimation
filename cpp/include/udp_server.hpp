@@ -197,8 +197,8 @@ public:
         if (incoming_frame.millis > latest_frame_.millis && incoming_frame.id == 1) {
             prev_frame_ = latest_frame_;
             latest_frame_ = incoming_frame;
-//            double dt = latest_frame_.millis - prev_frame_.millis;
-//            std::cout << "[INFO] Frame DT {" << dt << "}\n";
+            double dt = latest_frame_.millis - prev_frame_.millis;
+            std::cout << "[INFO] Frame DT {" << dt << "}\n";
         }
     }
 

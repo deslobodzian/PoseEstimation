@@ -86,7 +86,7 @@ struct input_frame{
         }
     }
 };
-class Server {
+class TCPServer {
 
 private:
     int sockfd_;

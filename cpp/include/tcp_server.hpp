@@ -159,7 +159,7 @@ public:
     int receive() {
 //        error("receiving");
         bzero(receive_buf, BUFFER_SIZE);
-        recv(connfd_, receive_buf, sizeof(receive_buf), 0);
+        return recv(connfd_, receive_buf, sizeof(receive_buf), 0);
     }
 
     input_frame get_new_frame() {
@@ -206,8 +206,10 @@ public:
 
     void data_thread() {
         while (true) {
-            receive();
-            send_frame(data_frame_);
+            if (receive() < 0) {
+                error("receive error");
+            }
+//            send_frame(data_frame_);
         }
     }
     void start_thread() {

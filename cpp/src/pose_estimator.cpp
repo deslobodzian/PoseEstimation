@@ -104,7 +104,7 @@ void PoseEstimator::init() {
 			));
     }
     info("Starting UDP Server thread");
-    server_.start_thread();
+//    server_.start_thread();
 //    info("Waiting for initial pose");
 //    bool exit_init = false;
 //    while (!exit_init) {

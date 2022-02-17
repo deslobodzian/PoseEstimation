@@ -159,7 +159,7 @@ void PoseEstimator::print_zed_measurements(int label) {
 }
 void PoseEstimator::send_message() {
     auto time = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now().time_since_epoch()).count();
-    output_frame frame(
+    output_frame frame = output_frame(
             time,
             0,
             0,

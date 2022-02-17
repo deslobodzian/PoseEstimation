@@ -165,15 +165,15 @@ public:
     input_frame get_new_frame() {
         std::string s(receive_buf, sizeof(receive_buf));
         info(s);
-        std::vector<std::string> values = split(s);
-        if (atof(values.at(0).c_str()) == 0) {
-            init_pose_ = input_frame(values);
-            has_init_pose_ = true;
-            return input_frame();
-        } else {
-            real_data_started_ = true;
-            return input_frame(values);
-        }
+//        std::vector<std::string> values = split(s);
+//        if (atof(values.at(0).c_str()) == 0) {
+//            init_pose_ = input_frame(values);
+//            has_init_pose_ = true;
+//            return input_frame();
+//        } else {
+//            real_data_started_ = true;
+//            return input_frame(values);
+//        }
     }
     int send_msg(std::string msg) {
 //        error("sending");

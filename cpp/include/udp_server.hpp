@@ -196,14 +196,14 @@ public:
         if (receive() > 0) {
             error("No frame");
         } else {
-            input_frame incoming_frame = get_new_frame();
-            if (incoming_frame.millis > latest_frame_.millis && incoming_frame.id == 1) {
-                info("Received frame");
-                prev_frame_ = latest_frame_;
-                latest_frame_ = incoming_frame;
-//            double dt = latest_frame_.millis - prev_frame_.millis;
-//            std::cout << "[INFO] Frame DT {" << dt << "}\n";
-            }
+//            input_frame incoming_frame = get_new_frame();
+//            if (incoming_frame.millis > latest_frame_.millis && incoming_frame.id == 1) {
+//                info("Received frame");
+//                prev_frame_ = latest_frame_;
+//                latest_frame_ = incoming_frame;
+////            double dt = latest_frame_.millis - prev_frame_.millis;
+////            std::cout << "[INFO] Frame DT {" << dt << "}\n";
+//            }
         }
     }
 
@@ -229,7 +229,7 @@ public:
     void data_processing_thread() {
         while (true) {
             send(data_frame_);
-//            receive_frame();
+            receive_frame();
 //            if (send(data_frame_) < 0) {
 //                error("message failed");
 //            } else {

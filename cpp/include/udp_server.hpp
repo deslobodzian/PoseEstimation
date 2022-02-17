@@ -21,6 +21,15 @@ struct output_frame {
     bool has_target;
     double goal_distance;
     double goal_angle;
+    output_frame() {
+        millis = 0;
+        est_x = 0;
+        est_y = 0;
+        est_heading = 0;
+        has_target = false;
+        goal_distance = 0;
+        goal_angle = 0;
+    }
     output_frame(long m, double x, double y, double heading, bool target, double goal_dist, double goal_ang) {
         millis = m;
         est_x = x;

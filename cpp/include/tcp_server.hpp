@@ -91,7 +91,7 @@ class Server {
 private:
     int sockfd_;
     int connfd_;
-    struct socklen_t len_;
+    socklen_t len_;
     struct sockaddr_in server_address_;
     struct sockaddr_in client_address_;
     char buf[BUFFER_SIZE];

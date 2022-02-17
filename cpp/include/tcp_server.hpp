@@ -209,6 +209,7 @@ public:
             if (receive() < 0) {
                 error("receive error");
             }
+            info(get_latest_frame().millis);
 //            send_frame(data_frame_);
         }
     }

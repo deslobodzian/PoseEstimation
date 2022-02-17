@@ -108,6 +108,7 @@ private:
     bool real_data_started_ = false;
 
     std::thread data_thread_;
+    std::thread recv_thread_;
 
 public:
     Server() {
@@ -226,10 +227,14 @@ public:
         data_frame_ = frame;
     }
 
+    void receive_thread() {
+        while (true) {
+            receive_frame();
+        }
+    }
     void data_processing_thread() {
         while (true) {
             send(data_frame_);
-            receive_frame();
 //            if (send(data_frame_) < 0) {
 //                error("message failed");
 //            } else {
@@ -239,5 +244,6 @@ public:
 
     void start_thread() {
         data_thread_ = std::thread(&Server::data_processing_thread, this);
+        recv_thread_ = std::thread(&Server::receive_thread, this)
     }
 };

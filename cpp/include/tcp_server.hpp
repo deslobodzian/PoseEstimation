@@ -207,12 +207,12 @@ public:
 
     void data_thread() {
         while (true) {
-            if (receive() < 0) {
-                error("receive error");
-            }
-            get_new_frame();
+//            if (receive() < 0) {
+//                error("receive error");
+//            }
+//            get_new_frame();
 //            info(std::to_string(get_latest_frame().millis));
-//            send_frame(data_frame_);
+            send_frame(data_frame_);
         }
     }
     void start_thread() {

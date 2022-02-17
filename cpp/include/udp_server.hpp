@@ -209,7 +209,7 @@ public:
 
     void data_processing_thread() {
         while (true) {
-            receive_frame();
+//            receive_frame();
         }
     }
 

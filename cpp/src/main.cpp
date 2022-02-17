@@ -20,7 +20,7 @@ int main() {
     while (true) {
         // wait until the estimator has started all threads before feeding data to the filter.
         if (estimator.threads_started()) {
-            estimator.send_message();
+//            estimator.send_message();
 //            z.clear();
 //            estimator.add_measurements(z);
 

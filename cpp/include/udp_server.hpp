@@ -94,6 +94,7 @@ private:
     input_frame latest_frame_;
     input_frame prev_frame_;
     input_frame init_pose_;
+    output_frame data_frame_;
     bool has_init_pose_ = false;
     bool real_data_started_ = false;
 
@@ -207,9 +208,14 @@ public:
         return real_data_started_;
     }
 
+    void set_data_frame(output_frame &frame) {
+        data_frame_ = frame;
+    }
+
     void data_processing_thread() {
         while (true) {
-//            receive_frame();
+            send(data_frame_);
+            receive_frame();
         }
     }
 

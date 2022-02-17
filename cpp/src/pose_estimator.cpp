@@ -168,7 +168,7 @@ void PoseEstimator::send_message() {
             zed_.get_distance_to_object_label(2),
             zed_.get_angle_to_object_label(2)
             );
-    server_.send(frame);
+    server_.set_data_frame(frame);
 }
 
 Zed& PoseEstimator::get_zed() {

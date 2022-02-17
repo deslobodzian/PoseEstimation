@@ -249,6 +249,7 @@ public:
         while (true) {
             send(data_frame_);
 //            if (send(data_frame_) < 0) {
+            receive_frame();
 //                error("message failed");
 //            } else {
 //            }

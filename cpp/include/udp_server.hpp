@@ -229,7 +229,7 @@ public:
 
     void receive_thread() {
         while (true) {
-            receive();
+            receive_frame();
             output_frame frame;
             send(frame);
             //receive_frame();

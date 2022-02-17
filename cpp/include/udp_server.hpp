@@ -230,8 +230,8 @@ public:
     void receive_thread() {
         while (true) {
             receive();
-            std::string s = "why";
-            send(s);
+            output_frame frame;
+            send(frame);
             //receive_frame();
         }
     }

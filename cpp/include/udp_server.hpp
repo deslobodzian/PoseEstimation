@@ -223,8 +223,8 @@ public:
 
     void data_processing_thread() {
         while (true) {
-            send(data_frame_);
             receive_frame();
+            send(data_frame_);
         }
     }
 

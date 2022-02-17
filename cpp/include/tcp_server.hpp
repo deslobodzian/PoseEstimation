@@ -157,6 +157,7 @@ public:
     }
 
     int receive() {
+        error("receiving");
         bzero(receive_buf, BUFFER_SIZE);
         recv(connfd_, receive_buf, sizeof(receive_buf), 0);
     }
@@ -174,6 +175,7 @@ public:
         }
     }
     int send_msg(std::string msg) {
+        error("sending");
         bzero(buf, BUFFER_SIZE);
         msg.copy(buf, BUFFER_SIZE);
         return send(connfd_, buf, sizeof(buf), 0);

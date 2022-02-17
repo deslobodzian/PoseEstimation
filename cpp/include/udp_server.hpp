@@ -142,9 +142,9 @@ public:
     ~Server() = default;
 
     int receive() {
-        bzero(buf, BUFFER_SIZE);
+        bzero(receive_buf, BUFFER_SIZE);
         n = recvfrom(socket_,
-                     buf,
+                     receive_buf,
                      BUFFER_SIZE,
                      0,
                      (struct sockaddr*) &clientAddr_,
@@ -174,12 +174,12 @@ public:
     }
 
     std::string get_message() {
-        std::string s(buf, sizeof(buf));
+        std::string s(receive_buf, sizeof(receive_buf));
         std::vector<std::string> values = split(s);
         return s;
     }
     input_frame get_new_frame() {
-        std::string s(buf, sizeof(buf));
+        std::string s(receive_buf, sizeof(receive_buf));
         std::vector<std::string> values = split(s);
         if (atof(values.at(0).c_str()) == 0) {
             init_pose_ = input_frame(values);
@@ -196,7 +196,6 @@ public:
         if (receive() > 0) {
             error("No frame");
         } else {
-            receive();
             input_frame incoming_frame = get_new_frame();
             if (incoming_frame.millis > latest_frame_.millis && incoming_frame.id == 1) {
                 info("Received frame");

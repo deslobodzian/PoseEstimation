@@ -87,6 +87,7 @@ class Server {
 
 private:
     int socket_;
+    int socket1_;
     int host_port_ = 27002;
     int client_port_ = 27001;
     socklen_t clientLength_;
@@ -113,12 +114,18 @@ private:
 public:
     Server() {
         socket_ = socket(AF_INET, SOCK_DGRAM, 0);
+        socket1_ = socket(AF_INET, SOCK_DGRAM, 0);
         if (socket_ < 0) {
             std::cout << "ERROR: Couldn't open socket." << std::endl;
         }
 
         optval = 1;
         setsockopt(socket_,
+                   SOL_SOCKET,
+                   SO_REUSEADDR,
+                   (const void*) &optval,
+                   sizeof(int));
+        setsockopt(socket1_,
                    SOL_SOCKET,
                    SO_REUSEADDR,
                    (const void*) &optval,
@@ -137,6 +144,9 @@ public:
         clientAddr_.sin_family = AF_INET;
         clientAddr_.sin_addr.s_addr = inet_addr(client_.c_str());
         clientAddr_.sin_port = htons((unsigned short)client_port_);
+        if (bind(socket1_, ((struct sockaddr *) &clientAddr_), sizeof(clientAddr_)) < 0) {
+            std::cout << "ERROR: Couldn't bind socket" << std::endl;
+        }
         clientLength_ = sizeof(clientAddr_);
     }
 
@@ -144,7 +154,7 @@ public:
 
     int receive() {
         bzero(receive_buf, BUFFER_SIZE);
-        n = recvfrom(socket_,
+        n = recvfrom(socket1_,
                      receive_buf,
                      BUFFER_SIZE,
                      0,

@@ -109,7 +109,7 @@ private:
 
 
 public:
-    Server() {
+    TCPServer() {
         sockfd_ = socket(AF_INET, SOCK_STREAM, 0);
         if (sockfd_ == -1) {
             error("socket creation failed");

@@ -158,7 +158,7 @@ public:
 
     int receive() {
         bzero(receive_buf, BUFFER_SIZE);
-        recv(connfd_, receive_buf, sizeof(receive_buf));
+        recv(connfd_, receive_buf, sizeof(receive_buf), 0);
     }
 
     input_frame get_new_frame() {

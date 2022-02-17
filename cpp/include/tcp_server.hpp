@@ -2,7 +2,7 @@
 // Created by DSlobodzian on 2/17/2022.
 //
 
-#pragma once;
+#pragma once
 
 #include <stdio.h>
 #include <netdb.h>
@@ -14,7 +14,6 @@
 #include "utils.hpp"
 #include <thread>
 
-#define MAX 80
 #define PORT 27002
 #define SA struct sockaddr
 #define BUFFER_SIZE 1024
@@ -92,7 +91,7 @@ class Server {
 private:
     int sockfd_;
     int connfd_;
-    int len_;
+    struct socklen_t len_;
     struct sockaddr_in server_address_;
     struct sockaddr_in client_address_;
     char buf[BUFFER_SIZE];

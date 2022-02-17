@@ -208,7 +208,7 @@ public:
         }
     }
     void start_thread() {
-        data_thread_ = std::thread(&Server::data_thread_, this);
+        data_thread_ = std::thread(&TCPServer::data_thread_, this);
     }
 
 

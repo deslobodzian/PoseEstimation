@@ -51,9 +51,6 @@ public:
         cam_to_robot_.setIdentity();
         cam_to_robot_.tx = CAM_TO_ROBOT_X;
         cam_to_robot_.ty = CAM_TO_ROBOT_Y;
-        info("camera dist x: " + std::to_string(calibration_params_.stereo_transform.tx * 0.5f));
-        info("camera dist y: " + std::to_string(calibration_params_.stereo_transform.ty * 0.5f));
-        info("camera dist z: " + std::to_string(calibration_params_.stereo_transform.tz * 0.5f));
 
     }
     ~Zed(){}
@@ -66,6 +63,9 @@ public:
 
     bool enable_tracking() {
         PositionalTrackingParameters tracking_params;
+        info("camera dist x: " + std::to_string(calibration_params_.stereo_transform.tx));
+        info("camera dist y: " + std::to_string(calibration_params_.stereo_transform.ty));
+        info("camera dist z: " + std::to_string(calibration_params_.stereo_transform.tz));
         if (!zed_.isOpened()) {
             error("Opening camera failed");
             return false;

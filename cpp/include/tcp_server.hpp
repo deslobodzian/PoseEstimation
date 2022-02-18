@@ -177,7 +177,8 @@ public:
     int send_msg(std::string msg) {
 //        error("sending");
         bzero(buf, BUFFER_SIZE);
-        msg.copy(buf, BUFFER_SIZE);
+        msg.c_str().copy(buf, BUFFER_SIZE);
+//        msg..copy(buf, BUFFER_SIZE);
         return send(connfd_, buf, sizeof(buf), 0);
     }
 

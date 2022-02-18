@@ -47,7 +47,7 @@ public:
 	    detection_params_.enable_tracking = true;
 	    detection_params_.enable_mask_output = false;
 	    detection_params_.detection_model = sl::DETECTION_MODEL::CUSTOM_BOX_OBJECTS;
-        calibration_params_ = zed_.getCameraInformation()->calibration_parameters;
+        calibration_params_ = zed_.getCameraInformation()::calibration_parameters;
         cam_to_robot_.setIdentity();
         cam_to_robot_.tx = CAM_TO_ROBOT_X;
         cam_to_robot_.ty = CAM_TO_ROBOT_Y;

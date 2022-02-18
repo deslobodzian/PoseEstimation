@@ -9,7 +9,7 @@
 
 #define CAM_TO_ROBOT_X -0.361696
 #define CAM_TO_ROBOT_Y -0.00889
-#define CAM_TO_CATAPULT_Y = -0.1651
+#define CAM_TO_CATAPULT_Y -0.1651
 
 using namespace sl;
 

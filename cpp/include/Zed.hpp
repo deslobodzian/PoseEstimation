@@ -93,7 +93,7 @@ public:
         transform_pose(tmp, 0, ty, 0);
 //        Transfrom tmp;
 //        tmp.setIdentity();
-        transform_pose(tmp, cam_to_robot_);
+        transform_pose(tmp, cam_to_robot_.tx, cam_to_robot_.ty, 0);
 //        transform_pose(tmp, left_offset);
         info("tx" + std::to_string(tmp.tx));
         info("ty" + std::to_string(tmp.ty));
@@ -204,7 +204,7 @@ public:
         pose = Transform::inverse(tmpTransform) * pose * tmpTransform;
     }
 
-    void transform_pose(Transform &pose, Transform &transform) {
+    void transform_pose(Transform &pose, Transform transform) {
          pose = Transform::inverse(transform) * pose * transform;
      }
 

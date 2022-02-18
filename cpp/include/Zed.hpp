@@ -90,10 +90,10 @@ public:
     // Basic euclidean distance equation.
     float center_cam_distance_from_object(ObjectData& object) {
         float ty = calibration_params_.stereo_transform.ty * 0.5f;
-        Transform left_offset;
-        left_offset.setIdentity();
-        left_offset.ty = ty;
-        transform_pose(left_offset, 0, ty, 0);
+        Transform tmp;
+        tmp.setIdentity();
+        tmp.ty = ty;
+        transform_pose(tmp, 0, ty, 0);
 //        Transfrom tmp;
 //        tmp.setIdentity();
         transform_pose(tmp, cam_to_robot_);

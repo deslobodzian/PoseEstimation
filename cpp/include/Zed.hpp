@@ -82,11 +82,11 @@ public:
 
     // Basic euclidean distance equation.
     float center_cam_distance_from_object(ObjectData& object) {
-        float tx = zed_.getCameraInformation().camera_configuration.calibration_parameters.stereo_transform.tx * 0.5f;
+        float ty = zed_.getCameraInformation().camera_configuration.calibration_parameters.stereo_transform.ty * 0.5f;
 
         Transform tmp;
         tmp.setIdentity();
-        tmp.tx = tx;
+        tmp.ty = ty;
         transform_pose(tmp, cam_to_robot_);
 //        float x = pow(temp.getTranslation().tx, 2);
 //        float y = pow(temp.getTranslation().ty, 2);

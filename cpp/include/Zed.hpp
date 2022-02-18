@@ -87,22 +87,14 @@ public:
     // Basic euclidean distance equation.
     float center_cam_distance_from_object(ObjectData& object) {
         float ty = calibration_params_.stereo_transform.ty * 0.5f;
-        float cx = CAM_TO_ROBOT_X;
-        float cy = CAM_TO_ROBOT_Y;
         Transform tmp;
         tmp.setIdentity();
-        tmp.ty = ty;
+        tmp.tx = CAM_TO_ROBOT_X;
+        tmp.ty = CAM_TO_ROBOT_Y + ty;
 //        transform_pose(tmp, 0, ty, 0);
-        transform_pose(tmp, cx, cy + ty, 0);
-//        transform_pose(tmp, left_offset);
-        info("Cam to robot X " + std::to_string(CAM_TO_ROBOT_X));
-        info("Cam to robot Y " + std::to_string(CAM_TO_ROBOT_Y));
         info("tx" + std::to_string(tmp.tx));
         info("ty" + std::to_string(tmp.ty));
         info("tz" + std::to_string(tmp.tz));
-//        float x = pow(temp.getTranslation().tx, 2);
-//        float y = pow(temp.getTranslation().ty, 2);
-//        float z = pow(temp.getTranslation().ty, 2);
         float x = pow(object.position.x - tmp.tx, 2);
         float y = pow(object.position.y - tmp.ty, 2);
         float z = pow(object.position.z - tmp.tz, 2);

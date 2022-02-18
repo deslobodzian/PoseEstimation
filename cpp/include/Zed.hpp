@@ -91,7 +91,7 @@ public:
         tmp.setIdentity();
         tmp.ty = ty;
         transform_pose(tmp, 0, ty, 0);
-        info(tmp.getInfos());
+        info(std::string(tmp.getInfos().c_str()));
 //        float x = pow(temp.getTranslation().tx, 2);
 //        float y = pow(temp.getTranslation().ty, 2);
 //        float z = pow(temp.getTranslation().ty, 2);

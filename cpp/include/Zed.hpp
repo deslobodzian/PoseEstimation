@@ -57,15 +57,13 @@ public:
     // Open the zed camera with initial parameters.
     // init_params_ defined in Zed contructor 
     bool open_camera() {
-         return (zed_.open(init_params_) == ERROR_CODE::SUCCESS);
+         auto return_state = zed_.open(init_params_);
+         calibration_params_ = zed_.getCameraInformation().calibration_parameters;
+         return (return_state == ERROR_CODE::SUCCESS);
     }
 
     bool enable_tracking() {
         PositionalTrackingParameters tracking_params;
-        calibration_params_ = zed_.getCameraInformation().calibration_parameters;
-        info("camera dist x: " + std::to_string(calibration_params_.stereo_transform.tx));
-        info("camera dist y: " + std::to_string(calibration_params_.stereo_transform.ty));
-        info("camera dist z: " + std::to_string(calibration_params_.stereo_transform.tz));
         if (!zed_.isOpened()) {
             error("Opening camera failed");
             return false;
@@ -89,11 +87,11 @@ public:
     // Basic euclidean distance equation.
     float center_cam_distance_from_object(ObjectData& object) {
         float ty = calibration_params_.stereo_transform.ty * 0.5f;
-
         Transform tmp;
         tmp.setIdentity();
-//        tmp.ty = ty;
-//        transform_pose(tmp, cam_to_robot_);
+        tmp.ty = ty;
+        transform_pose(tmp, 0, ty, 0);
+        info(tmp.getInfos());
 //        float x = pow(temp.getTranslation().tx, 2);
 //        float y = pow(temp.getTranslation().ty, 2);
 //        float z = pow(temp.getTranslation().ty, 2);

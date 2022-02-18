@@ -7,8 +7,8 @@
 #include <Eigen/Dense>
 #include "map.hpp"
 
-#define CAM_TO_ROBOT_X -0.361696;
-#define CAM_TO_ROBOT_Y -0.00889;
+#define CAM_TO_ROBOT_X -0.361696
+#define CAM_TO_ROBOT_Y -0.00889
 
 using namespace sl;
 

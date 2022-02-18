@@ -9,6 +9,7 @@
 
 #define CAM_TO_ROBOT_X -0.361696
 #define CAM_TO_ROBOT_Y -0.00889
+#define CAM_TO_CATAPULT_Y = -0.1651
 
 using namespace sl;
 
@@ -85,7 +86,7 @@ public:
     }
 
     // Basic euclidean distance equation.
-    float center_cam_distance_from_object(ObjectData& object) {
+    float robot_distance_to_object(ObjectData& object) {
         float ty = calibration_params_.stereo_transform.ty * 0.5f;
         Transform tmp;
         tmp.setIdentity();
@@ -101,10 +102,12 @@ public:
         return sqrt(x + y + z);
     }
 
-    float center_cam_phi_angle_to_object(ObjectData& object) {
-//        Eigen::Vector3d a = Eigen::Vector
-//        return atan2(object.position.y - y_pose, object.position.x - x_pose);
-        return 0;
+    float catapult_phi_angle_to_object(ObjectData& object) {
+        float ty = calibration_params_.stereo_transform.ty * 0.5f;
+        Eigen::Vector2d a(object.position.x, object.position.y - ty - CAM_TO_CATAPULT);
+        Eigen::Vector2d b(0, 1);
+        float angle = acos(a.dot(b)/(a.norm() * b.norm()));
+        return angle;
     }
 
     void input_custom_objects(std::vector<sl::CustomBoxObjectData> objects_in) {
@@ -139,7 +142,7 @@ public:
 
     double get_distance_to_object(int id) {
         ObjectData obj = get_object_from_id(id);
-        return center_cam_distance_from_object(obj);
+        return robot_distance_to_object(obj);
     }
 
     double get_distance_to_object_label(int label) {
@@ -151,13 +154,13 @@ public:
         }
     }
 
-    double get_distance_from_object(game_elements element) {
+    double get_distance_to_object(game_elements element) {
         return get_distance_to_object_label(element);
     }
 
     double get_angle_to_object(int id) {
         ObjectData obj = get_object_from_id(id);
-        return center_cam_phi_angle_to_object(obj);
+        return catapult_phi_angle_to_object(obj);
     }
 
     double get_angle_to_object_label(int label) {
@@ -165,7 +168,7 @@ public:
          if (tmp.empty()) {
              return NAN;
          } else {
-             return get_distance_to_object(tmp.at(0).id);
+             return get_angle_to_object(tmp.at(0).id);
          }
      }
 

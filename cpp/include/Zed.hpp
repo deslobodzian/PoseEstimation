@@ -25,6 +25,7 @@ private:
      bool has_area_map_ = false;
      SensorsData sensors_data_;
      SensorsData::IMUData imu_data_;
+     CalibrationParameters calibration_params_;
      Transform cam_to_robot_;
 
      float left_offset_to_center_;
@@ -46,9 +47,14 @@ public:
 	    detection_params_.enable_tracking = true;
 	    detection_params_.enable_mask_output = false;
 	    detection_params_.detection_model = sl::DETECTION_MODEL::CUSTOM_BOX_OBJECTS;
+        calibration_params_ = zed_.getCameraInformation()->calibration_parameters;
         cam_to_robot_.setIdentity();
         cam_to_robot_.tx = CAM_TO_ROBOT_X;
         cam_to_robot_.ty = CAM_TO_ROBOT_Y;
+        info("camera dist x: " + std::to_string(calibration_params_.stereo_transform.tx * 0.5f));
+        info("camera dist y: " + std::to_string(calibration_params_.stereo_transform.ty * 0.5f));
+        info("camera dist z: " + std::to_string(calibration_params_.stereo_transform.tz * 0.5f));
+
     }
     ~Zed(){}
 
@@ -82,12 +88,12 @@ public:
 
     // Basic euclidean distance equation.
     float center_cam_distance_from_object(ObjectData& object) {
-        float ty = zed_.getCameraInformation().camera_configuration.calibration_parameters.stereo_transform.ty * 0.5f;
+        float ty = calibration_params_.stereo_transform.ty * 0.5f;
 
         Transform tmp;
         tmp.setIdentity();
-        tmp.ty = ty;
-        transform_pose(tmp, cam_to_robot_);
+//        tmp.ty = ty;
+//        transform_pose(tmp, cam_to_robot_);
 //        float x = pow(temp.getTranslation().tx, 2);
 //        float y = pow(temp.getTranslation().ty, 2);
 //        float z = pow(temp.getTranslation().ty, 2);

@@ -93,8 +93,8 @@ public:
 //        transform_pose(tmp, 0, ty, 0);
         transform_pose(tmp, CAM_TO_ROBOT_X, CAM_TO_ROBOT_Y + ty, 0);
 //        transform_pose(tmp, left_offset);
-        info("Cam to robot X " + std::to_string(CAM_TO_ROBOT_X))
-        info("Cam to robot Y " + std::to_string(CAM_TO_ROBOT_Y))
+        info("Cam to robot X " + std::to_string(CAM_TO_ROBOT_X));
+        info("Cam to robot Y " + std::to_string(CAM_TO_ROBOT_Y));
         info("tx" + std::to_string(tmp.tx));
         info("ty" + std::to_string(tmp.ty));
         info("tz" + std::to_string(tmp.tz));

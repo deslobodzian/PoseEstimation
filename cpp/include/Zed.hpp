@@ -166,7 +166,7 @@ public:
     double get_angle_to_object_label(int label) {
          std::vector<ObjectData> tmp = get_objects_from_label(label);
          if (tmp.empty()) {
-             return NAN;
+             return 333;
          } else {
              return get_angle_to_object(tmp.at(0).id);
          }

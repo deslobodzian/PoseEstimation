@@ -7,6 +7,9 @@
 #include <Eigen/Dense>
 #include "map.hpp"
 
+#define CAM_TO_ROBOT_X -0.361696;
+#define CAM_TO_ROBOT_Y -0.00889;
+
 using namespace sl;
 
 class Zed {
@@ -22,6 +25,7 @@ private:
      bool has_area_map_ = false;
      SensorsData sensors_data_;
      SensorsData::IMUData imu_data_;
+     Transform cam_to_robot_;
 
      float left_offset_to_center_;
 
@@ -34,7 +38,7 @@ public:
 	    // Initial Parameters
         init_params_.camera_resolution = RESOLUTION::HD1080;
 	    init_params_.sdk_verbose = true;
-        init_params_.coordinate_system = COORDINATE_SYSTEM::RIGHT_HANDED_Z_UP;
+        init_params_.coordinate_system = COORDINATE_SYSTEM::RIGHT_HANDED_Z_UP_X_FWD;
         init_params_.coordinate_units = UNIT::METER;
 
         runtime_params_.measure3D_reference_frame = REFERENCE_FRAME::CAMERA;
@@ -42,6 +46,9 @@ public:
 	    detection_params_.enable_tracking = true;
 	    detection_params_.enable_mask_output = false;
 	    detection_params_.detection_model = sl::DETECTION_MODEL::CUSTOM_BOX_OBJECTS;
+        cam_to_robot_.setIdentity();
+        cam_to_robot_.tx = CAM_TO_ROBOT_X;
+        cam_to_robot_.ty = CAM_TO_ROBOT_Y;
     }
     ~Zed(){}
 
@@ -76,12 +83,17 @@ public:
     // Basic euclidean distance equation.
     float center_cam_distance_from_object(ObjectData& object) {
         float tx = zed_.getCameraInformation().camera_configuration.calibration_parameters.stereo_transform.tx * 0.5f;
+
+        Transform tmp;
+        tmp.setIdentity();
+        tmp.tx = tx;
+        transform_pose(tmp, cam_to_robot_);
 //        float x = pow(temp.getTranslation().tx, 2);
 //        float y = pow(temp.getTranslation().ty, 2);
 //        float z = pow(temp.getTranslation().ty, 2);
-        float x = pow(object.position.x - tx, 2);
-        float y = pow(object.position.y, 2);
-        float z = pow(object.position.z, 2);
+        float x = pow(object.position.x - tmp.tx, 2);
+        float y = pow(object.position.y - tmp.ty, 2);
+        float z = pow(object.position.z - tmp.tz, 2);
         return sqrt(x + y + z);
     }
 
@@ -181,6 +193,10 @@ public:
         tmpTransform.tz = tz;
         pose = Transform::inverse(tmpTransform) * pose * tmpTransform;
     }
+
+    void transform_pose(Transform &pose, Transform &transform) {
+         pose = Transform::inverse(transform) * pose * transform;
+     }
 
     float get_linear_velocity_x() {
         if (successful_grab()) {

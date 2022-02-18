@@ -47,7 +47,6 @@ public:
 	    detection_params_.enable_tracking = true;
 	    detection_params_.enable_mask_output = false;
 	    detection_params_.detection_model = sl::DETECTION_MODEL::CUSTOM_BOX_OBJECTS;
-        calibration_params_ = zed_.getCameraInformation().calibration_parameters;
         cam_to_robot_.setIdentity();
         cam_to_robot_.tx = CAM_TO_ROBOT_X;
         cam_to_robot_.ty = CAM_TO_ROBOT_Y;
@@ -63,6 +62,7 @@ public:
 
     bool enable_tracking() {
         PositionalTrackingParameters tracking_params;
+        calibration_params_ = zed_.getCameraInformation().calibration_parameters;
         info("camera dist x: " + std::to_string(calibration_params_.stereo_transform.tx));
         info("camera dist y: " + std::to_string(calibration_params_.stereo_transform.ty));
         info("camera dist z: " + std::to_string(calibration_params_.stereo_transform.tz));

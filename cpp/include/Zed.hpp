@@ -27,9 +27,6 @@ private:
      SensorsData::IMUData imu_data_;
      CalibrationParameters calibration_params_;
      Transform cam_to_robot_;
-     cam_to_robot_.setIdentity();
-     cam_to_robot_.tx = CAM_TO_ROBOT_X;
-     cam_to_robot_.ty = CAM_TO_ROBOT_Y;
 
      float left_offset_to_center_;
 

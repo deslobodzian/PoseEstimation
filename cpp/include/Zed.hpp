@@ -79,9 +79,12 @@ public:
         temp.setIdentity();
         temp.setTranslation(object.position);
         transform_pose(temp, zed_.getCameraInformation().camera_configuration.calibration_parameters.stereo_transform.tx * 0.5f, 0, 0);
-        float x = pow(temp.getTranslation().tx, 2);
-        float y = pow(temp.getTranslation().ty, 2);
-        float z = pow(temp.getTranslation().ty, 2);
+//        float x = pow(temp.getTranslation().tx, 2);
+//        float y = pow(temp.getTranslation().ty, 2);
+//        float z = pow(temp.getTranslation().ty, 2);
+        float x = pow(object.position.x, 2);
+        float y = pow(object.position.y, 2);
+        float z = pow(object.position.z, 2);
         return sqrt(x + y + z);
     }
 

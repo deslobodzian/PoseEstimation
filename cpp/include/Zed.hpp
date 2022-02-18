@@ -105,7 +105,7 @@ public:
     float catapult_phi_angle_to_object(ObjectData& object) {
         float ty = calibration_params_.stereo_transform.ty * 0.5f;
         Eigen::Vector2d a(object.position.x, object.position.y - ty - CAM_TO_CATAPULT_Y);
-        Eigen::Vector2d b(0, 1);
+        Eigen::Vector2d b(1, 0);
         float angle = acos(a.dot(b)/(a.norm() * b.norm()));
         return angle;
     }

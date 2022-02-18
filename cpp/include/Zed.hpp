@@ -75,19 +75,20 @@ public:
 
     // Basic euclidean distance equation.
     float center_cam_distance_from_object(ObjectData& object) {
-        float x_pose = pose_.getTranslation().tx;
-        float y_pose = pose_.getTranslation().ty;
-        float z_pose = pose_.getTranslation().tz;
-        float x = pow(object.position.x - x_pose, 2);
-        float y = pow(object.position.y - y_pose, 2);
-        float z = pow(object.position.z - z_pose, 2);
+        Transform temp;
+        temp.setIdentity();
+        temp.setTranslation(object.position);
+        transform_pose(temp, zed_.getCameraInformation().camera_configuration.calibration_parameters.stereo_transform.tx, 0, 0);
+        float x = pow(temp.getTranslation().tx, 2);
+        float y = pow(temp.getTranslation().ty, 2);
+        float z = pow(temp.getTranslation().ty, 2);
         return sqrt(x + y + z);
     }
 
     float center_cam_phi_angle_to_object(ObjectData& object) {
-        float x_pose = pose_.getTranslation().tx;
-        float y_pose = pose_.getTranslation().ty;
-        return atan2(object.position.y - y_pose, object.position.x - x_pose);
+//        Eigen::Vector3d a = Eigen::Vector
+//        return atan2(object.position.y - y_pose, object.position.x - x_pose);
+        return 0;
     }
 
     void input_custom_objects(std::vector<sl::CustomBoxObjectData> objects_in) {
@@ -117,7 +118,7 @@ public:
     }
 
     bool has_objects(int label) {
-         return get_objects_from_label(label).empty();
+         return !get_objects_from_label(label).empty();
     }
 
     double get_distance_to_object(int id) {

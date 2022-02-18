@@ -91,9 +91,7 @@ public:
         tmp.setIdentity();
         tmp.ty = ty;
         transform_pose(tmp, 0, ty, 0);
-//        Transfrom tmp;
-//        tmp.setIdentity();
-        transform_pose(tmp, cam_to_robot_.tx, cam_to_robot_.ty, 0);
+        transform_pose(tmp, CAM_TO_ROBOT_X, CAM_TO_ROBOT_Y, 0);
 //        transform_pose(tmp, left_offset);
         info("tx" + std::to_string(tmp.tx));
         info("ty" + std::to_string(tmp.ty));

@@ -103,9 +103,9 @@ void PoseEstimator::init() {
 			       	std::ref(monocular_cameras_.at(i))
 			));
     }
-//    server_.listening_for_client();
-//    info("Starting UDP Server thread");
-//    server_.start_thread();
+    server_.listening_for_client();
+    info("Starting TCP Server thread");
+    server_.start_thread();
 //    info("Waiting for initial pose");
 //    bool exit_init = false;
 //    while (!exit_init) {
@@ -165,11 +165,11 @@ void PoseEstimator::send_message() {
             0,
             0,
             0,
-            zed_.has_objects(0),
-            zed_.get_distance_to_object_label(0),
-            zed_.get_angle_to_object_label(0)
+            zed_.has_objects(2),
+            zed_.get_distance_to_object_label(2),
+            zed_.get_angle_to_object_label(2)
             );
-//    server_.set_data_frame(frame);
+    server_.set_data_frame(frame);
 }
 
 Zed& PoseEstimator::get_zed() {

@@ -7,8 +7,9 @@
 #include <Eigen/Dense>
 #include "map.hpp"
 
-#define CAM_TO_ROBOT_X -0.361696;
-#define CAM_TO_ROBOT_Y -0.00889;
+#define CAM_TO_ROBOT_X -0.361696
+#define CAM_TO_ROBOT_Y -0.00889
+#define CAM_TO_CATAPULT_Y -0.1651
 
 using namespace sl;
 
@@ -25,6 +26,7 @@ private:
      bool has_area_map_ = false;
      SensorsData sensors_data_;
      SensorsData::IMUData imu_data_;
+     CalibrationParameters calibration_params_;
      Transform cam_to_robot_;
 
      float left_offset_to_center_;
@@ -49,13 +51,16 @@ public:
         cam_to_robot_.setIdentity();
         cam_to_robot_.tx = CAM_TO_ROBOT_X;
         cam_to_robot_.ty = CAM_TO_ROBOT_Y;
+
     }
     ~Zed(){}
 
     // Open the zed camera with initial parameters.
     // init_params_ defined in Zed contructor 
     bool open_camera() {
-         return (zed_.open(init_params_) == ERROR_CODE::SUCCESS);
+         auto return_state = zed_.open(init_params_);
+         calibration_params_ = zed_.getCameraInformation().calibration_parameters;
+         return (return_state == ERROR_CODE::SUCCESS);
     }
 
     bool enable_tracking() {
@@ -81,26 +86,28 @@ public:
     }
 
     // Basic euclidean distance equation.
-    float center_cam_distance_from_object(ObjectData& object) {
-        float ty = zed_.getCameraInformation().camera_configuration.calibration_parameters.stereo_transform.ty * 0.5f;
-
+    float robot_distance_to_object(ObjectData& object) {
+        float ty = calibration_params_.stereo_transform.ty * 0.5f;
         Transform tmp;
         tmp.setIdentity();
-        tmp.ty = ty;
-        transform_pose(tmp, cam_to_robot_);
-//        float x = pow(temp.getTranslation().tx, 2);
-//        float y = pow(temp.getTranslation().ty, 2);
-//        float z = pow(temp.getTranslation().ty, 2);
+        tmp.tx = CAM_TO_ROBOT_X;
+        tmp.ty = CAM_TO_ROBOT_Y + ty;
+//        transform_pose(tmp, 0, ty, 0);
+//        info("tx" + std::to_string(tmp.tx));
+//        info("ty" + std::to_string(tmp.ty));
+//        info("tz" + std::to_string(tmp.tz));
         float x = pow(object.position.x - tmp.tx, 2);
         float y = pow(object.position.y - tmp.ty, 2);
         float z = pow(object.position.z - tmp.tz, 2);
         return sqrt(x + y + z);
     }
 
-    float center_cam_phi_angle_to_object(ObjectData& object) {
-//        Eigen::Vector3d a = Eigen::Vector
-//        return atan2(object.position.y - y_pose, object.position.x - x_pose);
-        return 0;
+    float catapult_phi_angle_to_object(ObjectData& object) {
+        float ty = calibration_params_.stereo_transform.ty * 0.5f;
+        Eigen::Vector2d a(object.position.x, object.position.y - ty - CAM_TO_CATAPULT_Y);
+        Eigen::Vector2d b(1, 0);
+        float angle = acos(a.dot(b)/(a.norm() * b.norm()));
+        return angle;
     }
 
     void input_custom_objects(std::vector<sl::CustomBoxObjectData> objects_in) {
@@ -135,7 +142,7 @@ public:
 
     double get_distance_to_object(int id) {
         ObjectData obj = get_object_from_id(id);
-        return center_cam_distance_from_object(obj);
+        return robot_distance_to_object(obj);
     }
 
     double get_distance_to_object_label(int label) {
@@ -147,21 +154,21 @@ public:
         }
     }
 
-    double get_distance_from_object(game_elements element) {
+    double get_distance_to_object(game_elements element) {
         return get_distance_to_object_label(element);
     }
 
     double get_angle_to_object(int id) {
         ObjectData obj = get_object_from_id(id);
-        return center_cam_phi_angle_to_object(obj);
+        return catapult_phi_angle_to_object(obj);
     }
 
     double get_angle_to_object_label(int label) {
          std::vector<ObjectData> tmp = get_objects_from_label(label);
          if (tmp.empty()) {
-             return NAN;
+             return 333;
          } else {
-             return get_distance_to_object(tmp.at(0).id);
+             return get_angle_to_object(tmp.at(0).id);
          }
      }
 
@@ -194,7 +201,7 @@ public:
         pose = Transform::inverse(tmpTransform) * pose * tmpTransform;
     }
 
-    void transform_pose(Transform &pose, Transform &transform) {
+    void transform_pose(Transform &pose, Transform transform) {
          pose = Transform::inverse(transform) * pose * transform;
      }
 

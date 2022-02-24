@@ -2,6 +2,8 @@ import math
 
 import numpy as np
 import matplotlib.pyplot as plt
+import scipy.spatial.transform
+from scipy.spatial.transform import Rotation
 
 
 def angle(pos, goal, speed, g):
@@ -84,8 +86,7 @@ def main():
     # print(r * math.cos(theta))
     # print(r * math.cos(phi))
     # print(r * math.sin(theta))
-    new_ball_exit_vel = np.array([r * math.cos(theta), 0, r * math.sin(theta)])
-    x_new, y_new, z_new = trajectory(ball_pos, new_ball_exit_vel, gravity,)
+    x_new, y_new, z_new = trajectory(ball_pos, ball_exit_vel, gravity)
     ax.scatter(target_pos[0], target_pos[1], target_pos[2], c='r')
     ax.scatter(ld[0], ld[1], ld[2], c='g')
     ax.plot3D(x, y, z)

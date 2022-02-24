@@ -19,13 +19,20 @@ def travel_time(x, angle, speed):
 def calculate_lead_time(p, v, g, speed):
     c0 = p.dot(p)
     c1 = 2 * p.dot(v)
-    c2 = p.dot(g) + v.dot(v) - (speed * speed)
-    c3 = v.dot(g)
-    c4 = 0.25 * g.dot(g)
-    coeffs = [c0, c1, c2, c3, c4]
+    c2 = v.dot(v) - (speed * speed)
+    coeffs = [c0, c1, c2]
     return np.roots(coeffs)
 
-def trajectory(pos, vel, gravity, angle):
+
+def cartesian_to_spherical(b):
+    root = (b[0] * b[0]) + (b[1]*b[1]) + (b[2] * b[2])
+    r = math.sqrt(root)
+    theta = math.atan(b[1]/b[0])
+    phi = math.atan(math.hypot(b[0], b[1]) / b[2])
+    return r, theta, phi
+
+
+def trajectory(pos, vel, gravity):
     x, y, z = [], [], []
     for t in np.arange(0, 10, 0.1):
         xt = pos[0] + vel[0] * t
@@ -45,23 +52,45 @@ def calculate_angle(v, x, z, g):
     return math.atan(num / denom), math.atan(num1 / denom)
 
 def main():
-    target_pos = np.array([1, 1.5, 5])
-    ball_pos = np.array([0, 0.0, 0])
-    ball_exit_vel = np.array([0.0, 5.0, 20.0])
-    target_vel = np.array([0.9, 0.0, 0.0])
+
+    target_pos = np.array([8.2296, 4.1148, 0.220472])
+    target_vel = np.array([0.0, 0.9, 0.0])
+    ball_pos = np.array([0, 4.1148, 0])
+
     gravity = np.array([0, 0, 9.81])
+    speed = 10.0
+
+    a1, a2 = calculate_angle(speed, target_pos[0], target_pos[2], gravity[2])
+
+    x_vel = speed * math.cos(a1)
+    z_vel = speed * math.sin(a1)
+    ball_exit_vel = np.array([x_vel, 0.0, z_vel])
     speed = np.linalg.norm(ball_exit_vel)
-    a1, a2 = calculate_angle(speed, 3, 4, -9.81)
+    print("angle one " + str(a1))
+    print("angle two " + str(a2))
+
     # tr = pos + (vel * time[0] + (0.5 * gravity * (time[0] * time[0])))
     time = calculate_lead_time(target_pos, target_vel, gravity, speed)
-    aim_point = target_pos + target_vel * time[0] + (0.5 * gravity * (time[0] * time[0]))
+    ld = target_pos + (target_vel * time[1])
+    print(ld)
     fig = plt.figure()
     ax = plt.axes(projection='3d')
-    x, y, z = trajectory(ball_pos, ball_exit_vel, gravity, a1)
-    ax.scatter(aim_point[0], aim_point[1], aim_point[2])
+    x, y, z = trajectory(ball_pos, ball_exit_vel, gravity)
+    r, theta, phi = cartesian_to_spherical(ld)
+    print("r " +str(r))
+    print("theta " + str(theta))
+    print("phi " + str(phi))
+    # new_a = calculate_angle(speed, ld[0], target_pos[2], gravity[2])
+    # print(r * math.cos(theta))
+    # print(r * math.cos(phi))
+    # print(r * math.sin(theta))
+    new_ball_exit_vel = np.array([r * math.cos(theta), 0, r * math.sin(theta)])
+    x_new, y_new, z_new = trajectory(ball_pos, new_ball_exit_vel, gravity,)
+    ax.scatter(target_pos[0], target_pos[1], target_pos[2], c='r')
+    ax.scatter(ld[0], ld[1], ld[2], c='g')
     ax.plot3D(x, y, z)
+    ax.plot3D(x_new, y_new, z_new, c='g')
     plt.show()
-    # print(pos + vel*time[0] + 0.5 * gravity * (time[0] * time[0]))
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':

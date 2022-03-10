@@ -39,6 +39,7 @@ public:
     Zed() {
 	    // Initial Parameters
         init_params_.camera_resolution = RESOLUTION::HD1080;
+	init_params_.depth_mode = DEPTH_MODE::NEURAL;
 	    init_params_.sdk_verbose = true;
         init_params_.coordinate_system = COORDINATE_SYSTEM::RIGHT_HANDED_Z_UP_X_FWD;
         init_params_.coordinate_units = UNIT::METER;
@@ -106,7 +107,12 @@ public:
         float ty = calibration_params_.stereo_transform.ty * 0.5f;
         Eigen::Vector2d a(object.position.x, object.position.y - ty - CAM_TO_CATAPULT_Y);
         Eigen::Vector2d b(1, 0);
-        float angle = acos(a.dot(b)/(a.norm() * b.norm()));
+	float angle = 0;
+	if (object.position.y < 0) {
+        	angle = -acos(a.dot(b)/(a.norm() * b.norm()));
+	} else {
+        	angle = acos(a.dot(b)/(a.norm() * b.norm()));
+	}
         return angle;
     }
 
@@ -260,3 +266,4 @@ public:
     }
 };
 
+//

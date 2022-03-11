@@ -205,6 +205,11 @@ public:
 
     void data_thread() {
         while (true) {
+//            if (receive() < 0 && send_frame(data_frame_) < 0) {
+//                error("Lost Client, Looking for new connection");
+//                has_client_ = false;
+//                listening_for_client();
+//            }
             receive();
             send_frame(data_frame_);
         }

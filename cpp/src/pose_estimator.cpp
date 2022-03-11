@@ -103,7 +103,6 @@ void PoseEstimator::init() {
 			       	std::ref(monocular_cameras_.at(i))
 			));
     }
-    server_.listening_for_client();
     info("Starting TCP Server thread");
     server_.start_thread();
 //    info("Waiting for initial pose");

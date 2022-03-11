@@ -98,9 +98,9 @@ public:
 //        info("tx" + std::to_string(tmp.tx));
 //        info("ty" + std::to_string(tmp.ty));
 //        info("tz" + std::to_string(tmp.tz));
-        float x = pow(object.position.x - tmp.tx, 2);
+        float x = pow(object.position.x, 2);
         float y = pow(object.position.y - tmp.ty, 2);
-        float z = pow(object.position.z - tmp.tz, 2);
+        float z = pow(object.position.z, 2);
         return sqrt(x + y + z);
     }
 

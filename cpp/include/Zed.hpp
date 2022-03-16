@@ -38,17 +38,19 @@ private:
 public:
     Zed() {
 	    // Initial Parameters
-        init_params_.camera_resolution = RESOLUTION::HD1080;
+        init_params_.camera_resolution = RESOLUTION::HD720;
+	init_params_.camera_fps = 60;
 	init_params_.depth_mode = DEPTH_MODE::NEURAL;
-	    init_params_.sdk_verbose = true;
+	init_params_.sdk_verbose = true;
         init_params_.coordinate_system = COORDINATE_SYSTEM::RIGHT_HANDED_Z_UP_X_FWD;
         init_params_.coordinate_units = UNIT::METER;
+	init_params_.depth_maximum_distance = 20;
 
         runtime_params_.measure3D_reference_frame = REFERENCE_FRAME::CAMERA;
 	    // Object Detection Parameters
-	    detection_params_.enable_tracking = true;
-	    detection_params_.enable_mask_output = false;
-	    detection_params_.detection_model = sl::DETECTION_MODEL::CUSTOM_BOX_OBJECTS;
+	detection_params_.enable_tracking = true;
+	detection_params_.enable_mask_output = false;
+	detection_params_.detection_model = sl::DETECTION_MODEL::CUSTOM_BOX_OBJECTS;
         cam_to_robot_.setIdentity();
         cam_to_robot_.tx = CAM_TO_ROBOT_X;
         cam_to_robot_.ty = CAM_TO_ROBOT_Y;
@@ -91,15 +93,14 @@ public:
         float ty = calibration_params_.stereo_transform.ty * 0.5f;
         Transform tmp;
         tmp.setIdentity();
-        tmp.tx = CAM_TO_ROBOT_X;
-        tmp.ty = CAM_TO_ROBOT_Y + ty;
+        tmp.ty = ty;
 //        transform_pose(tmp, 0, ty, 0);
 //        info("tx" + std::to_string(tmp.tx));
 //        info("ty" + std::to_string(tmp.ty));
 //        info("tz" + std::to_string(tmp.tz));
-        float x = pow(object.position.x - tmp.tx, 2);
+        float x = pow(object.position.x, 2);
         float y = pow(object.position.y - tmp.ty, 2);
-        float z = pow(object.position.z - tmp.tz, 2);
+        float z = pow(object.position.z, 2);
         return sqrt(x + y + z);
     }
 

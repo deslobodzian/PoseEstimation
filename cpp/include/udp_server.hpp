@@ -11,76 +11,76 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
-//#define BUFFER_SIZE 1024
+#define BUFFER_SIZE 1024
 
-//struct output_frame {
-//    long millis;
-//    double est_x;
-//    double est_y;
-//    double est_heading;
-//    bool has_target;
-//    double goal_distance;
-//    double goal_angle;
-//    output_frame() {
-//        millis = 0;
-//        est_x = 0;
-//        est_y = 0;
-//        est_heading = 0;
-//        has_target = false;
-//        goal_distance = 0;
-//        goal_angle = 0;
-//    }
-//    output_frame(long m, double x, double y, double heading, bool target, double goal_dist, double goal_ang) {
-//        millis = m;
-//        est_x = x;
-//        est_y = y;
-//        est_heading = heading;
-//        has_target = target;
-//        goal_distance = goal_dist;
-//        goal_angle = goal_ang;
-//    }
-//    std::string to_udp_string() {
-//        std::string value = std::to_string(millis) + ";" +
-//                            std::to_string(est_x) + ";" +
-//                            std::to_string(est_y) + ";" +
-//                            std::to_string(est_heading) +  ";" +
-//                            std::to_string(has_target) +  ";" +
-//                            std::to_string(goal_distance) +  ";" +
-//                            std::to_string(goal_angle);
-//        return value;
-//    }
-//};
-//
-//struct input_frame{
-//    int id;
-//    long millis;
-//    double u[3]; // odometry [dx, dy, dTheta]
-//    double init_pose[3]; // initial position [x, y, theta]
-//    input_frame() {
-//        id = -1;
-//        millis = 0;
-//        u[0] = 0;
-//        u[1] = 0;
-//        u[2] = 0;
-//        init_pose[0] = 0;
-//        init_pose[1] = 0;
-//        init_pose[2] = 0;
-//    };
-//    input_frame(std::vector<std::string> values) {
-//        if (atof(values.at(0).c_str()) == 0) {
-//            id = 0;
-//            init_pose[0] = atof(values.at(1).c_str());
-//            init_pose[1] = atof(values.at(2).c_str());
-//            init_pose[2] = atof(values.at(3).c_str());
-//        } else {
-//            id = 1;
-//            millis = atof(values.at(1).c_str());
-//            u[0] = atof(values.at(2).c_str());
-//            u[1] = atof(values.at(3).c_str());
-//            u[2] = atof(values.at(4).c_str());
-//        }
-//    }
-//};
+struct output_frame {
+    long millis;
+    double est_x;
+    double est_y;
+    double est_heading;
+    bool has_target;
+    double goal_distance;
+    double goal_angle;
+    output_frame() {
+        millis = 0;
+        est_x = 0;
+        est_y = 0;
+        est_heading = 0;
+        has_target = false;
+        goal_distance = 0;
+        goal_angle = 0;
+    }
+    output_frame(long m, double x, double y, double heading, bool target, double goal_dist, double goal_ang) {
+        millis = m;
+        est_x = x;
+        est_y = y;
+        est_heading = heading;
+        has_target = target;
+        goal_distance = goal_dist;
+        goal_angle = goal_ang;
+    }
+    std::string to_udp_string() {
+        std::string value = std::to_string(millis) + ";" +
+                            std::to_string(est_x) + ";" +
+                            std::to_string(est_y) + ";" +
+                            std::to_string(est_heading) +  ";" +
+                            std::to_string(has_target) +  ";" +
+                            std::to_string(goal_distance) +  ";" +
+                            std::to_string(goal_angle);
+        return value;
+    }
+};
+
+struct input_frame{
+    int id;
+    long millis;
+    double u[3]; // odometry [dx, dy, dTheta]
+    double init_pose[3]; // initial position [x, y, theta]
+    input_frame() {
+        id = -1;
+        millis = 0;
+        u[0] = 0;
+        u[1] = 0;
+        u[2] = 0;
+        init_pose[0] = 0;
+        init_pose[1] = 0;
+        init_pose[2] = 0;
+    };
+    input_frame(std::vector<std::string> values) {
+        if (atof(values.at(0).c_str()) == 0) {
+            id = 0;
+            init_pose[0] = atof(values.at(1).c_str());
+            init_pose[1] = atof(values.at(2).c_str());
+            init_pose[2] = atof(values.at(3).c_str());
+        } else {
+            id = 1;
+            millis = atof(values.at(1).c_str());
+            u[0] = atof(values.at(2).c_str());
+            u[1] = atof(values.at(3).c_str());
+            u[2] = atof(values.at(4).c_str());
+        }
+    }
+};
 
 
 class Server {
@@ -98,7 +98,7 @@ private:
     char *hostAddrp_;
     int optval;
     int n;
-    std::string host_ = "10.56.87.59";
+    std::string host_ = "10.56.87.20";
     std::string client_ = "10.56.87.2";
     input_frame latest_frame_;
     input_frame prev_frame_;
@@ -108,7 +108,7 @@ private:
     bool real_data_started_ = false;
 
     std::thread data_thread_;
-    std::thread recv_thread_;
+    //std::thread recv_thread_;
 
 public:
     Server() {
@@ -170,7 +170,7 @@ public:
     }
 
     int send(output_frame &frame) {
-        info("Sent frame");
+//        info("Sent frame");
         return send(frame.to_udp_string());
     }
 
@@ -238,7 +238,8 @@ public:
     void data_processing_thread() {
         while (true) {
             send(data_frame_);
-            receive();
+	    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            //receive();
 //            if (send(data_frame_) < 0) {
 //                error("message failed");
 //            } else {

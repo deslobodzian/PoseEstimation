@@ -10,7 +10,7 @@
 #include "particle_filter.hpp"
 #include "map.hpp"
 #include "Zed.hpp"
-#include "tcp_server.hpp"
+#include "udp_server.hpp"
 #include "monocular_camera.hpp"
 
 class PoseEstimator {
@@ -19,7 +19,7 @@ private:
     int num_zed_cameras_;
     std::vector<Eigen::Vector3d> z_;
     Eigen::Vector3d init_pose_;
-    TCPServer server_;
+    Server server_;
     Zed zed_;
     ParticleFilter filter_;
     std::string engine_name_ = "custom.engine";

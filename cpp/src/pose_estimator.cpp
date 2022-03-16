@@ -172,7 +172,7 @@ void PoseEstimator::send_message() {
             zed_.object_z_from_catapult(0),
             zed_.object_vx(0),
             zed_.object_vy(0),
-            zed_.object_vz(0),
+            zed_.object_vz(0)
     );
     server_.set_data_frame(frame);
 }

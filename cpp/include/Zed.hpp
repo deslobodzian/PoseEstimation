@@ -104,25 +104,31 @@ public:
         return sqrt(x + y + z);
     }
 
-    float object_x_from_catapult(ObjectData& object) {
-         return object.position.x;
+    float object_x_from_catapult(int id) {
+        ObjectData obj = get_object_from_id(id);
+        return obj.position.x;
     }
-    float object_y_from_catapult(ObjectData& object) {
+    float object_y_from_catapult(int id) {
+        ObjectData obj = get_object_from_id(id);
         float ty = calibration_params_.stereo_transform.ty * 0.5f;
-        return object.position.y - ty - CAM_TO_CATAPULT_Y;
+        return obj.position.y - ty - CAM_TO_CATAPULT_Y;
     }
-    float object_z_from_catapult(ObjectData& object) {
-        return object.position.z;
+    float object_z_from_catapult(int id) {
+        ObjectData obj = get_object_from_id(id);
+        return obj.position.z;
     }
 
-    float object_vx(ObjectData& object) {
-         return object.velocity.x;
+    float object_vx(int id) {
+        ObjectData obj = get_object_from_id(id);
+        return obj.velocity.x;
     }
-    float object_vy(ObjectData& object) {
-        return object.velocity.y;
+    float object_vy(int id) {
+        ObjectData obj = get_object_from_id(id);
+        return obj.velocity.y;
     }
-    float object_vz(ObjectData& object) {
-        return object.velocity.z;
+    float object_vz(int id) {
+        ObjectData obj = get_object_from_id(id);
+        return obj.velocity.z;
     }
 
     float catapult_phi_angle_to_object(ObjectData& object) {

@@ -54,7 +54,7 @@ struct output_frame {
             double gy,
             double gz,
             double vx,
-            double vy
+            double vy,
             double vz
             ) {
         millis = m;

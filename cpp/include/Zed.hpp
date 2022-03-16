@@ -116,13 +116,13 @@ public:
     }
 
     float object_vx(ObjectData& object) {
-         return object.velocity.vx;
+         return object.velocity.x;
     }
     float object_vy(ObjectData& object) {
-        return object.velocity.vy;
+        return object.velocity.y;
     }
     float object_vz(ObjectData& object) {
-        return object.velocity.vz;
+        return object.velocity.z;
     }
 
     float catapult_phi_angle_to_object(ObjectData& object) {

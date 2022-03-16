@@ -104,6 +104,17 @@ public:
         return sqrt(x + y + z);
     }
 
+    float object_x_from_catapult(ObjectData& object) {
+         return object.position.x;
+    }
+    float object_y_from_catapult(ObjectData& object) {
+        float ty = calibration_params_.stereo_transform.ty * 0.5f;
+        return object.position.y - ty - CAM_TO_CATAPULT_Y;
+    }
+    float object_z_from_catapult(ObjectData& object) {
+        return object.position.z;
+    }
+
     float object_vx(ObjectData& object) {
          return object.velocity.vx;
     }

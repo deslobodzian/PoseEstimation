@@ -167,6 +167,9 @@ void PoseEstimator::send_message() {
             zed_.has_objects(0),
             zed_.get_distance_to_object_label(0),
             zed_.get_angle_to_object_label(0)
+            zed_.object_x_from_catapult(0),
+            zed_.object_y_from_catapult(0),
+            zed_.object_z_from_catapult(0),
             zed_.object_vx(0)
             zed_.object_vy(0)
             zed_.object_vz(0)

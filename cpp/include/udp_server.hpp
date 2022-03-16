@@ -21,6 +21,9 @@ struct output_frame {
     bool has_target;
     double goal_distance;
     double goal_angle;
+    double goal_x;
+    double goal_y;
+    double goal_z;
     double goal_vx;
     double goal_vy;
     double goal_vz;
@@ -32,6 +35,9 @@ struct output_frame {
         has_target = false;
         goal_distance = 0;
         goal_angle = 0;
+        goal_x = 0;
+        goal_y = 0;
+        goal_z = 0;
         goal_vx = 0;
         goal_vy = 0;
         goal_vz = 0;
@@ -44,6 +50,9 @@ struct output_frame {
             bool target,
             double goal_dist,
             double goal_ang,
+            double gx,
+            double gy,
+            double gz,
             double vx,
             double vy
             double vz
@@ -55,6 +64,9 @@ struct output_frame {
         has_target = target;
         goal_distance = goal_dist;
         goal_angle = goal_ang;
+        goal_x = gx;
+        goal_y = gy;
+        goal_z = gz;
         goal_vx = vx;
         goal_vy = vy;
         goal_vz = vz;
@@ -67,6 +79,9 @@ struct output_frame {
                             std::to_string(has_target) +  ";" +
                             std::to_string(goal_distance) +  ";" +
                             std::to_string(goal_angle) + ";" +
+                            std::to_string(goal_x) + ";" +
+                            std::to_string(goal_y) + ";" +
+                            std::to_string(goal_z) + ";" +
                             std::to_string(goal_vx) + ";" +
                             std::to_string(goal_vy) + ";" +
                             std::to_string(goal_vz);

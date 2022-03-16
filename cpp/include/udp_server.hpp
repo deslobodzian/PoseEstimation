@@ -21,6 +21,9 @@ struct output_frame {
     bool has_target;
     double goal_distance;
     double goal_angle;
+    double goal_vx;
+    double goal_vy;
+    double goal_vz;
     output_frame() {
         millis = 0;
         est_x = 0;
@@ -29,8 +32,22 @@ struct output_frame {
         has_target = false;
         goal_distance = 0;
         goal_angle = 0;
+        goal_vx = 0;
+        goal_vy = 0;
+        goal_vz = 0;
     }
-    output_frame(long m, double x, double y, double heading, bool target, double goal_dist, double goal_ang) {
+    output_frame(
+            long m,
+            double x,
+            double y,
+            double heading,
+            bool target,
+            double goal_dist,
+            double goal_ang,
+            double vx,
+            double vy
+            double vz
+            ) {
         millis = m;
         est_x = x;
         est_y = y;
@@ -38,6 +55,9 @@ struct output_frame {
         has_target = target;
         goal_distance = goal_dist;
         goal_angle = goal_ang;
+        goal_vx = vx;
+        goal_vy = vy;
+        goal_vz = vz;
     }
     std::string to_udp_string() {
         std::string value = std::to_string(millis) + ";" +
@@ -46,7 +66,10 @@ struct output_frame {
                             std::to_string(est_heading) +  ";" +
                             std::to_string(has_target) +  ";" +
                             std::to_string(goal_distance) +  ";" +
-                            std::to_string(goal_angle);
+                            std::to_string(goal_angle) + ";" +
+                            std::to_string(goal_vx) + ";" +
+                            std::to_string(goal_vy) + ";" +
+                            std::to_string(goal_vz);
         return value;
     }
 };

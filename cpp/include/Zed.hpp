@@ -104,6 +104,16 @@ public:
         return sqrt(x + y + z);
     }
 
+    float object_vx(ObjectData& object) {
+         return object.velocity.vx;
+    }
+    float object_vy(ObjectData& object) {
+        return object.velocity.vy;
+    }
+    float object_vz(ObjectData& object) {
+        return object.velocity.vz;
+    }
+
     float catapult_phi_angle_to_object(ObjectData& object) {
         float ty = calibration_params_.stereo_transform.ty * 0.5f;
         Eigen::Vector2d a(object.position.x, object.position.y - ty - CAM_TO_CATAPULT_Y);

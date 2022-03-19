@@ -4,6 +4,9 @@
 #pragma once
 
 #include <sl/Camera.hpp>
+#include <thread>
+#include <mutex>
+#include <chrono>
 #include <Eigen/Dense>
 #include "map.hpp"
 
@@ -28,6 +31,9 @@ private:
      SensorsData::IMUData imu_data_;
      CalibrationParameters calibration_params_;
      Transform cam_to_robot_;
+     std::thread obj_thread_;
+     std::mutex obj_mutex_;
+     
 
      float left_offset_to_center_;
 
@@ -40,7 +46,7 @@ public:
 	    // Initial Parameters
         init_params_.camera_resolution = RESOLUTION::HD720;
 	init_params_.camera_fps = 60;
-	init_params_.depth_mode = DEPTH_MODE::NEURAL;
+	init_params_.depth_mode = DEPTH_MODE::ULTRA;
 	init_params_.sdk_verbose = true;
         init_params_.coordinate_system = COORDINATE_SYSTEM::RIGHT_HANDED_Z_UP_X_FWD;
         init_params_.coordinate_units = UNIT::METER;
@@ -148,20 +154,22 @@ public:
 	    zed_.ingestCustomBoxObjects(objects_in);
     }
 
+    void update_objects() {
+	 zed_.retrieveObjects(objects_, objectTracker_params_rt_);
+    }
+
     ObjectData get_object_from_id(int id) {
-	   ObjectData tmp;
-	   zed_.retrieveObjects(objects_, objectTracker_params_rt_);
-	   objects_.getObjectDataFromId(tmp, id);
-	   return tmp;
+	 ObjectData tmp;
+	 objects_.getObjectDataFromId(tmp, id);
+	 return tmp;
     }
 
     std::vector<ObjectData> get_objects_from_label(int label) {
          std::vector<ObjectData> tmp;
-         zed_.retrieveObjects(objects_, objectTracker_params_rt_);
          for (auto object : objects_.object_list) {
-             if (object.raw_label == label) {
-                 tmp.push_back(object);
-             }
+         	if (object.raw_label == label) {
+               		tmp.push_back(object);
+             	}
          }
          return tmp;
     }
@@ -288,6 +296,16 @@ public:
                pose.getTranslation().tx, pose.getTranslation().ty, pose.getTranslation().tz, pose.timestamp.getMilliseconds());
     }
 
+    void obj_thread() {
+	    while (true){ 
+		obj_mutex_.lock();
+		obj_mutex_.unlock();
+	    }
+    }
+
+    void start_zed_thread() {
+	    obj_thread_ = std::thread(&Zed::obj_thread, this);
+    }
 
     void close() {
         zed_.close();

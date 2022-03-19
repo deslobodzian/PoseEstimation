@@ -276,7 +276,7 @@ public:
     void data_processing_thread() {
         while (true) {
             send(data_frame_);
-	    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+	    std::this_thread::sleep_for(std::chrono::microseconds(5000));
             //receive();
 //            if (send(data_frame_) < 0) {
 //                error("message failed");

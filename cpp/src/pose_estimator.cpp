@@ -94,15 +94,16 @@ void PoseEstimator::init() {
                 this,
                 std::ref(zed_)
             ));
-    info("Starting monocular camera threads.");
-    for (int i = 0; i < num_monocular_cameras_; ++i) {
-        inference_threads_.push_back(
-			std::thread(
-				&PoseEstimator::run_inference,
-			       	this,
-			       	std::ref(monocular_cameras_.at(i))
-			));
-    }
+
+    //info("Starting monocular camera threads.");
+    //for (int i = 0; i < num_monocular_cameras_; ++i) {
+    //    inference_threads_.push_back(
+//			std::thread(
+//				&PoseEstimator::run_inference,
+//			       	this,
+//			       	std::ref(monocular_cameras_.at(i))
+//			));
+//  }
     info("Starting UDP Server thread");
     server_.start_thread();
 //    info("Waiting for initial pose");
@@ -158,6 +159,7 @@ void PoseEstimator::print_zed_measurements(int label) {
     debug(message);
 }
 void PoseEstimator::send_message() {
+    zed_.update_objects();
     auto time = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now().time_since_epoch()).count();
     output_frame frame(
             time,

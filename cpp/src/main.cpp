@@ -20,8 +20,12 @@ int main() {
     while (true) {
         // wait until the estimator has started all threads before feeding data to the filter.
         if (estimator.threads_started()) {
-            //estimator.print_zed_measurements(2);
+	    auto start = std::chrono::high_resolution_clock::now();
+            //estimator.print_zed_measurements(0);
             estimator.send_message();
+	    auto stop = std::chrono::high_resolution_clock::now();
+	    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop-start);
+	    info("Duration: " + std::to_string(duration.count()));
 //            z.clear();
 //            estimator.add_measurements(z);
 

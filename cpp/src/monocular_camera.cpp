@@ -109,6 +109,7 @@ tracked_object MonocularCamera::get_object_at_index(int class_id, int index) {
 
 tracked_object MonocularCamera::closest_object_to_camera(int class_id) {
     std::vector <tracked_object> temp = get_objects(class_id);
+    info("temp size is: " std::to_string(temp.size()));
     int index = 0;
     if (temp.size() > 0) {
     for (int i = 0; i < temp.size(); ++i) {

@@ -145,7 +145,7 @@ void PoseEstimator::init() {
 }
 
 void PoseEstimator::print_measurements(int camera_id) {
-    tracked_object obj = monocular_cameras_.at(camera_id).get_object(0);
+    tracked_object obj = monocular_cameras_.at(camera_id).get_object_at_index(0, 0);
     double measurement = monocular_cameras_.at(camera_id).yaw_angle_to_object(obj);
     std::string message = "Camera[" + std::to_string(camera_id) + "] has found object: " +
     std::to_string(obj.class_id) + " with angle {" + std::to_string(measurement);

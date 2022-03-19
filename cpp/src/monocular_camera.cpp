@@ -84,33 +84,47 @@ void MonocularCamera::draw_tracked_objects() {
 	}
 }
 
-double MonocularCamera::area_of_bounding_box(Rect& bbox) {
-    return bbox.area();
-}
-
 std::vector<tracked_object> MonocularCamera::get_objects(int class_id) {
-    std::vector<tracked_objects> temp;
+    std::vector<tracked_object> temp;
     for (auto object : objects_) {
-        if (object.id == class_id) {
-            temp.push_back(object)
+        if (object.class_id == class_id) {
+            temp.push_back(object);
         }
     }
     return temp;
 }
 
+tracked_object MonocularCamera::get_object_at_index(int class_id, int index) {
+    std::vector<tracked_object> temp = get_objects(class_id);
+    if (temp.empty()) {
+        Rect r(Point(0,0), Point(1,1));
+        tracked_object empty(r, 99);
+        return empty;
+    }
+    return temp.at(index);
+}
+
 tracked_object MonocularCamera::closest_object_to_camera(int class_id) {
-    std::vector<tracked_objects> temp = get_objects(class_id);
+    std::vector<tracked_object> temp = get_objects(class_id);
     int index = 0;
     for (int i = 0; i < temp.size(); ++i) {
-        if (area_of_bounding_box(temp.at(i)) > area_of_bounding_box(temp.at(index))) {
+        if (temp.at(i).object.area() > temp.at(index).object.area()) {
             index = i;
         }
     }
-    return temp.at(index)
+    return temp.at(index);
 }
 
-bool MonocularCamera::is_object_in_box(tracked_object &obj, Rect& box) {
-    return box.
+bool MonocularCamera::is_object_in_box(tracked_object &obj, Rect &box) {
+    int box_tl_x = box.tl().x;
+    int box_tl_y = box.tl().y;
+    int box_br_x = box.br().x;
+    int box_br_y = box.br().y;
+    int obj_tl_x = obj.object.tl().x;
+    int obj_tl_y = obj.object.tl().y;
+    int obj_br_x = obj.object.br().x;
+    int obj_br_y = obj.object.br().y;
+    return box_tl_x >= obj_tl_x && box_tl_y >= obj_tl_y && box_br_y >= obj_br_y && box_br_x >= obj_br_x;
 }
 
 int MonocularCamera::get_id() {

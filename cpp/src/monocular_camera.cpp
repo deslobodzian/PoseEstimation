@@ -6,6 +6,7 @@
 MonocularCamera::MonocularCamera(int device_id, camera_config config) {
     device_id_ = device_id;
     config_ = config;
+    obj_mutex_ = new std::mutex();
 }
 MonocularCamera::~MonocularCamera() {
     cap_.release();
@@ -70,9 +71,7 @@ void MonocularCamera::draw_crosshair(Rect rect) {
 }
 
 void MonocularCamera::add_tracked_objects(std::vector<tracked_object> objs) {
-    obj_mutex_.lock();
     objects_ = objs;
-    obj_mutex_.unlock();
 }
 
 void MonocularCamera::draw_crosshair(tracked_object obj) {

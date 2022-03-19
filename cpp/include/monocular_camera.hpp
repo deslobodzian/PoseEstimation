@@ -73,13 +73,13 @@ struct tracked_object {
 
 
 class MonocularCamera {
-std::mutex obj_mutex_;
 private:
     VideoCapture cap_;
     Mat frame_;
     int device_id_;
     camera_config config_;
     std::vector<tracked_object> objects_;
+    std::mutex *obj_mutex_;
 
 public:
     MonocularCamera() = default;

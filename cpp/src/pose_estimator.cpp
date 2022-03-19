@@ -169,7 +169,7 @@ void PoseEstimator::send_message() {
     double blue_ball_yaw = -99;
     double red_ball_yaw = -99;
     if (num_monocular_cameras_ > 0) {
-	info("Number of cameras: " + std::to_string(num_monocular_cameras_));
+//	info("Number of cameras: " + std::to_string(num_monocular_cameras_));
 //        temp = monocular_cameras_.at(0).get_objects(0);
         tracked_object b_ball = monocular_cameras_.at(0).closest_object_to_camera(0);
         tracked_object r_ball = monocular_cameras_.at(0).closest_object_to_camera(2);

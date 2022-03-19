@@ -10,6 +10,7 @@
 #include <cmath>
 #include <vector>
 #include <opencv2/opencv.hpp>
+#include <mutex>
 #include <Eigen/Dense>
 #include "map.hpp"
 
@@ -77,6 +78,7 @@ private:
     int device_id_;
     camera_config config_;
     std::vector<tracked_object> objects_;
+    std::mutex obj_mutex_;
 
 public:
     MonocularCamera() = default;

@@ -70,7 +70,9 @@ void MonocularCamera::draw_crosshair(Rect rect) {
 }
 
 void MonocularCamera::add_tracked_objects(std::vector<tracked_object> objs) {
+    obj_mutex_.lock();
     objects_ = objs;
+    obj_mutex_.unlock();
 }
 
 void MonocularCamera::draw_crosshair(tracked_object obj) {

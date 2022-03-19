@@ -18,7 +18,7 @@ bool MonocularCamera::open_camera() {
 //	    ", height=" + std::to_string(config_.camera_resolution.height) +
 //	    ", framerate="+ std::to_string(config_.frames_per_second) + 
 //	    "/1 ! videoconvert ! appsink";
-    cap_.open(device_id_);
+    cap_.open(device_id_, CAP_V4L2);
     cap_.set(CAP_PROP_FRAME_WIDTH, config_.camera_resolution.width);
     cap_.set(CAP_PROP_FRAME_HEIGHT, config_.camera_resolution.height);
     cap_.set(CAP_PROP_FPS, config_.frames_per_second);

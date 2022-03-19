@@ -177,6 +177,8 @@ void PoseEstimator::send_message() {
             red_ball_yaw = monocular_cameras_.at(0).yaw_angle_to_object(blue_ball);
         }
     }
+    info("Closest red ball yaw" + std::to_string(red_ball_yaw));
+    info("Closest blue ball yaw" + std::to_string(blue_ball_yaw));
     auto time = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now().time_since_epoch()).count();
     output_frame frame(
             time,

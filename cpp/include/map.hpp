@@ -8,6 +8,7 @@
 
 #define FIELD_LENGTH
 
+// number correlates to the ID of the YoloV5 model.
 enum game_elements {
     blue_ball = 0,
     goal = 1,

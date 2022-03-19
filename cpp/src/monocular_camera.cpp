@@ -71,9 +71,7 @@ void MonocularCamera::draw_crosshair(Rect rect) {
 }
 
 void MonocularCamera::add_tracked_objects(std::vector<tracked_object> objs) {
-    obj_mutex_->lock();
     objects_ = objs;
-    obj_mutex_->unlock();
 }
 
 void MonocularCamera::draw_crosshair(tracked_object obj) {
@@ -89,13 +87,11 @@ void MonocularCamera::draw_tracked_objects() {
 
 std::vector<tracked_object> MonocularCamera::get_objects(int class_id) {
     std::vector<tracked_object> temp;
-    obj_mutex_->lock();
     for (auto object : objects_) {
         if (object.class_id == class_id) {
             temp.push_back(object);
         }
     }
-    obj_mutex_->unlock();
     return temp;
 }
 
@@ -110,11 +106,11 @@ tracked_object MonocularCamera::get_object_at_index(int class_id, int index) {
 }
 
 tracked_object MonocularCamera::closest_object_to_camera(int class_id) {
-    info("grab objects")
+    info("grab objects");
     std::vector<tracked_object> temp = get_objects(class_id);
-    info("grabbed objects")
+    info("grabbed objects");
     int index = 0;
-    info("looping objects")
+    info("looping objects");
     for (int i = 0; i < temp.size(); ++i) {
         if (temp.at(i).object.area() > temp.at(index).object.area()) {
             index = i;

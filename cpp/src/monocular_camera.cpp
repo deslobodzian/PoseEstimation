@@ -34,14 +34,14 @@ Mat MonocularCamera::get_frame() {
     return frame_;
 }
 
-double MonocularCamera::yaw_angle_to_object(tracked_object obj) {
+double MonocularCamera::yaw_angle_to_object(tracked_object &obj) {
     Point object_center = (obj.object.br() + obj.object.tl()) / 2.0;
     Point center(config_.camera_resolution.width / 2.0, config_.camera_resolution.width / 2.0);
     double focal_length = config_.camera_resolution.width / (2.0 * tan(config_.field_of_view.horizontal / 2.0));
     return atan((center - object_center).x / focal_length);
 }
 
-double MonocularCamera::pitch_angle_to_object(tracked_object obj) {
+double MonocularCamera::pitch_angle_to_object(tracked_object &obj) {
     Point object_center = (obj.object.br() + obj.object.tl()) / 2.0;
     Point center(config_.camera_resolution.height / 2.0, config_.camera_resolution.height / 2.0);
     double focal_length = config_.camera_resolution.height / (2.0 * tan(config_.field_of_view.vertical / 2.0));
@@ -57,6 +57,7 @@ void MonocularCamera::add_measurements(std::vector<Eigen::Vector3d> &z) {
 void MonocularCamera::draw_rect(Rect rect) {
     rectangle(frame_, rect, Scalar(0, 255, 255), 1);
 }
+
 void MonocularCamera::draw_crosshair(Rect rect) {
     Point object_center = (rect.br() + rect.tl()) / 2.0;
     Point top = object_center + Point(0, 10);
@@ -83,19 +84,35 @@ void MonocularCamera::draw_tracked_objects() {
 	}
 }
 
-tracked_object MonocularCamera::get_object(int id) {
-    if (objects_.empty()) {
-	    cv::Rect r(Point(0,0), Point(1,1));
-	    tracked_object x(r, 5);
-	    return x;
-    }
+double MonocularCamera::area_of_bounding_box(Rect& bbox) {
+    return bbox.area();
+}
 
-    return objects_.at(id);
+std::vector<tracked_object> MonocularCamera::get_objects(int class_id) {
+    std::vector<tracked_objects> temp;
+    for (auto object : objects_) {
+        if (object.id == class_id) {
+            temp.push_back(object)
+        }
+    }
+    return temp;
+}
+
+tracked_object MonocularCamera::closest_object_to_camera(int class_id) {
+    std::vector<tracked_objects> temp = get_objects(class_id);
+    int index = 0;
+    for (int i = 0; i < temp.size(); ++i) {
+        if (area_of_bounding_box(temp.at(i)) > area_of_bounding_box(temp.at(index))) {
+            index = i;
+        }
+    }
+    return temp.at(index)
+}
+
+bool MonocularCamera::is_object_in_box(tracked_object &obj, Rect& box) {
+    return box.
 }
 
 int MonocularCamera::get_id() {
 	return device_id_;
 }
-
-
-

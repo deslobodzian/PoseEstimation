@@ -8,6 +8,7 @@
 
 
 #include <cmath>
+#include <vector>
 #include <opencv2/opencv.hpp>
 #include <Eigen/Dense>
 
@@ -90,12 +91,16 @@ public:
     void draw_rect(Rect rect);
     void draw_crosshair(Rect rect);
     void draw_crosshair(tracked_object obj);
-    void add_tracked_objects(std::vector<tracked_object> objs);
-    double yaw_angle_to_object(tracked_object obj);
-    double pitch_angle_to_object(tracked_object obj);
-    void add_measurements(std::vector<Eigen::Vector3d> &z);
-    tracked_object get_object(int id);
     void draw_tracked_objects();
+
+    double area_of_bounding_box(Rect &bbox);
+    void add_tracked_objects(std::vector<tracked_object> objs);
+    double yaw_angle_to_object(tracked_object &obj);
+    double pitch_angle_to_object(tracked_object &obj);
+    void add_measurements(std::vector<Eigen::Vector3d> &z);
+    bool is_object_in_box(tracked_object &obj, int top_left_corner, int bottom_right_corner);
+    std::vector<tracked_object> get_objects(int class_id);
+    tracked_object closed_object_to_camera(int class_id);
 };
 
 #endif //PARTICLE_FILTER_MONOCULARCAMERA_HPP

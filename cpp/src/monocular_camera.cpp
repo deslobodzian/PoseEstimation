@@ -89,11 +89,13 @@ void MonocularCamera::draw_tracked_objects() {
 
 std::vector<tracked_object> MonocularCamera::get_objects(int class_id) {
     std::vector<tracked_object> temp;
+    obj_mutex_->lock();
     for (auto object : objects_) {
         if (object.class_id == class_id) {
             temp.push_back(object);
         }
     }
+    obj_mutex_->unlock();
     return temp;
 }
 

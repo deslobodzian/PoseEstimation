@@ -13,6 +13,7 @@
 #include <mutex>
 #include <Eigen/Dense>
 #include "map.hpp"
+#include "utils.hpp"
 
 using namespace cv;
 

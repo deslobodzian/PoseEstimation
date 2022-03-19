@@ -47,6 +47,7 @@ void PoseEstimator::run_inference(MonocularCamera& camera) {
     Yolov5 yoloRT;
     yoloRT.initialize_engine(engine_name_);
     threads_started_.at(camera.get_id()) = true;
+    info("Monocular Inference started");
     while (true) {
    	    camera.read_frame();
     	cv::Mat image = camera.get_frame();
@@ -61,6 +62,7 @@ void PoseEstimator::run_inference_zed(Zed& camera) {
     Yolov5 yoloRT;
     yoloRT.initialize_engine(engine_name_);
     threads_started_.back() = true;
+    info("Zed Inference started");
     while (true) {
     	sl::Mat image = camera.get_left_image();
     	cv::Mat temp;
@@ -167,6 +169,7 @@ void PoseEstimator::send_message() {
     double blue_ball_yaw = -99;
     double red_ball_yaw = -99;
     if (num_monocular_cameras_ > 0) {
+	info("Number of cameras: " + std::to_string(num_monocular_cameras_));
         tracked_object b_ball = monocular_cameras_.at(0).closest_object_to_camera(blue_ball);
         tracked_object r_ball = monocular_cameras_.at(0).closest_object_to_camera(red_ball);
         // id of 99 is a dummy id, no current object has this object id.

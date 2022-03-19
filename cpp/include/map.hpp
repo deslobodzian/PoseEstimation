@@ -10,10 +10,10 @@
 
 enum game_elements {
     blue_ball = 0,
-    goal = 1
-    rad_ball = 2,
+    goal = 1,
+    red_ball = 2,
     blue_plate = 3, // not used
-    red_plate = 4, // not used
+    red_plate = 4 // not used
 };
 
 struct Landmark {

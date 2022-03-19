@@ -59,7 +59,7 @@ struct output_frame {
             double gz,
             double vx,
             double vy,
-            double vz
+            double vz,
             double b_ball_yaw,
             double r_ball_yaw
             ) {
@@ -76,6 +76,8 @@ struct output_frame {
         goal_vx = vx;
         goal_vy = vy;
         goal_vz = vz;
+        blue_ball_yaw = b_ball_yaw;
+        red_ball_yaw= r_ball_yaw;
     }
     std::string to_udp_string() {
         std::string value = std::to_string(millis) + ";" +

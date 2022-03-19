@@ -96,8 +96,6 @@ public:
 
     // Basic euclidean distance equation.
     float robot_distance_to_object(ObjectData& object) {
-        std::vector<sl::float3> object_3Dbbox = object.bounding_box;
-        sl::float3 center_point_of_top_plane = (object_3Dbbox.at(0) - object_3Dbbox.at(2)) / 2.0
         float ty = calibration_params_.stereo_transform.ty * 0.5f;
         Transform tmp;
         tmp.setIdentity();
@@ -106,9 +104,9 @@ public:
 //        info("tx" + std::to_string(tmp.tx));
 //        info("ty" + std::to_string(tmp.ty));
 //        info("tz" + std::to_string(tmp.tz));
-        float x = pow(center_point_of_top_plane.x, 2);
-        float y = pow(center_point_of_top_plane.y - tmp.ty, 2);
-        float z = pow(center_point_of_top_plane.z, 2);
+        float x = pow(object.position.x, 2);
+        float y = pow(object.position.y - tmp.ty, 2);
+        float z = pow(object.position.z, 2);
         return sqrt(x + y + z);
     }
 

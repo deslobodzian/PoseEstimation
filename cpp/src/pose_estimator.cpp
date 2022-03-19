@@ -168,10 +168,10 @@ void PoseEstimator::send_message() {
     // Camera ID 0, will be the camera facing the intake.
     double blue_ball_yaw = -99;
     double red_ball_yaw = -99;
+    std::vector<tracked_object> temp;
     if (num_monocular_cameras_ > 0) {
 	info("Number of cameras: " + std::to_string(num_monocular_cameras_));
-        tracked_object b_ball = monocular_cameras_.at(0).get_objects(0).at(0);
-        tracked_object r_ball = monocular_cameras_.at(0).get_objects(0).at(0);
+        temp = monocular_cameras_.at(0).get_objects(0);
 //        tracked_object b_ball = monocular_cameras_.at(0).closest_object_to_camera(blue_ball);
 //        tracked_object r_ball = monocular_cameras_.at(0).closest_object_to_camera(red_ball);
         // id of 99 is a dummy id, no current object has this object id.

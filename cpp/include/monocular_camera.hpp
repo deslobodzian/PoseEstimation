@@ -80,6 +80,7 @@ private:
     int device_id_;
     camera_config config_;
     std::vector<tracked_object> objects_;
+    bool grabbed_objects_ = false;
     std::mutex *obj_mutex_;
 
 public:

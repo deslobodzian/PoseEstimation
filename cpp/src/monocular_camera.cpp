@@ -110,8 +110,11 @@ tracked_object MonocularCamera::get_object_at_index(int class_id, int index) {
 }
 
 tracked_object MonocularCamera::closest_object_to_camera(int class_id) {
+    info("grab objects")
     std::vector<tracked_object> temp = get_objects(class_id);
+    info("grabbed objects")
     int index = 0;
+    info("looping objects")
     for (int i = 0; i < temp.size(); ++i) {
         if (temp.at(i).object.area() > temp.at(index).object.area()) {
             index = i;

@@ -168,7 +168,6 @@ void PoseEstimator::send_message() {
     // Camera ID 0, will be the camera facing the intake.
     double blue_ball_yaw = -99;
     double red_ball_yaw = -99;
-    std::vector<tracked_object> temp;
     if (num_monocular_cameras_ > 0) {
 	info("Number of cameras: " + std::to_string(num_monocular_cameras_));
 //        temp = monocular_cameras_.at(0).get_objects(0);
@@ -182,8 +181,8 @@ void PoseEstimator::send_message() {
             red_ball_yaw = monocular_cameras_.at(0).yaw_angle_to_object(r_ball);
         }
     }
-    info("Closest red ball yaw" + std::to_string(red_ball_yaw));
-    info("Closest blue ball yaw" + std::to_string(blue_ball_yaw));
+//    info("Closest red ball yaw" + std::to_string(red_ball_yaw));
+//    info("Closest blue ball yaw" + std::to_string(blue_ball_yaw));
     auto time = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now().time_since_epoch()).count();
     output_frame frame(
             time,

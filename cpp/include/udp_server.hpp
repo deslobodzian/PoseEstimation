@@ -27,6 +27,8 @@ struct output_frame {
     double goal_vx;
     double goal_vy;
     double goal_vz;
+    double blue_ball_yaw;
+    double red_ball_yaw;
     output_frame() {
         millis = 0;
         est_x = 0;
@@ -41,6 +43,8 @@ struct output_frame {
         goal_vx = 0;
         goal_vy = 0;
         goal_vz = 0;
+        blue_ball_yaw = 0;
+        red_ball_yaw = 0;
     }
     output_frame(
             long m,
@@ -56,6 +60,8 @@ struct output_frame {
             double vx,
             double vy,
             double vz
+            double b_ball_yaw,
+            double r_ball_yaw
             ) {
         millis = m;
         est_x = x;
@@ -84,7 +90,9 @@ struct output_frame {
                             std::to_string(goal_z) + ";" +
                             std::to_string(goal_vx) + ";" +
                             std::to_string(goal_vy) + ";" +
-                            std::to_string(goal_vz);
+                            std::to_string(goal_vz) + ";" +
+                            std::to_string(blue_ball_yaw) + ";" +
+                            std::to_string(red_ball_yaw);
         return value;
     }
 };

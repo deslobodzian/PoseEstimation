@@ -112,7 +112,16 @@ tracked_object MonocularCamera::closest_object_to_camera(int class_id) {
             index = i;
         }
     }
+    if (temp.empty()) {
+        Rect r(Point(0,0), Point(1,1));
+        tracked_object empty(r, 99);
+        return empty;
+    }
     return temp.at(index);
+}
+
+tracked_object MonocularCamera::closest_object_to_camera(game_elements game_element) {
+    return closest_object_to_camera(game_element);
 }
 
 bool MonocularCamera::is_object_in_box(tracked_object &obj, Rect &box) {

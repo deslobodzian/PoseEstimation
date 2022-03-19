@@ -98,15 +98,15 @@ void PoseEstimator::init() {
                 std::ref(zed_)
             ));
 
-    //info("Starting monocular camera threads.");
-    //for (int i = 0; i < num_monocular_cameras_; ++i) {
-    //    inference_threads_.push_back(
-//			std::thread(
-//				&PoseEstimator::run_inference,
-//			       	this,
-//			       	std::ref(monocular_cameras_.at(i))
-//			));
-//  }
+    info("Starting monocular camera threads.");
+    for (int i = 0; i < num_monocular_cameras_; ++i) {
+        inference_threads_.push_back(
+			std::thread(
+				&PoseEstimator::run_inference,
+			       	this,
+			       	std::ref(monocular_cameras_.at(i))
+			));
+    }
     info("Starting UDP Server thread");
     server_.start_thread();
 //    info("Waiting for initial pose");
@@ -163,21 +163,37 @@ void PoseEstimator::print_zed_measurements(int label) {
 }
 void PoseEstimator::send_message() {
     zed_.update_objects();
+    // Camera ID 0, will be the camera facing the intake.
+    double blue_ball_yaw = -99;
+    double red_ball_yaw = -99;
+    if (num_monocular_cams_ > 0) {
+        tracked_object blue_ball = monocular_cameras_.at(0).closest_object_to_camera(blue_ball);
+        tracked_object red_ball = monocular_cameras_.at(0).closest_object_to_camera(red_ball);
+        // id of 99 is a dummy id, no current object has this object id.
+        if (blue_ball.class_id != 99) {
+            blue_ball_yaw = monocular_cameras_.at(0).yaw_angle_to_object(blue_ball);
+        }
+        if (red_ball.class_id != 99) {
+            red_ball_yaw = monocular_cameras_.at(0).yaw_angle_to_object(blue_ball);
+        }
+    }
     auto time = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now().time_since_epoch()).count();
     output_frame frame(
             time,
             0,
             0,
             0,
-            zed_.has_objects(0),
-            zed_.get_distance_to_object_label(0),
-            zed_.get_angle_to_object_label(0),
-            zed_.object_x_from_catapult(0),
-            zed_.object_y_from_catapult(0),
-            zed_.object_z_from_catapult(0),
-            zed_.object_vx(0),
-            zed_.object_vy(0),
-            zed_.object_vz(0)
+            zed_.has_objects(1),
+            zed_.get_distance_to_object_label(1),
+            zed_.get_angle_to_object_label(1),
+            zed_.object_x_from_catapult(1),
+            zed_.object_y_from_catapult(1),
+            zed_.object_z_from_catapult(1),
+            zed_.object_vx(1),
+            zed_.object_vy(1),
+            zed_.object_vz(1)
+            blue_ball_yaw,
+            red_ball_yaw
     );
     server_.set_data_frame(frame);
 }

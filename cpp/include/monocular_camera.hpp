@@ -11,6 +11,7 @@
 #include <vector>
 #include <opencv2/opencv.hpp>
 #include <Eigen/Dense>
+#include "map.hpp"
 
 using namespace cv;
 
@@ -100,8 +101,8 @@ public:
     bool is_object_in_box(tracked_object &obj, Rect &rect);
     std::vector<tracked_object> get_objects(int class_id);
     tracked_object closest_object_to_camera(int class_id);
+    tracked_object closest_object_to_camera(game_elements game_element);
     tracked_object get_object_at_index(int class_id, int index);
-
 };
 
 #endif //PARTICLE_FILTER_MONOCULARCAMERA_HPP

@@ -8,6 +8,7 @@
 PoseEstimator::PoseEstimator(int num_monocular_cameras) {
     num_monocular_cameras_ = num_monocular_cameras;
     for (int i = 0; i < num_monocular_cameras_; ++i) {
+        // Logitech C920s
         camera_config config = camera_config(78, resolution(1920, 1080), 30);
         monocular_cameras_.emplace_back(MonocularCamera(i, config));
         monocular_cameras_.at(i).open_camera();
@@ -21,7 +22,9 @@ PoseEstimator::PoseEstimator(int num_monocular_cameras, int num_zed_cameras, std
     for (int i = 0; i < num_zed_cameras + num_monocular_cameras; ++i) {
         threads_started_.push_back(false);
     }
-    for (int i = 0; i < num_monocular_cameras_; ++i) { camera_config config = camera_config(78, resolution(1920, 1080), 30);
+    // Logitech C920s
+    for (int i = 0; i < num_monocular_cameras_; ++i) {
+        camera_config config = camera_config(78, resolution(1920, 1080), 30);
         monocular_cameras_.emplace_back(MonocularCamera(i, config));
         monocular_cameras_.at(i).open_camera();
     }
@@ -143,7 +146,7 @@ void PoseEstimator::init() {
 }
 
 void PoseEstimator::print_measurements(int camera_id) {
-    tracked_object obj = monocular_cameras_.at(camera_id).get_object(0);
+    tracked_object obj = monocular_cameras_.at(camera_id).get_object_at_index(0, 0);
     double measurement = monocular_cameras_.at(camera_id).yaw_angle_to_object(obj);
     std::string message = "Camera[" + std::to_string(camera_id) + "] has found object: " +
     std::to_string(obj.class_id) + " with angle {" + std::to_string(measurement);

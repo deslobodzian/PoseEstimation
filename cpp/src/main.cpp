@@ -13,29 +13,25 @@
 int main() {
     // if c++20 can replace with " Landmark{.x = 3, .y = -2, .id = 3} "
     Map map;
-    PoseEstimator estimator(0, 1, map.get_landmarks());
+    // estimator(monocular cam, zed cam, landmarks)
+    PoseEstimator estimator(1, 1, map.get_landmarks());
     std::vector<Eigen::Vector3d> z;
     estimator.init();
 
     while (true) {
         // wait until the estimator has started all threads before feeding data to the filter.
         if (estimator.threads_started()) {
-	    auto start = std::chrono::high_resolution_clock::now();
+	    //auto start = std::chrono::high_resolution_clock::now();
             //estimator.print_zed_measurements(0);
             estimator.send_message();
-	    auto stop = std::chrono::high_resolution_clock::now();
-	    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop-start);
-	    info("Duration: " + std::to_string(duration.count()));
+	    //auto stop = std::chrono::high_resolution_clock::now();
+	    //auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop-start);
+	    //info("Duration: " + std::to_string(duration.count()));
 //            z.clear();
 //            estimator.add_measurements(z);
 
 //            auto time = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now().time_since_epoch()).count();
         }
-//
-//	    std::cout << "Object distance is: " << estimator.get_zed().get_distance_to_object_label(0) << "\n";
-//            std::cout << "[INFO] Number of measurements is {" << z.size() << "}\n";
-  //          output_frame frame(time, 0, 0, 0, 0, estimator.get_zed().get_distance_to_object_label(0), 0);
-   //         if (server.send(frame) < 0 ) { std::cout << "[ERROR] Couldn't send frame!"; }
     }
 }
 

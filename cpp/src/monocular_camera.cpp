@@ -4,6 +4,7 @@
 #include "monocular_camera.hpp"
 
 MonocularCamera::MonocularCamera(int device_id, camera_config config) {
+    std::mutex obj_mutex_;
     device_id_ = device_id;
     config_ = config;
 }

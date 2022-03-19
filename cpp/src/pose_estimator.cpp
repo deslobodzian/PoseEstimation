@@ -175,9 +175,9 @@ void PoseEstimator::send_message() {
         tracked_object b_ball = monocular_cameras_.at(0).closest_object_to_camera(0);
 //        tracked_object r_ball = monocular_cameras_.at(0).closest_object_to_camera(red_ball);
         // id of 99 is a dummy id, no current object has this object id.
-//        if (b_ball.class_id != 99) {
-//            blue_ball_yaw = monocular_cameras_.at(0).yaw_angle_to_object(b_ball);
-//        }
+        if (b_ball.class_id != 99) {
+            blue_ball_yaw = monocular_cameras_.at(0).yaw_angle_to_object(b_ball);
+        }
 //        if (r_ball.class_id != 99) {
 //            red_ball_yaw = monocular_cameras_.at(0).yaw_angle_to_object(r_ball);
 //        }

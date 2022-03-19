@@ -191,7 +191,7 @@ void PoseEstimator::send_message() {
             zed_.object_z_from_catapult(1),
             zed_.object_vx(1),
             zed_.object_vy(1),
-            zed_.object_vz(1)
+            zed_.object_vz(1),
             blue_ball_yaw,
             red_ball_yaw
     );

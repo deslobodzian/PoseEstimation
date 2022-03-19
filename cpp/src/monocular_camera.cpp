@@ -72,6 +72,7 @@ void MonocularCamera::draw_crosshair(Rect rect) {
 
 void MonocularCamera::add_tracked_objects(std::vector<tracked_object> objs) {
     objects_ = objs;
+    info("Objects found is: " + std::to_string(objects_.size()));
 }
 
 void MonocularCamera::draw_crosshair(tracked_object obj) {

@@ -6,7 +6,6 @@
 MonocularCamera::MonocularCamera(int device_id, camera_config config) {
     device_id_ = device_id;
     config_ = config;
-    obj_mutex_ = new std::mutex();
 }
 MonocularCamera::~MonocularCamera() {
     cap_.release();

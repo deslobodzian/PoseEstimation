@@ -80,8 +80,7 @@ private:
     int device_id_;
     camera_config config_;
     std::vector<tracked_object> objects_;
-    bool grabbed_objects_ = false;
-    std::mutex *obj_mutex_;
+    std::vector<tracked_objects> latest_objects_;
 
 public:
     MonocularCamera() = default;
@@ -103,6 +102,7 @@ public:
     double yaw_angle_to_object(tracked_object &obj);
     double pitch_angle_to_object(tracked_object &obj);
     void add_measurements(std::vector<Eigen::Vector3d> &z);
+    void update_object();
     bool is_object_in_box(tracked_object &obj, Rect &rect);
     std::vector<tracked_object> get_objects(int class_id);
     tracked_object closest_object_to_camera(int class_id);

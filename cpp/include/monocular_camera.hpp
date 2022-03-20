@@ -80,7 +80,7 @@ private:
     int device_id_;
     camera_config config_;
     std::vector<tracked_object> objects_;
-    std::vector<tracked_objects> latest_objects_;
+    std::vector<tracked_object> latest_objects_;
 
 public:
     MonocularCamera() = default;

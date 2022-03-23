@@ -200,7 +200,7 @@ public:
 
         bzero((char* ) &clientAddr_, sizeof(clientAddr_));
         clientAddr_.sin_family = AF_INET;
-        clientAddr_.sin_addr.s_addr = INADDR_ANY;
+        clientAddr_.sin_addr.s_addr = inet_addr(client_.c_str());
         clientAddr_.sin_port = htons((unsigned short)client_port_);
         clientLength_ = sizeof(clientAddr_);
 

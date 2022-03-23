@@ -267,7 +267,7 @@ public:
         } else {
             input_frame incoming_frame = get_new_frame();
             if (incoming_frame.millis > latest_frame_.millis && incoming_frame.id == 1) {
-                info("Received frame");
+//                info("Received frame");
                 prev_frame_ = latest_frame_;
                 latest_frame_ = incoming_frame;
                 double dt = latest_frame_.millis - prev_frame_.millis;

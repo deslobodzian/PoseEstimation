@@ -250,6 +250,7 @@ public:
 
     input_frame get_new_frame() {
         std::string s(receive_buf, sizeof(receive_buf));
+        info(s);
         std::vector<std::string> values = split(s);
         if (atof(values.at(0).c_str()) == 0) {
             init_pose_ = input_frame(values);

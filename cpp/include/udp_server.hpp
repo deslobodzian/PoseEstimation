@@ -217,7 +217,7 @@ public:
                      BUFFER_SIZE,
                      0,
                      (struct sockaddr*) &serverAddr_,
-                     &clientLength_);
+                     &serverLength_);
         if (n < 0) {
             error("ERROR: Couldn't receive from client");
         }

@@ -111,28 +111,26 @@ void PoseEstimator::init() {
     }
     info("Starting UDP Server thread");
     server_.start_thread();
-//    info("Waiting for initial pose");
-//    bool exit_init = false;
-//    while (!exit_init) {
-//        // dummy frame so RoboRIO can grab the IP of the Jetson.
-//        output_frame frame(0, 0, 0, 0, 0, 0, 0);
-//        server_.send(frame);
-//        // Wait till server has received the initial pose from the RoboRio.
-//        if (server_.received_init_pose()) {
-//            init_pose_ = Eigen::Vector3d{
-//                    server_.get_init_pose_frame().init_pose[0],
-//                    server_.get_init_pose_frame().init_pose[1],
-//                    server_.get_init_pose_frame().init_pose[2],
-//            };
-//            // initialize our estimator with the initial pose.
-//            exit_init = true;
-//            info("Set initial pose");
-//        }
-//    }
-//    info("Initializing filter with pose: [" +
-//         std::to_string(init_pose_(0)) + ", " +
-//         std::to_string(init_pose_(1)) + ", " +
-//         std::to_string(init_pose_(2)) + "]");
+    info("Waiting for initial pose");
+    bool exit_init = false;
+    while (!exit_init) {
+        // Wait till server has received the initial pose from the RoboRio.
+        if (server_.received_init_pose()) {
+            init_pose_ = Eigen::Vector3d{
+                    server_.get_init_pose_frame().init_pose[0],
+                    server_.get_init_pose_frame().init_pose[1],
+                    server_.get_init_pose_frame().init_pose[2],
+            };
+            zed_.enable_tracking(init_pose_);
+            // initialize our estimator with the initial pose.
+            exit_init = true;
+            info("Set initial pose");
+        }
+    }
+    info("Initializing filter with pose: [" +
+         std::to_string(init_pose_(0)) + ", " +
+         std::to_string(init_pose_(1)) + ", " +
+         std::to_string(init_pose_(2)) + "]");
 //    filter_.init_particle_filter(init_pose_);
 //    bool start_estimator = false;
 //    info("Waiting for odometry data");
@@ -163,6 +161,8 @@ void PoseEstimator::print_zed_measurements(int label) {
             "] radians}";
     debug(message);
 }
+
+
 void PoseEstimator::send_message() {
     zed_.update_objects();
     // Camera ID 0, will be the camera facing the intake.
@@ -184,9 +184,9 @@ void PoseEstimator::send_message() {
     auto time = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now().time_since_epoch()).count();
     output_frame frame(
             time,
-            0,
-            0,
-            0,
+            zed_.get_robot_pose().getTranslation().x,
+            zed_.get_robot_pose().getTranslation().y,
+            zed_.get_robot_pose().getEulerAngles().z,
             zed_.has_objects(1),
             zed_.get_distance_to_object_label(1),
             zed_.get_angle_to_object_label(1),
@@ -225,6 +225,7 @@ bool PoseEstimator::threads_started(){
     }
     return true;
 }
+
 
 
 void PoseEstimator::kill() {

@@ -10,6 +10,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <cmath>
 
 #define BUFFER_SIZE 1024
 
@@ -79,22 +80,25 @@ struct output_frame {
         blue_ball_yaw = b_ball_yaw;
         red_ball_yaw= r_ball_yaw;
     }
+    double is_nan(double value) {
+        return isnan(value) ? value : -999;
+    }
     std::string to_udp_string() {
-        std::string value = std::to_string(millis) + ";" +
-                            std::to_string(est_x) + ";" +
-                            std::to_string(est_y) + ";" +
-                            std::to_string(est_heading) +  ";" +
+        std::string value = std::to_string(is_nan(millis)) + ";" +
+                            std::to_string(is_nan(est_x)) + ";" +
+                            std::to_string(is_nan(est_y)) + ";" +
+                            std::to_string(is_nan(est_heading)) +  ";" +
                             std::to_string(has_target) +  ";" +
-                            std::to_string(goal_distance) +  ";" +
-                            std::to_string(goal_angle) + ";" +
-                            std::to_string(goal_x) + ";" +
-                            std::to_string(goal_y) + ";" +
-                            std::to_string(goal_z) + ";" +
-                            std::to_string(goal_vx) + ";" +
-                            std::to_string(goal_vy) + ";" +
-                            std::to_string(goal_vz) + ";" +
-                            std::to_string(blue_ball_yaw) + ";" +
-                            std::to_string(red_ball_yaw);
+                            std::to_string(is_nan(goal_distance)) +  ";" +
+                            std::to_string(is_nan(goal_angle)) + ";" +
+                            std::to_string(is_nan(goal_x)) + ";" +
+                            std::to_string(is_nan(goal_y)) + ";" +
+                            std::to_string(is_nan(goal_z)) + ";" +
+                            std::to_string(is_nan(goal_vx)) + ";" +
+                            std::to_string(is_nan(goal_vy)) + ";" +
+                            std::to_string(is_nan(goal_vz)) + ";" +
+                            std::to_string(is_nan(blue_ball_yaw)) + ";" +
+                            std::to_string(is_nan(red_ball_yaw));
         return value;
     }
 };
@@ -134,7 +138,8 @@ struct input_frame{
 class Server {
 
 private:
-    int socket_;
+    int send_socket_;
+    int receive_socket_;
     int host_port_ = 27002;
     int client_port_ = 27001;
     socklen_t clientLength_;
@@ -156,17 +161,27 @@ private:
     bool real_data_started_ = false;
 
     std::thread data_thread_;
-    //std::thread recv_thread_;
+    std::thread recv_thread_;
 
 public:
     Server() {
-        socket_ = socket(AF_INET, SOCK_DGRAM, 0);
-        if (socket_ < 0) {
-            std::cout << "ERROR: Couldn't open socket." << std::endl;
+        send_socket_ = socket(AF_INET, SOCK_DGRAM, 0);
+        receive_socket_ = socket(AF_INET, SOCK_DGRAM, 0);
+
+        if (send_socket_ < 0) {
+            error("ERROR: Couldn't open socket");
+        }
+        if (receive_socket_ < 0) {
+            error("Couldn't open receive socket");
         }
 
         optval = 1;
-        setsockopt(socket_,
+        setsockopt(send_socket_,
+                   SOL_SOCKET,
+                   SO_REUSEADDR,
+                   (const void*) &optval,
+                   sizeof(int));
+        setsockopt(receive_socket_,
                    SOL_SOCKET,
                    SO_REUSEADDR,
                    (const void*) &optval,
@@ -177,8 +192,8 @@ public:
         serverAddr_.sin_addr.s_addr = inet_addr(host_.c_str());
         serverAddr_.sin_port = htons((unsigned short)host_port_);
 
-        if (bind(socket_, ((struct sockaddr *) &serverAddr_), sizeof(serverAddr_)) < 0) {
-            std::cout << "ERROR: Couldn't bind socket" << std::endl;
+        if (bind(send_socket_, ((struct sockaddr *) &serverAddr_), sizeof(serverAddr_)) < 0) {
+            error("ERROR: Couldn't bind send socket");
         }
 
         bzero((char* ) &clientAddr_, sizeof(clientAddr_));
@@ -186,27 +201,31 @@ public:
         clientAddr_.sin_addr.s_addr = inet_addr(client_.c_str());
         clientAddr_.sin_port = htons((unsigned short)client_port_);
         clientLength_ = sizeof(clientAddr_);
+
+        if (bind(receive_socket_, ((struct sockaddr *) &clientAddr_), sizeof(clientAddr_)) < 0) {
+            error("ERROR: Couldn't bind receive socket");
+        }
     }
 
     ~Server() = default;
 
     int receive() {
         bzero(receive_buf, BUFFER_SIZE);
-        n = recvfrom(socket_,
+        n = recvfrom(receive_socket_,
                      receive_buf,
                      BUFFER_SIZE,
                      0,
                      (struct sockaddr*) &clientAddr_,
                      &clientLength_);
         if (n < 0) {
-            std::cout << "ERROR: Couldn't receive from client." << std::endl;
+            error("ERROR: Couldn't receive from client");
         }
     }
 
     int send(std::string msg) {
         bzero(buf, BUFFER_SIZE);
         msg.copy(buf, BUFFER_SIZE);
-        return sendto(socket_, buf, strlen(buf), 0, (struct sockaddr*) &clientAddr_, clientLength_);
+        return sendto(send_socket_, buf, strlen(buf), 0, (struct sockaddr*) &clientAddr_, clientLength_);
     }
 
     std::vector<std::string> split( const std::string& str, char delimiter = ';' ) {
@@ -227,6 +246,7 @@ public:
         std::vector<std::string> values = split(s);
         return s;
     }
+
     input_frame get_new_frame() {
         std::string s(receive_buf, sizeof(receive_buf));
         std::vector<std::string> values = split(s);
@@ -245,14 +265,14 @@ public:
         if (receive() > 0) {
             error("No frame");
         } else {
-//            input_frame incoming_frame = get_new_frame();
-//            if (incoming_frame.millis > latest_frame_.millis && incoming_frame.id == 1) {
-//                info("Received frame");
-//                prev_frame_ = latest_frame_;
-//                latest_frame_ = incoming_frame;
-//            double dt = latest_frame_.millis - prev_frame_.millis;
-//            std::cout << "[INFO] Frame DT {" << dt << "}\n";
-//            }
+            input_frame incoming_frame = get_new_frame();
+            if (incoming_frame.millis > latest_frame_.millis && incoming_frame.id == 1) {
+                info("Received frame");
+                prev_frame_ = latest_frame_;
+                latest_frame_ = incoming_frame;
+                double dt = latest_frame_.millis - prev_frame_.millis;
+//                std::cout << "[INFO] Frame DT {" << dt << "}\n";
+            }
         }
     }
 
@@ -278,25 +298,18 @@ public:
     void receive_thread() {
         while (true) {
             receive_frame();
-            output_frame frame;
-            send(frame);
-            //receive_frame();
+            std::this_thread::sleep_for(std::chrono::microseconds(1000));
         }
     }
     void data_processing_thread() {
         while (true) {
             send(data_frame_);
-	        std::this_thread::sleep_for(std::chrono::microseconds(5000));
-            //receive();
-//            if (send(data_frame_) < 0) {
-//                error("message failed");
-//            } else {
-//            }
+	        std::this_thread::sleep_for(std::chrono::microseconds(1000));
         }
     }
 
     void start_thread() {
         data_thread_ = std::thread(&Server::data_processing_thread, this);
-//        recv_thread_ = std::thread(&Server::receive_thread, this);
+        recv_thread_ = std::thread(&Server::receive_thread, this);
     }
 };

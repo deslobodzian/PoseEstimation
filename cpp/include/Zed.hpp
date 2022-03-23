@@ -19,7 +19,8 @@ using namespace sl;
 class Zed {
 private:
      Camera zed_;
-     Pose pose_;
+     Pose camera_pose_;
+     Pose robot_pose_;
      sl::Mat image_;
      InitParameters init_params_;
      RuntimeParameters runtime_params_;
@@ -31,9 +32,6 @@ private:
      SensorsData::IMUData imu_data_;
      CalibrationParameters calibration_params_;
      Transform cam_to_robot_;
-     std::thread obj_thread_;
-     std::mutex obj_mutex_;
-     
 
      float left_offset_to_center_;
 
@@ -45,22 +43,21 @@ public:
     Zed() {
 	    // Initial Parameters
         init_params_.camera_resolution = RESOLUTION::HD720;
-	init_params_.camera_fps = 60;
-	init_params_.depth_mode = DEPTH_MODE::ULTRA;
-	init_params_.sdk_verbose = true;
+	    init_params_.camera_fps = 60;
+	    init_params_.depth_mode = DEPTH_MODE::ULTRA;
+	    init_params_.sdk_verbose = true;
         init_params_.coordinate_system = COORDINATE_SYSTEM::RIGHT_HANDED_Z_UP_X_FWD;
         init_params_.coordinate_units = UNIT::METER;
-	init_params_.depth_maximum_distance = 20;
+	    init_params_.depth_maximum_distance = 20;
 
         runtime_params_.measure3D_reference_frame = REFERENCE_FRAME::CAMERA;
 	    // Object Detection Parameters
-	detection_params_.enable_tracking = true;
-	detection_params_.enable_mask_output = false;
-	detection_params_.detection_model = sl::DETECTION_MODEL::CUSTOM_BOX_OBJECTS;
+	    detection_params_.enable_tracking = true;
+	    detection_params_.enable_mask_output = false;
+	    detection_params_.detection_model = sl::DETECTION_MODEL::CUSTOM_BOX_OBJECTS;
         cam_to_robot_.setIdentity();
         cam_to_robot_.tx = CAM_TO_ROBOT_X;
         cam_to_robot_.ty = CAM_TO_ROBOT_Y;
-
     }
     ~Zed(){}
 
@@ -72,7 +69,7 @@ public:
          return (return_state == ERROR_CODE::SUCCESS);
     }
 
-    bool enable_tracking() {
+    bool enable_tracking(Eigen::Vector3d init_pose) {
         PositionalTrackingParameters tracking_params;
         if (!zed_.isOpened()) {
             error("Opening camera failed");
@@ -82,6 +79,9 @@ public:
            tracking_params.area_file_path = "map.area";
         }
         tracking_params.enable_area_memory = true;
+        sl::Transform initial_position;
+        initial_position.setTranslation(sl::Translation(init_pose(0), init_pose(1), 0));
+        tracking_params.initial_world_transform = initial_position;
         zed_.enablePositionalTracking(tracking_params);
         return true;
     }
@@ -94,16 +94,13 @@ public:
         return true;
     }
 
+
     // Basic euclidean distance equation.
     float robot_distance_to_object(ObjectData& object) {
         float ty = calibration_params_.stereo_transform.ty * 0.5f;
         Transform tmp;
         tmp.setIdentity();
         tmp.ty = ty;
-//        transform_pose(tmp, 0, ty, 0);
-//        info("tx" + std::to_string(tmp.tx));
-//        info("ty" + std::to_string(tmp.ty));
-//        info("tz" + std::to_string(tmp.tz));
         float x = pow(object.position.x, 2);
         float y = pow(object.position.y - tmp.ty, 2);
         float z = pow(object.position.z, 2);
@@ -114,11 +111,13 @@ public:
         ObjectData obj = get_object_from_id(id);
         return obj.position.x;
     }
+
     float object_y_from_catapult(int id) {
         ObjectData obj = get_object_from_id(id);
         float ty = calibration_params_.stereo_transform.ty * 0.5f;
         return obj.position.y - ty - CAM_TO_CATAPULT_Y;
     }
+
     float object_z_from_catapult(int id) {
         ObjectData obj = get_object_from_id(id);
         return obj.position.z;
@@ -141,12 +140,12 @@ public:
         float ty = calibration_params_.stereo_transform.ty * 0.5f;
         Eigen::Vector2d a(object.position.x, object.position.y - ty - CAM_TO_CATAPULT_Y);
         Eigen::Vector2d b(1, 0);
-	float angle = 0;
-	if (object.position.y < 0) {
-        	angle = -acos(a.dot(b)/(a.norm() * b.norm()));
-	} else {
-        	angle = acos(a.dot(b)/(a.norm() * b.norm()));
-	}
+	    float angle = 0;
+	    if (object.position.y < 0) {
+             	angle = -acos(a.dot(b)/(a.norm() * b.norm()));
+	    } else {
+            	angle = acos(a.dot(b)/(a.norm() * b.norm()));
+	    }
         return angle;
     }
 
@@ -155,13 +154,13 @@ public:
     }
 
     void update_objects() {
-	 zed_.retrieveObjects(objects_, objectTracker_params_rt_);
+         zed_.retrieveObjects(objects_, objectTracker_params_rt_);
     }
 
     ObjectData get_object_from_id(int id) {
-	 ObjectData tmp;
-	 objects_.getObjectDataFromId(tmp, id);
-	 return tmp;
+         ObjectData tmp;
+         objects_.getObjectDataFromId(tmp, id);
+         return tmp;
     }
 
     std::vector<ObjectData> get_objects_from_label(int label) {
@@ -226,12 +225,21 @@ public:
          }
     }
 
+    Pose get_camera_pose() {
+         zed_.getPosition(camera_pose_, sl::REFERENCE_FRAME::CAMERA);
+         if (successful_grab()) {
+             return camera_pose_;
+         }
+         return Pose();
+    }
 
-    Pose get_pose() {
-        if (successful_grab()) {
-            return pose_;
-        }
-        return Pose();
+    Pose get_robot_pose() {
+         zed_.getPosition(robot_pose_, sl::REFERENCE_FRAME::WORLD);
+         transform_pose(robot_pose_.pose_data, cam_to_robot_);
+         if (successful_grab()) {
+             return robot_pose_;
+         }
+         return Pose();
     }
 
     void transform_pose(Transform &pose, float tx, float ty, float tz) {
@@ -245,7 +253,7 @@ public:
 
     void transform_pose(Transform &pose, Transform transform) {
          pose = Transform::inverse(transform) * pose * transform;
-     }
+    }
 
     float get_linear_velocity_x() {
         if (successful_grab()) {
@@ -294,17 +302,6 @@ public:
     void print_pose(Pose& pose) {
         printf("Translation: x: %.3f, y: %.3f, z: %.3f, timestamp: %llu\r",
                pose.getTranslation().tx, pose.getTranslation().ty, pose.getTranslation().tz, pose.timestamp.getMilliseconds());
-    }
-
-    void obj_thread() {
-	    while (true){ 
-		obj_mutex_.lock();
-		obj_mutex_.unlock();
-	    }
-    }
-
-    void start_zed_thread() {
-	    obj_thread_ = std::thread(&Zed::obj_thread, this);
     }
 
     void close() {

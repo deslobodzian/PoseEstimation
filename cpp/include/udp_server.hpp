@@ -85,7 +85,7 @@ struct output_frame {
         return isnan(value) ? value : -999;
     }
     std::string to_udp_string() {
-        std::string value = std::to_string(is_nan(millis)) + ";" +
+        std::string value = std::to_string(millis) + ";" +
                             std::to_string(is_nan(est_x)) + ";" +
                             std::to_string(is_nan(est_y)) + ";" +
                             std::to_string(is_nan(est_heading)) +  ";" +

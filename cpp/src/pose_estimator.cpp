@@ -97,6 +97,7 @@ void PoseEstimator::init() {
     info("Waiting for initial pose");
     bool exit_init = false;
     while (!exit_init) {
+        std::cout << "\bWaiting" << std::flush;
         // Wait till server has received the initial pose from the RoboRio.
         if (server_.received_init_pose()) {
             init_pose_ = Eigen::Vector3d{

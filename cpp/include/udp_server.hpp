@@ -144,6 +144,7 @@ private:
     int host_port_ = 27002;
     int client_port_ = 27001;
     socklen_t clientLength_;
+    socklen_t serverLength_;
     struct sockaddr_in serverAddr_;
     struct sockaddr_in clientAddr_;
     struct hostent *hostp_; // Host info
@@ -193,6 +194,7 @@ public:
         serverAddr_.sin_family = AF_INET;
         serverAddr_.sin_addr.s_addr = inet_addr(host_.c_str());
         serverAddr_.sin_port = htons((unsigned short)host_port_);
+        serverLength_ = sizeof(serverLength_);
 
         // client
         bzero((char* ) &clientAddr_, sizeof(clientAddr_));
@@ -214,7 +216,7 @@ public:
                      receive_buf,
                      BUFFER_SIZE,
                      0,
-                     (struct sockaddr*) &clientAddr_,
+                     (struct sockaddr*) &serverAddr_,
                      &clientLength_);
         if (n < 0) {
             error("ERROR: Couldn't receive from client");

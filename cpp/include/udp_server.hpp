@@ -204,9 +204,6 @@ public:
         clientAddr_.sin_port = htons((unsigned short)client_port_);
         clientLength_ = sizeof(clientAddr_);
 
-        if (bind(receive_socket_, ((struct sockaddr *) &clientAddr_), sizeof(clientAddr_)) < 0) {
-            error("ERROR: Couldn't bind receive socket");
-        }
     }
 
     ~Server() = default;
@@ -298,6 +295,9 @@ public:
     }
 
     void receive_thread() {
+        if (bind(receive_socket_, ((struct sockaddr *) &clientAddr_), sizeof(clientAddr_)) < 0) {
+            error("ERROR: Couldn't bind receive socket");
+        }
         while (true) {
             receive_frame();
             std::this_thread::sleep_for(std::chrono::microseconds(1000));

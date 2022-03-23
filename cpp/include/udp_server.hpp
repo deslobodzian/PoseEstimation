@@ -139,8 +139,8 @@ struct input_frame{
 class Server {
 
 private:
-    int send_socket_;
-    int receive_socket_;
+    int server_socket_;
+//    int receive_socket_;
     int host_port_ = 27002;
     int client_port_ = 27001;
     socklen_t clientLength_;
@@ -151,7 +151,6 @@ private:
     char receive_buf[BUFFER_SIZE];
     char *hostAddrp_;
     int optval;
-    int optval1;
     int n;
     std::string host_ = "10.56.87.20";
     std::string client_ = "10.56.87.2";
@@ -167,35 +166,34 @@ private:
 
 public:
     Server() {
-        send_socket_ = socket(AF_INET, SOCK_DGRAM, 0);
-        receive_socket_ = socket(AF_INET, SOCK_DGRAM, 0);
+        server_socket_ = socket(AF_INET, SOCK_DGRAM, 0);
+//        receive_socket_ = socket(AF_INET, SOCK_DGRAM, 0);
 
-        if (send_socket_ < 0) {
+        if (server_socket_ < 0) {
             error("ERROR: Couldn't open socket");
         }
-        if (receive_socket_ < 0) {
-            error("Couldn't open receive socket");
-        }
+//        if (receive_socket_ < 0) {
+//            error("Couldn't open receive socket");
+//        }
 
         optval = 1;
-        optval1 = 2;
-        setsockopt(send_socket_,
+        setsockopt(server_socket_,
                    SOL_SOCKET,
                    SO_REUSEADDR,
                    (const void*) &optval,
                    sizeof(int));
-        setsockopt(receive_socket_,
-                   SOL_SOCKET,
-                   SO_REUSEADDR,
-                   (const void*) &optval1,
-                   sizeof(int));
+//        setsockopt(receive_socket_,
+//                   SOL_SOCKET,
+//                   SO_REUSEADDR,
+//                   (const void*) &optval1,
+//                   sizeof(int));
 
         bzero((char* ) &serverAddr_, sizeof(serverAddr_));
         serverAddr_.sin_family = AF_INET;
         serverAddr_.sin_addr.s_addr = inet_addr(host_.c_str());
         serverAddr_.sin_port = htons((unsigned short)host_port_);
 
-        if (bind(send_socket_, ((struct sockaddr *) &serverAddr_), sizeof(serverAddr_)) < 0) {
+        if (bind(server_socket_, ((struct sockaddr *) &serverAddr_), sizeof(serverAddr_)) < 0) {
             error("ERROR: Couldn't bind send socket");
         }
 
@@ -205,16 +203,16 @@ public:
         clientAddr_.sin_port = htons((unsigned short)client_port_);
         clientLength_ = sizeof(clientAddr_);
 
-        if (bind(receive_socket_, ((struct sockaddr *) &clientAddr_), sizeof(clientAddr_)) < 0) {
-            error("ERROR: Couldn't bind receive socket");
-        }
+//        if (bind(receive_socket_, ((struct sockaddr *) &clientAddr_), sizeof(clientAddr_)) < 0) {
+//            error("ERROR: Couldn't bind receive socket");
+//        }
     }
 
     ~Server() = default;
 
     int receive() {
         bzero(receive_buf, BUFFER_SIZE);
-        n = recvfrom(receive_socket_,
+        n = recvfrom(server_socket_,
                      receive_buf,
                      BUFFER_SIZE,
                      0,
@@ -228,7 +226,7 @@ public:
     int send(std::string msg) {
         bzero(buf, BUFFER_SIZE);
         msg.copy(buf, BUFFER_SIZE);
-        return sendto(send_socket_, buf, strlen(buf), 0, (struct sockaddr*) &clientAddr_, clientLength_);
+        return sendto(server_socket_, buf, strlen(buf), 0, (struct sockaddr*) &clientAddr_, clientLength_);
     }
 
     std::vector<std::string> split( const std::string& str, char delimiter = ';' ) {
@@ -300,8 +298,8 @@ public:
 
     void receive_thread() {
         while (true) {
-            receive_frame();
-            std::this_thread::sleep_for(std::chrono::microseconds(1000));
+//            receive_frame();
+//            std::this_thread::sleep_for(std::chrono::microseconds(1000));
         }
     }
     void data_processing_thread() {

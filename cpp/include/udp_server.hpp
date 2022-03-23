@@ -140,7 +140,7 @@ class Server {
 
 private:
     int server_socket_;
-//    int receive_socket_;
+    int client_socket_;
     int host_port_ = 27002;
     int client_port_ = 27001;
     socklen_t clientLength_;
@@ -182,30 +182,27 @@ public:
                    SO_REUSEADDR,
                    (const void*) &optval,
                    sizeof(int));
-//        setsockopt(receive_socket_,
-//                   SOL_SOCKET,
-//                   SO_REUSEADDR,
-//                   (const void*) &optval1,
-//                   sizeof(int));
+        setsockopt(receive_socket_,
+                   SOL_SOCKET,
+                   SO_REUSEADDR,
+                   (const void*) &optval,
+                   sizeof(int));
 
+        // server
         bzero((char* ) &serverAddr_, sizeof(serverAddr_));
         serverAddr_.sin_family = AF_INET;
         serverAddr_.sin_addr.s_addr = inet_addr(host_.c_str());
         serverAddr_.sin_port = htons((unsigned short)host_port_);
 
-        if (bind(server_socket_, ((struct sockaddr *) &serverAddr_), sizeof(serverAddr_)) < 0) {
-            error("ERROR: Couldn't bind send socket");
-        }
-
+        // client
         bzero((char* ) &clientAddr_, sizeof(clientAddr_));
         clientAddr_.sin_family = AF_INET;
         clientAddr_.sin_addr.s_addr = inet_addr(client_.c_str());
         clientAddr_.sin_port = htons((unsigned short)client_port_);
         clientLength_ = sizeof(clientAddr_);
-
-//        if (bind(receive_socket_, ((struct sockaddr *) &clientAddr_), sizeof(clientAddr_)) < 0) {
-//            error("ERROR: Couldn't bind receive socket");
-//        }
+        if (bind(server_socket_, ((struct sockaddr *) &serverAddr_), sizeof(serverAddr_)) < 0) {
+            error("ERROR: Couldn't bind send socket");
+        }
     }
 
     ~Server() = default;
@@ -226,7 +223,7 @@ public:
     int send(std::string msg) {
         bzero(buf, BUFFER_SIZE);
         msg.copy(buf, BUFFER_SIZE);
-        return sendto(server_socket_, buf, strlen(buf), 0, (struct sockaddr*) &clientAddr_, clientLength_);
+        return sendto(client_socket_, buf, strlen(buf), 0, (struct sockaddr*) &clientAddr_, clientLength_);
     }
 
     std::vector<std::string> split( const std::string& str, char delimiter = ';' ) {
@@ -262,7 +259,6 @@ public:
     }
 
     void receive_frame() {
-//        debug("running frame");
         if (receive() > 0) {
             error("No frame");
         } else {
@@ -298,8 +294,8 @@ public:
 
     void receive_thread() {
         while (true) {
-//            receive_frame();
-//            std::this_thread::sleep_for(std::chrono::microseconds(1000));
+            receive_frame();
+            std::this_thread::sleep_for(std::chrono::microseconds(1000));
         }
     }
     void data_processing_thread() {

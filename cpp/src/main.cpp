@@ -14,7 +14,7 @@ int main() {
     // if c++20 can replace with " Landmark{.x = 3, .y = -2, .id = 3} "
     Map map;
     // estimator(monocular cam, zed cam, landmarks)
-    PoseEstimator estimator(1, 1, map.get_landmarks());
+    PoseEstimator estimator(0, 1, map.get_landmarks());
     std::vector<Eigen::Vector3d> z;
     estimator.init();
 

@@ -95,25 +95,25 @@ void PoseEstimator::init() {
     info("Starting UDP Server thread");
     server_.start_thread();
     info("Waiting for initial pose");
-    bool exit_init = false;
-    while (!exit_init) {
-        // Wait till server has received the initial pose from the RoboRio.
-        if (server_.received_init_pose()) {
-            init_pose_ = Eigen::Vector3d{
-                    server_.get_init_pose_frame().init_pose[0],
-                    server_.get_init_pose_frame().init_pose[1],
-                    server_.get_init_pose_frame().init_pose[2],
-            };
-            // initialize our estimator with the initial pose.
-            exit_init = true;
-            info("Set initial pose");
-        }
-    }
+//    bool exit_init = false;
+//    while (!exit_init) {
+//        // Wait till server has received the initial pose from the RoboRio.
+//        if (server_.received_init_pose()) {
+//            init_pose_ = Eigen::Vector3d{
+//                    server_.get_init_pose_frame().init_pose[0],
+//                    server_.get_init_pose_frame().init_pose[1],
+//                    server_.get_init_pose_frame().init_pose[2],
+//            };
+//            // initialize our estimator with the initial pose.
+//            exit_init = true;
+//            info("Set initial pose");
+//        }
+//    }
 
-    info("Initializing filter with pose: [" +
-         std::to_string(init_pose_(0)) + ", " +
-         std::to_string(init_pose_(1)) + ", " +
-         std::to_string(init_pose_(2)) + "]");
+//    info("Initializing filter with pose: [" +
+//         std::to_string(init_pose_(0)) + ", " +
+//         std::to_string(init_pose_(1)) + ", " +
+//         std::to_string(init_pose_(2)) + "]");
 
     info("Starting ZED camera thread.");
     inference_threads_.push_back(

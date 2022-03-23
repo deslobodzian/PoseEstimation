@@ -167,7 +167,7 @@ private:
 public:
     Server() {
         server_socket_ = socket(AF_INET, SOCK_DGRAM, 0);
-//        receive_socket_ = socket(AF_INET, SOCK_DGRAM, 0);
+        client_socket_ = socket(AF_INET, SOCK_DGRAM, 0);
 
         if (server_socket_ < 0) {
             error("ERROR: Couldn't open socket");
@@ -182,7 +182,7 @@ public:
                    SO_REUSEADDR,
                    (const void*) &optval,
                    sizeof(int));
-        setsockopt(receive_socket_,
+        setsockopt(client_socket_,
                    SOL_SOCKET,
                    SO_REUSEADDR,
                    (const void*) &optval,
@@ -200,6 +200,7 @@ public:
         clientAddr_.sin_addr.s_addr = inet_addr(client_.c_str());
         clientAddr_.sin_port = htons((unsigned short)client_port_);
         clientLength_ = sizeof(clientAddr_);
+        // listening on socket
         if (bind(server_socket_, ((struct sockaddr *) &serverAddr_), sizeof(serverAddr_)) < 0) {
             error("ERROR: Couldn't bind send socket");
         }

@@ -150,6 +150,7 @@ private:
     char receive_buf[BUFFER_SIZE];
     char *hostAddrp_;
     int optval;
+    int optval1;
     int n;
     std::string host_ = "10.56.87.20";
     std::string client_ = "10.56.87.2";
@@ -176,6 +177,7 @@ public:
         }
 
         optval = 1;
+        optval1 = 2;
         setsockopt(send_socket_,
                    SOL_SOCKET,
                    SO_REUSEADDR,
@@ -184,7 +186,7 @@ public:
         setsockopt(receive_socket_,
                    SOL_SOCKET,
                    SO_REUSEADDR,
-                   (const void*) &optval,
+                   (const void*) &optval1,
                    sizeof(int));
 
         bzero((char* ) &serverAddr_, sizeof(serverAddr_));

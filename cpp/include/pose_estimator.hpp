@@ -34,7 +34,7 @@ public:
     PoseEstimator(int num_monocular_cameras, int num_zed_cameras, std::vector<Landmark> landmarks);
     ~PoseEstimator();
 
-    void run_zed();
+    void run_zed(Eigen::Vector3d init_pose);
     void run_inference(MonocularCamera& camera);
     void run_inference_zed(Zed& camera);
     void update_measurements();

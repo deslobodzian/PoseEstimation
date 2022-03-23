@@ -37,9 +37,9 @@ PoseEstimator::~PoseEstimator(){
     }
 }
 
-void PoseEstimator::run_zed() {
+void PoseEstimator::run_zed(Eigen::Vector3d init_pose) {
     zed_.open_camera();
-    zed_.enable_tracking();
+    zed_.enable_tracking(init_pose);
     zed_.enable_object_detection();
 }
 
@@ -58,7 +58,7 @@ void PoseEstimator::run_inference(MonocularCamera& camera) {
 }
 
 void PoseEstimator::run_inference_zed(Zed& camera) {
-    run_zed();
+    run_zed(init_pose_);
     Yolov5 yoloRT;
     yoloRT.initialize_engine(engine_name_);
     threads_started_.back() = true;
@@ -92,23 +92,6 @@ void PoseEstimator::estimate_pose() {
 
 
 void PoseEstimator::init() {
-    info("Starting ZED camera thread.");
-    inference_threads_.push_back(
-            std::thread(
-                &PoseEstimator::run_inference_zed,
-                this,
-                std::ref(zed_)
-            ));
-
-    info("Starting monocular camera threads.");
-    for (int i = 0; i < num_monocular_cameras_; ++i) {
-        inference_threads_.push_back(
-			std::thread(
-				&PoseEstimator::run_inference,
-			       	this,
-			       	std::ref(monocular_cameras_.at(i))
-			));
-    }
     info("Starting UDP Server thread");
     server_.start_thread();
     info("Waiting for initial pose");
@@ -121,16 +104,34 @@ void PoseEstimator::init() {
                     server_.get_init_pose_frame().init_pose[1],
                     server_.get_init_pose_frame().init_pose[2],
             };
-            zed_.enable_tracking(init_pose_);
             // initialize our estimator with the initial pose.
             exit_init = true;
             info("Set initial pose");
         }
     }
+
     info("Initializing filter with pose: [" +
          std::to_string(init_pose_(0)) + ", " +
          std::to_string(init_pose_(1)) + ", " +
          std::to_string(init_pose_(2)) + "]");
+
+    info("Starting ZED camera thread.");
+    inference_threads_.push_back(
+            std::thread(
+                    &PoseEstimator::run_inference_zed,
+                    this,
+                    std::ref(zed_)
+            ));
+
+    info("Starting monocular camera threads.");
+    for (int i = 0; i < num_monocular_cameras_; ++i) {
+        inference_threads_.push_back(
+                std::thread(
+                        &PoseEstimator::run_inference,
+                        this,
+                        std::ref(monocular_cameras_.at(i))
+                ));
+    }
 //    filter_.init_particle_filter(init_pose_);
 //    bool start_estimator = false;
 //    info("Waiting for odometry data");

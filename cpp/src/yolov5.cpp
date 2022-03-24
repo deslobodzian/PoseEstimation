@@ -90,7 +90,7 @@ bool Yolov5::prepare_inference(cv::Mat& img_cv_rgb) {
         }
     }
 }
-bool Yolov5::prepare_inference(sl::Mat img_sl, cv::Mat& img_cv_rgb) {
+bool Yolov5::prepare_inference(sl::Mat& img_sl, cv::Mat& img_cv_rgb) {
     cv::Mat left_cv_rgba = slMat2cvMat(img_sl);
     cv::cvtColor(left_cv_rgba, img_cv_rgb, cv::COLOR_BGRA2BGR);
     prepare_inference(img_cv_rgb);

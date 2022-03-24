@@ -187,9 +187,9 @@ void PoseEstimator::send_message() {
     auto time = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now().time_since_epoch()).count();
     output_frame frame(
             time,
-            zed_.get_robot_pose().getTranslation().x,
-            zed_.get_robot_pose().getTranslation().y,
-            zed_.get_robot_pose().getEulerAngles().z,
+            0,
+            0,
+            0,
             zed_.has_objects(1),
             zed_.get_distance_to_object_label(1),
             zed_.get_angle_to_object_label(1),

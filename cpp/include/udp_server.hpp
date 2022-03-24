@@ -312,6 +312,6 @@ public:
 
     void start_thread() {
         data_thread_ = std::thread(&Server::data_processing_thread, this);
-        recv_thread_ = std::thread(&Server::receive_thread, this);
+//        recv_thread_ = std::thread(&Server::receive_thread, this);
     }
 };

@@ -69,6 +69,21 @@ public:
          return (return_state == ERROR_CODE::SUCCESS);
     }
 
+    bool enable_tracking() {
+        PositionalTrackingParameters tracking_params;
+        if (!zed_.isOpened()) {
+            error("Opening camera failed");
+            return false;
+        }
+        if (has_area_map_) {
+            tracking_params.area_file_path = "map.area";
+        }
+        tracking_params.enable_area_memory = true;
+        sl::Transform initial_position;
+        zed_.enablePositionalTracking(tracking_params);
+        return true;
+    }
+
     bool enable_tracking(Eigen::Vector3d init_pose) {
         PositionalTrackingParameters tracking_params;
         if (!zed_.isOpened()) {

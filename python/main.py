@@ -91,8 +91,9 @@ def calculate_point(p0, p2):
     temp = p0 + ((p2 - p0) / 2.0)
     return temp + (0.25 * (p2 - p0)[0], 0, 0)
 
+
 def trajectory_air(vel, angle):
-    v_term = 35.0 # mps
+    v_term = 35.0  # mps
     x, y, z = [], [], []
     angle1 = angle
     print(angle)
@@ -109,109 +110,91 @@ def trajectory_air(vel, angle):
     return x, y, z
 
 
+def catapult_calc(spring_disp, angle_disp):
+    arm_length = 20.9 * (2.54 / 100)
+    arm_mass = 0.56 # kg
+    arm_inertia = (1 / 3) * (arm_length * arm_length) * arm_mass
+    ball_inertia = (2 / 3) * 0.27 * (0.24 * 0.24)
+    inertia = arm_inertia + ball_inertia
+    small_arm_length = 6.0 / 39.37
+    spring_rate = 2 * (11.0 / 0.0057101471627692) # N per Meter
+    spring_force = spring_disp * spring_rate
+    torque = spring_force * small_arm_length
+    arm_accel = torque / inertia
+    exit_angle = angle_disp - math.radians(24.5)
+    time = math.sqrt((2.0 / arm_accel) * angle_disp)
+    angle_vel = angle_disp / time
+    exit_vel = angle_vel * arm_length
+    return exit_vel, exit_angle
 
-def calculate_air(vel, angle, p):
-    v_term = 35.0 # mps
-    x, y, z = [], [], []
-    angle1 = 0
-    print(angle)
-    speed = 0
-    error2 = p[0] + 0.5
-    error1 = p[0] - 0.5
-    error3 = p[2] + 0.5
-    error4 = p[2] - 0.5
-    i = 0
-    while speed < 45.0:
-        while angle1 < math.pi:
-            for t in np.arange(0, 10, 0.1):
-                i = 0
-                xt = ((speed * v_term) / 9.81) * (math.cos(angle1) * (1 - math.exp((-9.81 * t) / v_term)))
-                yt = 0
-                zt = (v_term / 9.81) * (speed * math.sin(angle1) + v_term) * (1 - math.exp((-9.81 * t) / v_term)) - (v_term * t)
-                # # if (zt < 0):
-                #     break
-                x.append(xt)
-                y.append(yt)
-                z.append(zt)
-            for x1 in x:
-                i = i + 1
-                if error1 < x1 < error2:
-                    print("point is x: " + str(x1))
-                    print("point is z: " + str(z[i]))
-                    print("speed is: " + str(speed))
-                    print("angle is: " + str(angle1))
-                    break
-            angle1 = angle1 + 0.01
-        speed = speed + 0.01
-    # return 0, 0
 
 def main():
-    target_pos = np.array([6.3, 0.0, 2.4384])
-    target_vel = np.array([0.0, 3.0, 0.0])
+    target_pos = np.array([4.5, 0.0, 2.4384])
+    target_vel = np.array([1.0, 0.5, 0.0])
     ball_pos = np.array([0, 0, 0])
 
+    speed, angle = catapult_calc(0.0785, math.radians(55))
+    print(speed)
+    print(angle)
     height = 3.3528  # meters
     min_height = 2.43  # meters
 
-    p0 = np.array([6, 6, 2.43])
-    p1 = np.array([7.2192, 7.2192, 2.43])
-    goal = calculate_point(p0, p1)
-    target_pos = goal
+    # p0 = np.array([6, 6, 2.43])
+    # p1 = np.array([7.2192, 7.2192, 2.43])
+    # goal = calculate_point(p0, p1)
+    # target_pos = goal
 
-    speed = ideal_speed(goal, min_height)
-    print("Ideal speed is " + str(speed))
+    # speed = ideal_speed(goal, min_height)
+    # print("Ideal speed is " + str(speed))
 
     gravity = np.array([0, 0, 9.81])
 
     a1, a2 = calculate_angle(speed, target_pos[0], target_pos[2], gravity[2])
+    print(a2)
 
     x_vel = speed * math.cos(a2)
     z_vel = speed * math.sin(a2)
     ball_exit_vel = np.array([x_vel, 0.0, z_vel])
-    x_vel1 = speed * math.cos(a2)
-    z_vel1 = speed * math.sin(a2)
-    ball_exit_vel1 = np.array([x_vel1, 0.0, z_vel1])
-    speed = np.linalg.norm(ball_exit_vel)
+    # x_vel1 = speed * math.cos(a2)
+    # z_vel1 = speed * math.sin(a2)
+    # ball_exit_vel1 = np.array([x_vel1, 0.0, z_vel1])
+    # speed = np.linalg.norm(ball_exit_vel)
     # print("angle one " + str(a1))
     # print("angle two " + str(a2))
 
     # tr = pos + (vel * time[0] + (0.5 * gravity * (time[0] * time[0])))
-    # time = calculate_lead_time(target_pos, target_vel, gravity, speed)
-    # ld = target_pos + (target_vel * time)
-    # print("Inital target pos" + str(target_pos))
-    # print("aim at point" + str(ld))
+    time = calculate_lead_time(target_pos, target_vel, gravity, speed)
+    ld = target_pos + (target_vel * time)
+    print("Inital target pos" + str(target_pos))
+    print("aim at point" + str(ld))
     fig = plt.figure()
     ax = plt.axes(projection='3d')
-    calculate_air(speed, a2, goal)
+    # calculate_air(speed, a2, goal)
     # a, v = calculate_air(speed, a1, goal)
 
-    v = speed + (np.linalg.norm(goal) * 0.12)
-    a = a2
-    x, y, z = trajectory_air(v, a)
-    x1, y1, z1 = trajectory(ball_pos, ball_exit_vel1, gravity)
+    # v = speed + (np.linalg.norm(goal) * 0.12)
+    # a = a2
+    x, y, z = trajectory(ball_pos, ball_exit_vel, gravity)
     # r, theta, phi = cartesian_to_spherical(ld)
     # print("r " +str(r))
     # print("theta " + str(theta))
     # print("phi " + str(phi))
-    # new_a = calculate_angle(speed, ld[0], target_pos[2], gravity[2])
-    # print(r * math.cos(theta))
-    # print(r * math.cos(phi))
-    # print(r * math.sin(theta))
-    # x1 = np.array([ld[0], ld[1]])
-    # x2 = np.array([target_pos[0], target_pos[1]])
-    # ang = math.acos(x1.dot(x2) / (np.linalg.norm(x1) * np.linalg.norm(x2)))
-    # print("angle should be " + str(ang) + "radians")
-    # print("angle should be " + str((ang * 180) / math.pi) + "degrees")
-    # x_new, y_new, z_new = trajectory(ball_pos, ball_exit_vel, gravity)
-    ax.scatter(p0[0], p0[1], p0[2])
-    ax.scatter(p1[0], p1[1], p1[2])
-    print(goal)
-    ax.scatter(goal[0], goal[1], goal[2])
+    new_speed = speed + np.linalg.norm(target_vel)
+    print(new_speed)
+    new_a1, new_a2 = calculate_angle(new_speed, ld[0], ld[2], gravity[2])
+    x_vel = new_speed * math.cos(new_a2)
+    z_vel = new_speed * math.sin(new_a2)
+    ball_exit_vel = np.array([x_vel, 0.0, z_vel])
+    print(new_a1)
+    print(new_a2)
+    print("dist to new is " + str(np.linalg.norm(ld)))
+    x_new, y_new, z_new = trajectory(ball_pos, ball_exit_vel, gravity)
+    # ax.scatter(goal[0], goal[1], goal[2])
     ax.scatter(target_pos[0], target_pos[1], target_pos[2], c='r')
-    # ax.scatter(ld[0], ld[1], ld[2], c='g')
+    ax.scatter(ld[0], ld[1], ld[2], c='g')
     ax.plot3D(x, y, z)
-    ax.plot3D(x1, y1, z1)
-    # ax.plot3D(x_new, y_new, z_new, c='g')
+    # ax.plot3D(x1, y1, z1)
+    ax.plot3D(x_new, y_new, z_new, c='g')
     plt.show()
 
 

@@ -1,10 +1,15 @@
 #ifndef ENTROPY_CALIBRATOR_H
 #define ENTROPY_CALIBRATOR_H
 
-#include <NvInfer.h>
+#include "NvInfer.h"
 #include <string>
 #include <vector>
-#include "macros.h"
+
+#if NV_TENSORRT_MAJOR >= 8
+#define TRT_NOEXCEPT noexcept
+#else
+#define TRT_NOEXCEPT
+#endif
 
 //! \class Int8EntropyCalibrator2
 //!

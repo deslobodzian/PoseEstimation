@@ -25,12 +25,7 @@
 #include <ostream>
 #include <sstream>
 #include <string>
-
-#if NV_TENSORRT_MAJOR >= 8
-#define TRT_NOEXCEPT noexcept
-#else
-#define TRT_NOEXCEPT
-#endif
+#include "macros.h"
 
 using Severity = nvinfer1::ILogger::Severity;
 
@@ -38,14 +33,14 @@ class LogStreamConsumerBuffer : public std::stringbuf
 {
 public:
     LogStreamConsumerBuffer(std::ostream& stream, const std::string& prefix, bool shouldLog)
-        : mOutput(stream)
-        , mPrefix(prefix)
-        , mShouldLog(shouldLog)
+            : mOutput(stream)
+            , mPrefix(prefix)
+            , mShouldLog(shouldLog)
     {
     }
 
     LogStreamConsumerBuffer(LogStreamConsumerBuffer&& other)
-        : mOutput(other.mOutput)
+            : mOutput(other.mOutput)
     {
     }
 
@@ -113,7 +108,7 @@ class LogStreamConsumerBase
 {
 public:
     LogStreamConsumerBase(std::ostream& stream, const std::string& prefix, bool shouldLog)
-        : mBuffer(stream, prefix, shouldLog)
+            : mBuffer(stream, prefix, shouldLog)
     {
     }
 
@@ -136,18 +131,18 @@ public:
     //! \brief Creates a LogStreamConsumer which logs messages with level severity.
     //!  Reportable severity determines if the messages are severe enough to be logged.
     LogStreamConsumer(Severity reportableSeverity, Severity severity)
-        : LogStreamConsumerBase(severityOstream(severity), severityPrefix(severity), severity <= reportableSeverity)
-        , std::ostream(&mBuffer) // links the stream buffer with the stream
-        , mShouldLog(severity <= reportableSeverity)
-        , mSeverity(severity)
+            : LogStreamConsumerBase(severityOstream(severity), severityPrefix(severity), severity <= reportableSeverity)
+            , std::ostream(&mBuffer) // links the stream buffer with the stream
+            , mShouldLog(severity <= reportableSeverity)
+            , mSeverity(severity)
     {
     }
 
     LogStreamConsumer(LogStreamConsumer&& other)
-        : LogStreamConsumerBase(severityOstream(other.mSeverity), severityPrefix(other.mSeverity), other.mShouldLog)
-        , std::ostream(&mBuffer) // links the stream buffer with the stream
-        , mShouldLog(other.mShouldLog)
-        , mSeverity(other.mSeverity)
+            : LogStreamConsumerBase(severityOstream(other.mSeverity), severityPrefix(other.mSeverity), other.mShouldLog)
+            , std::ostream(&mBuffer) // links the stream buffer with the stream
+            , mShouldLog(other.mShouldLog)
+            , mSeverity(other.mSeverity)
     {
     }
 
@@ -167,12 +162,12 @@ private:
     {
         switch (severity)
         {
-        case Severity::kINTERNAL_ERROR: return "[F] ";
-        case Severity::kERROR: return "[E] ";
-        case Severity::kWARNING: return "[W] ";
-        case Severity::kINFO: return "[I] ";
-        case Severity::kVERBOSE: return "[V] ";
-        default: assert(0); return "";
+            case Severity::kINTERNAL_ERROR: return "[F] ";
+            case Severity::kERROR: return "[E] ";
+            case Severity::kWARNING: return "[W] ";
+            case Severity::kINFO: return "[I] ";
+            case Severity::kVERBOSE: return "[V] ";
+            default: assert(0); return "";
         }
     }
 
@@ -208,7 +203,7 @@ class Logger : public nvinfer1::ILogger
 {
 public:
     Logger(Severity severity = Severity::kWARNING)
-        : mReportableSeverity(severity)
+            : mReportableSeverity(severity)
     {
     }
 
@@ -273,9 +268,9 @@ public:
         friend class Logger;
 
         TestAtom(bool started, const std::string& name, const std::string& cmdline)
-            : mStarted(started)
-            , mName(name)
-            , mCmdline(cmdline)
+                : mStarted(started)
+                , mName(name)
+                , mCmdline(cmdline)
         {
         }
 
@@ -381,12 +376,12 @@ private:
     {
         switch (severity)
         {
-        case Severity::kINTERNAL_ERROR: return "[F] ";
-        case Severity::kERROR: return "[E] ";
-        case Severity::kWARNING: return "[W] ";
-        case Severity::kINFO: return "[I] ";
-        case Severity::kVERBOSE: return "[V] ";
-        default: assert(0); return "";
+            case Severity::kINTERNAL_ERROR: return "[F] ";
+            case Severity::kERROR: return "[E] ";
+            case Severity::kWARNING: return "[W] ";
+            case Severity::kINFO: return "[I] ";
+            case Severity::kVERBOSE: return "[V] ";
+            default: assert(0); return "";
         }
     }
 
@@ -397,11 +392,11 @@ private:
     {
         switch (result)
         {
-        case TestResult::kRUNNING: return "RUNNING";
-        case TestResult::kPASSED: return "PASSED";
-        case TestResult::kFAILED: return "FAILED";
-        case TestResult::kWAIVED: return "WAIVED";
-        default: assert(0); return "";
+            case TestResult::kRUNNING: return "RUNNING";
+            case TestResult::kPASSED: return "PASSED";
+            case TestResult::kFAILED: return "FAILED";
+            case TestResult::kWAIVED: return "WAIVED";
+            default: assert(0); return "";
         }
     }
 
@@ -450,10 +445,10 @@ namespace
 //!
 //!     LOG_VERBOSE(logger) << "hello world" << std::endl;
 //!
-inline LogStreamConsumer LOG_VERBOSE(const Logger& logger)
-{
-    return LogStreamConsumer(logger.getReportableSeverity(), Severity::kVERBOSE);
-}
+    inline LogStreamConsumer LOG_VERBOSE(const Logger& logger)
+    {
+        return LogStreamConsumer(logger.getReportableSeverity(), Severity::kVERBOSE);
+    }
 
 //!
 //! \brief produces a LogStreamConsumer object that can be used to log messages of severity kINFO
@@ -462,10 +457,10 @@ inline LogStreamConsumer LOG_VERBOSE(const Logger& logger)
 //!
 //!     LOG_INFO(logger) << "hello world" << std::endl;
 //!
-inline LogStreamConsumer LOG_INFO(const Logger& logger)
-{
-    return LogStreamConsumer(logger.getReportableSeverity(), Severity::kINFO);
-}
+    inline LogStreamConsumer LOG_INFO(const Logger& logger)
+    {
+        return LogStreamConsumer(logger.getReportableSeverity(), Severity::kINFO);
+    }
 
 //!
 //! \brief produces a LogStreamConsumer object that can be used to log messages of severity kWARNING
@@ -474,10 +469,10 @@ inline LogStreamConsumer LOG_INFO(const Logger& logger)
 //!
 //!     LOG_WARN(logger) << "hello world" << std::endl;
 //!
-inline LogStreamConsumer LOG_WARN(const Logger& logger)
-{
-    return LogStreamConsumer(logger.getReportableSeverity(), Severity::kWARNING);
-}
+    inline LogStreamConsumer LOG_WARN(const Logger& logger)
+    {
+        return LogStreamConsumer(logger.getReportableSeverity(), Severity::kWARNING);
+    }
 
 //!
 //! \brief produces a LogStreamConsumer object that can be used to log messages of severity kERROR
@@ -486,10 +481,10 @@ inline LogStreamConsumer LOG_WARN(const Logger& logger)
 //!
 //!     LOG_ERROR(logger) << "hello world" << std::endl;
 //!
-inline LogStreamConsumer LOG_ERROR(const Logger& logger)
-{
-    return LogStreamConsumer(logger.getReportableSeverity(), Severity::kERROR);
-}
+    inline LogStreamConsumer LOG_ERROR(const Logger& logger)
+    {
+        return LogStreamConsumer(logger.getReportableSeverity(), Severity::kERROR);
+    }
 
 //!
 //! \brief produces a LogStreamConsumer object that can be used to log messages of severity kINTERNAL_ERROR
@@ -499,10 +494,10 @@ inline LogStreamConsumer LOG_ERROR(const Logger& logger)
 //!
 //!     LOG_FATAL(logger) << "hello world" << std::endl;
 //!
-inline LogStreamConsumer LOG_FATAL(const Logger& logger)
-{
-    return LogStreamConsumer(logger.getReportableSeverity(), Severity::kINTERNAL_ERROR);
-}
+    inline LogStreamConsumer LOG_FATAL(const Logger& logger)
+    {
+        return LogStreamConsumer(logger.getReportableSeverity(), Severity::kINTERNAL_ERROR);
+    }
 
 } // anonymous namespace
 

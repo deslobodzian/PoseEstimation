@@ -6,11 +6,11 @@
 
 #include <iostream>
 #include <thread>
-#include "yolov5.hpp"
+#include "inference/yolov5.hpp"
 #include "particle_filter.hpp"
 #include "map.hpp"
 #include "Zed.hpp"
-#include "udp_server.hpp"
+#include "networking/udp_server.hpp"
 #include "monocular_camera.hpp"
 
 class PoseEstimator {

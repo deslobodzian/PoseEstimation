@@ -1,4 +1,4 @@
-#include "yolov5.hpp"
+#include "inference/yolov5.hpp"
 
 
 int Yolov5::get_width(int x, float gw, int divisor) {

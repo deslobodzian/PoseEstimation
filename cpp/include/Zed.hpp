@@ -142,10 +142,12 @@ public:
         ObjectData obj = get_object_from_id(id);
         return obj.velocity.x;
     }
+
     float object_vy(int id) {
         ObjectData obj = get_object_from_id(id);
         return obj.velocity.y;
     }
+
     float object_vz(int id) {
         ObjectData obj = get_object_from_id(id);
         return obj.velocity.z;

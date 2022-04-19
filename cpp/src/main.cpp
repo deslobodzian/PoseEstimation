@@ -2,11 +2,11 @@
 // Created by DSlobodzian on 1/2/2022.
 //
 #include <chrono>
-#include "yolov5.hpp"
+#include "inference/yolov5.hpp"
 #include "utils.hpp"
 #include "Zed.hpp"
 #include "pose_estimator.hpp"
-#include "udp_server.hpp"
+#include "networking/udp_server.hpp"
 #include "particle_filter.hpp"
 
 

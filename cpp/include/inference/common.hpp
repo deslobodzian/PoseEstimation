@@ -11,8 +11,8 @@
 
 using namespace nvinfer1;
 
-inline cv::Rect get_rect(cv::Mat& img, float bbox[4]) {
-    int l, r, t, b;
+cv::Rect get_rect(cv::Mat& img, float bbox[4]) {
+    float l, r, t, b;
     float r_w = Yolo::INPUT_W / (img.cols * 1.0);
     float r_h = Yolo::INPUT_H / (img.rows * 1.0);
     if (r_h > r_w) {
@@ -34,15 +34,15 @@ inline cv::Rect get_rect(cv::Mat& img, float bbox[4]) {
         t = t / r_h;
         b = b / r_h;
     }
-    return cv::Rect(l, t, r - l, b - t);
+    return cv::Rect(round(l), round(t), round(r - l), round(b - t));
 }
 
-inline float iou(float lbox[4], float rbox[4]) {
+float iou(float lbox[4], float rbox[4]) {
     float interBox[] = {
-        (std::max)(lbox[0] - lbox[2] / 2.f , rbox[0] - rbox[2] / 2.f), //left
-        (std::min)(lbox[0] + lbox[2] / 2.f , rbox[0] + rbox[2] / 2.f), //right
-        (std::max)(lbox[1] - lbox[3] / 2.f , rbox[1] - rbox[3] / 2.f), //top
-        (std::min)(lbox[1] + lbox[3] / 2.f , rbox[1] + rbox[3] / 2.f), //bottom
+            (std::max)(lbox[0] - lbox[2] / 2.f , rbox[0] - rbox[2] / 2.f), //left
+            (std::min)(lbox[0] + lbox[2] / 2.f , rbox[0] + rbox[2] / 2.f), //right
+            (std::max)(lbox[1] - lbox[3] / 2.f , rbox[1] - rbox[3] / 2.f), //top
+            (std::min)(lbox[1] + lbox[3] / 2.f , rbox[1] + rbox[3] / 2.f), //bottom
     };
 
     if (interBox[2] > interBox[3] || interBox[0] > interBox[1])
@@ -52,11 +52,11 @@ inline float iou(float lbox[4], float rbox[4]) {
     return interBoxS / (lbox[2] * lbox[3] + rbox[2] * rbox[3] - interBoxS);
 }
 
-inline bool cmp(const Yolo::Detection& a, const Yolo::Detection& b) {
+bool cmp(const Yolo::Detection& a, const Yolo::Detection& b) {
     return a.conf > b.conf;
 }
 
-inline void nms(std::vector<Yolo::Detection>& res, float *output, float conf_thresh, float nms_thresh = 0.5) {
+void nms(std::vector<Yolo::Detection>& res, float *output, float conf_thresh, float nms_thresh = 0.5) {
     int det_size = sizeof(Yolo::Detection) / sizeof(float);
     std::map<float, std::vector<Yolo::Detection>> m;
     for (int i = 0; i < output[0] && i < Yolo::MAX_OUTPUT_BBOX_COUNT; i++) {
@@ -85,7 +85,7 @@ inline void nms(std::vector<Yolo::Detection>& res, float *output, float conf_thr
 
 // TensorRT weight files have a simple space delimited format:
 // [type] [size] <data x size in hex>
-inline std::map<std::string, Weights> loadWeights(const std::string file) {
+std::map<std::string, Weights> loadWeights(const std::string file) {
     std::cout << "Loading weights: " << file << std::endl;
     std::map<std::string, Weights> weightMap;
 
@@ -123,7 +123,7 @@ inline std::map<std::string, Weights> loadWeights(const std::string file) {
     return weightMap;
 }
 
-inline IScaleLayer* addBatchNorm2d(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, ITensor& input, std::string lname, float eps) {
+IScaleLayer* addBatchNorm2d(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, ITensor& input, std::string lname, float eps) {
     float *gamma = (float*)weightMap[lname + ".weight"].values;
     float *beta = (float*)weightMap[lname + ".bias"].values;
     float *mean = (float*)weightMap[lname + ".running_mean"].values;
@@ -156,9 +156,11 @@ inline IScaleLayer* addBatchNorm2d(INetworkDefinition *network, std::map<std::st
     return scale_1;
 }
 
-inline ILayer* convBlock(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, ITensor& input, int outch, int ksize, int s, int g, std::string lname) {
+
+
+ILayer* convBlock(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, ITensor& input, int outch, int ksize, int s, int g, std::string lname) {
     Weights emptywts{ DataType::kFLOAT, nullptr, 0 };
-    int p = ksize / 2;
+    int p = ksize / 3;
     IConvolutionLayer* conv1 = network->addConvolutionNd(input, outch, DimsHW{ ksize, ksize }, weightMap[lname + ".conv.weight"], emptywts);
     assert(conv1);
     conv1->setStrideNd(DimsHW{ s, s });
@@ -174,7 +176,7 @@ inline ILayer* convBlock(INetworkDefinition *network, std::map<std::string, Weig
     return ew;
 }
 
-inline ILayer* focus(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, ITensor& input, int inch, int outch, int ksize, std::string lname) {
+ILayer* focus(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, ITensor& input, int inch, int outch, int ksize, std::string lname) {
     ISliceLayer *s1 = network->addSlice(input, Dims3{ 0, 0, 0 }, Dims3{ inch, Yolo::INPUT_H / 2, Yolo::INPUT_W / 2 }, Dims3{ 1, 2, 2 });
     ISliceLayer *s2 = network->addSlice(input, Dims3{ 0, 1, 0 }, Dims3{ inch, Yolo::INPUT_H / 2, Yolo::INPUT_W / 2 }, Dims3{ 1, 2, 2 });
     ISliceLayer *s3 = network->addSlice(input, Dims3{ 0, 0, 1 }, Dims3{ inch, Yolo::INPUT_H / 2, Yolo::INPUT_W / 2 }, Dims3{ 1, 2, 2 });
@@ -185,7 +187,7 @@ inline ILayer* focus(INetworkDefinition *network, std::map<std::string, Weights>
     return conv;
 }
 
-inline ILayer* bottleneck(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, ITensor& input, int c1, int c2, bool shortcut, int g, float e, std::string lname) {
+ILayer* bottleneck(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, ITensor& input, int c1, int c2, bool shortcut, int g, float e, std::string lname) {
     auto cv1 = convBlock(network, weightMap, input, (int)((float)c2 * e), 1, 1, 1, lname + ".cv1");
     auto cv2 = convBlock(network, weightMap, *cv1->getOutput(0), c2, 3, 1, g, lname + ".cv2");
     if (shortcut && c1 == c2) {
@@ -195,7 +197,7 @@ inline ILayer* bottleneck(INetworkDefinition *network, std::map<std::string, Wei
     return cv2;
 }
 
-inline ILayer* bottleneckCSP(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, ITensor& input, int c1, int c2, int n, bool shortcut, int g, float e, std::string lname) {
+ILayer* bottleneckCSP(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, ITensor& input, int c1, int c2, int n, bool shortcut, int g, float e, std::string lname) {
     Weights emptywts{ DataType::kFLOAT, nullptr, 0 };
     int c_ = (int)((float)c2 * e);
     auto cv1 = convBlock(network, weightMap, input, c_, 1, 1, 1, lname + ".cv1");
@@ -218,7 +220,7 @@ inline ILayer* bottleneckCSP(INetworkDefinition *network, std::map<std::string, 
     return cv4;
 }
 
-inline ILayer* C3(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, ITensor& input, int c1, int c2, int n, bool shortcut, int g, float e, std::string lname) {
+ILayer* C3(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, ITensor& input, int c1, int c2, int n, bool shortcut, int g, float e, std::string lname) {
     int c_ = (int)((float)c2 * e);
     auto cv1 = convBlock(network, weightMap, input, c_, 1, 1, 1, lname + ".cv1");
     auto cv2 = convBlock(network, weightMap, input, c_, 1, 1, 1, lname + ".cv2");
@@ -235,7 +237,7 @@ inline ILayer* C3(INetworkDefinition *network, std::map<std::string, Weights>& w
     return cv3;
 }
 
-inline ILayer* SPP(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, ITensor& input, int c1, int c2, int k1, int k2, int k3, std::string lname) {
+ILayer* SPP(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, ITensor& input, int c1, int c2, int k1, int k2, int k3, std::string lname) {
     int c_ = c1 / 2;
     auto cv1 = convBlock(network, weightMap, input, c_, 1, 1, 1, lname + ".cv1");
 
@@ -256,7 +258,26 @@ inline ILayer* SPP(INetworkDefinition *network, std::map<std::string, Weights>& 
     return cv2;
 }
 
-inline std::vector<std::vector<float>> getAnchors(std::map<std::string, Weights>& weightMap, std::string lname) {
+ILayer* SPPF(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, ITensor& input, int c1, int c2, int k, std::string lname) {
+    int c_ = c1 / 2;
+    auto cv1 = convBlock(network, weightMap, input, c_, 1, 1, 1, lname + ".cv1");
+
+    auto pool1 = network->addPoolingNd(*cv1->getOutput(0), PoolingType::kMAX, DimsHW{ k, k });
+    pool1->setPaddingNd(DimsHW{ k / 2, k / 2 });
+    pool1->setStrideNd(DimsHW{ 1, 1 });
+    auto pool2 = network->addPoolingNd(*pool1->getOutput(0), PoolingType::kMAX, DimsHW{ k, k });
+    pool2->setPaddingNd(DimsHW{ k / 2, k / 2 });
+    pool2->setStrideNd(DimsHW{ 1, 1 });
+    auto pool3 = network->addPoolingNd(*pool2->getOutput(0), PoolingType::kMAX, DimsHW{ k, k });
+    pool3->setPaddingNd(DimsHW{ k / 2, k / 2 });
+    pool3->setStrideNd(DimsHW{ 1, 1 });
+    ITensor* inputTensors[] = { cv1->getOutput(0), pool1->getOutput(0), pool2->getOutput(0), pool3->getOutput(0) };
+    auto cat = network->addConcatenation(inputTensors, 4);
+    auto cv2 = convBlock(network, weightMap, *cat->getOutput(0), c2, 1, 1, 1, lname + ".cv2");
+    return cv2;
+}
+
+std::vector<std::vector<float>> getAnchors(std::map<std::string, Weights>& weightMap, std::string lname) {
     std::vector<std::vector<float>> anchors;
     Weights wts = weightMap[lname + ".anchor_grid"];
     int anchor_len = Yolo::CHECK_COUNT * 2;
@@ -268,7 +289,7 @@ inline std::vector<std::vector<float>> getAnchors(std::map<std::string, Weights>
     return anchors;
 }
 
-inline IPluginV2Layer* addYoLoLayer(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, std::string lname, std::vector<IConvolutionLayer*> dets) {
+IPluginV2Layer* addYoLoLayer(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, std::string lname, std::vector<IConvolutionLayer*> dets) {
     auto creator = getPluginRegistry()->getPluginCreator("YoloLayer_TRT", "1");
     auto anchors = getAnchors(weightMap, lname);
     PluginField plugin_fields[2];
@@ -303,4 +324,3 @@ inline IPluginV2Layer* addYoLoLayer(INetworkDefinition *network, std::map<std::s
     return yolo;
 }
 #endif
-

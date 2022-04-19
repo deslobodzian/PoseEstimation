@@ -237,7 +237,7 @@ void YoloLayerPlugin::forwardGpu(const float* const* inputs, float *output, cuda
 {
     int outputElem = 1 + mMaxOutObject * sizeof(Detection) / sizeof(float);
     for (int idx = 0; idx < batchSize; ++idx) {
-        CUDA_CHECK(cudaMemsetAsync(output + idx * outputElem, 0, sizeof(float), stream));
+        CUDA_CHECK(cudaMemset(output + idx * outputElem, 0, sizeof(float)));
     }
     int numElem = 0;
     for (unsigned int i = 0; i < mYoloKernel.size(); ++i) {
@@ -310,4 +310,3 @@ obj->setPluginNamespace(mNamespace.c_str());
 return obj;
 }
 }
-

@@ -19,6 +19,7 @@ int main() {
     ZMQServer server;
 
     while (true) {
+        debug("receiving");
         server.receive_message();
         // wait until the estimator has started all threads before feeding data to the filter.
 //        if (estimator.threads_started()) {

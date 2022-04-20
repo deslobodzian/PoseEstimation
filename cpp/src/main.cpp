@@ -1,11 +1,7 @@
 //
 // Created by DSlobodzian on 1/2/2022.
 //
-#include <chrono>
-#include "inference/yolov5.hpp"
 #include "utils.hpp"
-#include "Zed.hpp"
-#include "pose_estimator.hpp"
 #include "networking/zmq_server.hpp"
 
 
@@ -16,12 +12,10 @@ int main() {
 //    PoseEstimator estimator(0, 1, map.get_landmarks());
 //    std::vector<Eigen::Vector3d> z;
 //    estimator.init();
-    info("test");
     ZMQServer server;
-    info("test1");
+    debug("Starting loop");
     while (true) {
-        debug("receiving");
-//        server.receive_message();
+        server.receive_message();
         // wait until the estimator has started all threads before feeding data to the filter.
 //        if (estimator.threads_started()) {
 	    //auto start = std::chrono::high_resolution_clock::now();

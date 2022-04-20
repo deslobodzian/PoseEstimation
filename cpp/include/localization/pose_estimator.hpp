@@ -17,7 +17,7 @@ class PoseEstimator {
 private:
     int num_monocular_cameras_;
     int num_zed_cameras_;
-    std::vector<Eigen::Vector3d> z_;
+    std::vector<Measurement> z_;
     Eigen::Vector3d init_pose_;
     Server server_;
     Zed zed_;

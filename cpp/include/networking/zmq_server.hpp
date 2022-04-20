@@ -26,6 +26,7 @@ public:
     ~ZMQServer() = default;
 
     void send_message(std::string message) {
+        info("sending");
         _socket.send(zmq::buffer(message), zmq::send_flags::dontwait);
     }
 

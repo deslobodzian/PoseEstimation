@@ -48,9 +48,9 @@ double MonocularCamera::pitch_angle_to_object(tracked_object &obj) {
     return atan((center - object_center).x / focal_length);
 }
 
-void MonocularCamera::add_measurements(std::vector<Eigen::Vector3d> &z) {
+void MonocularCamera::add_measurements(std::vector<Measurement> &z) {
     for (auto object : objects_) {
-        z.push_back(Eigen::Vector3d{-1, yaw_angle_to_object(object), object.class_id});
+        z.push_back(Measurement(-1, yaw_angle_to_object(object), (game_elements) object.class_id));
     }
 }
 
@@ -130,7 +130,7 @@ tracked_object MonocularCamera::closest_object_to_camera(int class_id) {
 }
 
 tracked_object MonocularCamera::closest_object_to_camera(game_elements game_element) {
-    return closest_object_to_camera(game_element);
+    return closest_object_to_camera((int) game_element);
 }
 
 bool MonocularCamera::is_object_in_box(tracked_object &obj, Rect &box) {

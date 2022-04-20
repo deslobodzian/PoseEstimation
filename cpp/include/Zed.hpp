@@ -191,7 +191,7 @@ public:
     }
 
     std::vector<ObjectData> get_objects_from_element(game_elements element) {
-         return get_objects_from_label(element);
+         return get_objects_from_label((int) element);
     }
 
     bool has_objects(int label) {
@@ -236,9 +236,9 @@ public:
          }
     }
 
-    void add_measurements(std::vector<Eigen::Vector3d> &z, game_elements element) {
+    void add_measurements(std::vector<Measurement> &z, game_elements element) {
          for (auto &object : get_objects_from_element(element)) {
-             z.push_back(Eigen::Vector3d{get_distance_to_object(object.id), get_angle_to_object(object.id), element});
+             z.push_back(Measurement(get_distance_to_object(object.id), get_angle_to_object(object.id), element));
          }
     }
 

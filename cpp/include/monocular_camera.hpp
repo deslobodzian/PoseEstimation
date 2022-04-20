@@ -11,7 +11,7 @@
 #include <vector>
 #include <opencv2/opencv.hpp>
 #include <mutex>
-#include <Eigen/Dense>
+#include "localization/particle_filter.hpp"
 #include "map.hpp"
 #include "utils.hpp"
 
@@ -101,7 +101,7 @@ public:
     void add_tracked_objects(std::vector<tracked_object> objs);
     double yaw_angle_to_object(tracked_object &obj);
     double pitch_angle_to_object(tracked_object &obj);
-    void add_measurements(std::vector<Eigen::Vector3d> &z);
+    void add_measurements(std::vector<Measurement> &z);
     void update_objects();
     bool is_object_in_box(tracked_object &obj, Rect &rect);
     std::vector<tracked_object> get_objects(int class_id);

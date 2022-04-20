@@ -16,7 +16,7 @@ int main() {
 //    PoseEstimator estimator(0, 1, map.get_landmarks());
 //    std::vector<Eigen::Vector3d> z;
 //    estimator.init();
-    ZMQServer server;
+//    ZMQServer server;
     info("test");
     while (true) {
         debug("receiving");

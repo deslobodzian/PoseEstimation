@@ -22,6 +22,7 @@ public:
         _socket.bind(_address);
         info("Bind success");
     }
+
     ~ZMQServer() = default;
 
     void send_message(std::string message) {

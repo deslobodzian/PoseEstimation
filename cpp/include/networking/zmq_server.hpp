@@ -20,6 +20,7 @@ public:
         // bind socket
         info("Binding Socket: " + _address);
         _socket.bind(_address);
+        info("Bind success");
     }
     ~ZMQServer() = default;
 

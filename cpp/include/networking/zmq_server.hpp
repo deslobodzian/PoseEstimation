@@ -13,10 +13,10 @@ class ZMQServer {
 private:
     zmq::socket_t _socket;
     std::string _address = "tcp://*:5555";
+    zmq::context_t _ctx;
 public:
     ZMQServer() {
-        zmq::context_t ctx;
-        _socket = zmq::socket_t(ctx, zmq::socket_type::dealer);
+        _socket = zmq::socket_t(_ctx, zmq::socket_type::dealer);
         // bind socket
         info("Binding Socket: " + _address);
         _socket.bind(_address);

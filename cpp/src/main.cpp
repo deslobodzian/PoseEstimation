@@ -17,10 +17,10 @@ int main() {
 //    std::vector<Eigen::Vector3d> z;
 //    estimator.init();
     ZMQServer server;
-
+    info("test");
     while (true) {
         debug("receiving");
-        server.receive_message();
+//        server.receive_message();
         // wait until the estimator has started all threads before feeding data to the filter.
 //        if (estimator.threads_started()) {
 	    //auto start = std::chrono::high_resolution_clock::now();

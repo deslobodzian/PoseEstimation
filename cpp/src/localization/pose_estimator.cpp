@@ -156,14 +156,14 @@ void PoseEstimator::print_measurements(int camera_id) {
     info(message);
 }
 
-void PoseEstimator::print_zed_measurements(int label) {
-    std::string message =
-            "ZED vision measurement { Object [" + std::to_string(label) +
-            "]: Distance [" + std::to_string(zed_.get_distance_to_object_label(label)) +
-            "] meters, Angle [" + std::to_string(zed_.get_angle_to_object_label(label)) +
-            "] radians}";
-    debug(message);
-}
+//void PoseEstimator::print_zed_measurements(int label) {
+//    std::string message =
+//            "ZED vision measurement { Object [" + std::to_string(label) +
+//            "]: Distance [" + std::to_string(zed_.get_distance_to_object_label(label)) +
+//            "] meters, Angle [" + std::to_string(zed_.get_angle_to_object_label(label)) +
+//            "] radians}";
+//    debug(message);
+//}
 
 
 void PoseEstimator::send_message() {
@@ -185,24 +185,24 @@ void PoseEstimator::send_message() {
 //    info("Closest red ball yaw" + std::to_string(red_ball_yaw));
 //    info("Closest blue ball yaw" + std::to_string(blue_ball_yaw));
     auto time = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now().time_since_epoch()).count();
-    output_frame frame(
-            time,
-            0,
-            0,
-            0,
-            zed_.has_objects(1),
-            zed_.get_distance_to_object_label(1),
-            zed_.get_angle_to_object_label(1),
-            zed_.object_x_from_catapult(1),
-            zed_.object_y_from_catapult(1),
-            zed_.object_z_from_catapult(1),
-            zed_.object_vx(1),
-            zed_.object_vy(1),
-            zed_.object_vz(1),
-            blue_ball_yaw,
-            red_ball_yaw
-    );
-    server_.set_data_frame(frame);
+//    output_frame frame(
+//            time,
+//            0,
+//            0,
+//            0,
+//            zed_.has_objects(1),
+//            zed_.get_distance_to_object_label(1),
+//            zed_.get_angle_to_object_label(1),
+//            zed_.object_x_from_catapult(1),
+//            zed_.object_y_from_catapult(1),
+//            zed_.object_z_from_catapult(1),
+//            zed_.object_vx(1),
+//            zed_.object_vy(1),
+//            zed_.object_vz(1),
+//            blue_ball_yaw,
+//            red_ball_yaw
+//    );
+//    server_.set_data_frame(frame);
 }
 
 Zed& PoseEstimator::get_zed() {

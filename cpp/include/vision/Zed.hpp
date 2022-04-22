@@ -9,6 +9,7 @@
 #include <chrono>
 #include <Eigen/Dense>
 #include "map.hpp"
+#include "localization/particle_filter.hpp"
 
 #define CAM_TO_ROBOT_X -0.361696
 #define CAM_TO_ROBOT_Y -0.00889

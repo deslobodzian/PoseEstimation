@@ -62,39 +62,6 @@ public:
     void close();
 
 
-    float catapult_phi_angle_to_object(ObjectData& object) {
-        float ty = calibration_params_.stereo_transform.ty * 0.5f;
-        Eigen::Vector2d a(object.position.x, object.position.y - ty - CAM_TO_CATAPULT_Y);
-        Eigen::Vector2d b(1, 0);
-	    float angle = 0;
-	    if (object.position.y < 0) {
-             	angle = -acos(a.dot(b)/(a.norm() * b.norm()));
-	    } else {
-            	angle = acos(a.dot(b)/(a.norm() * b.norm()));
-	    }
-        return angle;
-    }
-
-
-    bool has_objects(int label) {
-         return !get_objects_from_label(label).empty();
-    }
-
-
-    double get_angle_to_object(int id) {
-        ObjectData obj = get_object_from_id(id);
-        return catapult_phi_angle_to_object(obj);
-    }
-
-    double get_angle_to_object_label(int label) {
-         std::vector<ObjectData> tmp = get_objects_from_label(label);
-         if (tmp.empty()) {
-             return 333;
-         } else {
-             return get_angle_to_object(tmp.at(0).id);
-         }
-     }
-
     void print_object(int label) {
          for (auto object : get_objects_from_label(label)) {
 		        std::cout << "Object label {" << object.raw_label << "} with id {" << object.id << "}\n";

@@ -9,9 +9,9 @@
 #include "inference/yolov5.hpp"
 #include "particle_filter.hpp"
 #include "map.hpp"
-#include "Zed.hpp"
+#include "camera/Zed.hpp"
 #include "networking/udp_server.hpp"
-#include "monocular_camera.hpp"
+#include "camera/monocular_camera.hpp"
 
 class PoseEstimator {
 private:

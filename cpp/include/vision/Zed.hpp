@@ -52,51 +52,15 @@ public:
 
     ObjectData get_object_from_id(int id);
     std::vector<ObjectData> get_objects_from_label(int label);
+    std::vector<ObjectData> get_objects_from_element(game_elements element);
+
+    sl::Transform get_calibration_stereo_transform();
+
+    sl::Mat get_left_image();
+    sl::Mat get_right_image();
 
     void close();
 
-    // Basic euclidean distance equation.
-    float robot_distance_to_object(ObjectData& object) {
-        float ty = calibration_params_.stereo_transform.ty * 0.5f;
-        Transform tmp;
-        tmp.setIdentity();
-        tmp.ty = ty;
-        float x = pow(object.position.x, 2);
-        float y = pow(object.position.y - tmp.ty, 2);
-        float z = pow(object.position.z, 2);
-        return sqrt(x + y + z);
-    }
-
-    float object_x_from_catapult(int id) {
-        ObjectData obj = get_object_from_id(id);
-        return obj.position.x;
-    }
-
-    float object_y_from_catapult(int id) {
-        ObjectData obj = get_object_from_id(id);
-        float ty = calibration_params_.stereo_transform.ty * 0.5f;
-        return obj.position.y - ty - CAM_TO_CATAPULT_Y;
-    }
-
-    float object_z_from_catapult(int id) {
-        ObjectData obj = get_object_from_id(id);
-        return obj.position.z;
-    }
-
-    float object_vx(int id) {
-        ObjectData obj = get_object_from_id(id);
-        return obj.velocity.x;
-    }
-
-    float object_vy(int id) {
-        ObjectData obj = get_object_from_id(id);
-        return obj.velocity.y;
-    }
-
-    float object_vz(int id) {
-        ObjectData obj = get_object_from_id(id);
-        return obj.velocity.z;
-    }
 
     float catapult_phi_angle_to_object(ObjectData& object) {
         float ty = calibration_params_.stereo_transform.ty * 0.5f;
@@ -111,31 +75,11 @@ public:
         return angle;
     }
 
-    std::vector<ObjectData> get_objects_from_element(game_elements element) {
-         return get_objects_from_label((int) element);
-    }
 
     bool has_objects(int label) {
          return !get_objects_from_label(label).empty();
     }
 
-    double get_distance_to_object(int id) {
-        ObjectData obj = get_object_from_id(id);
-        return robot_distance_to_object(obj);
-    }
-
-    double get_distance_to_object_label(int label) {
-        std::vector<ObjectData> tmp = get_objects_from_label(label);
-        if (tmp.empty()) {
-            return -1;
-        } else {
-            return get_distance_to_object(tmp.at(0).id);
-        }
-    }
-
-    double get_distance_to_object(game_elements element) {
-        return get_distance_to_object_label(element);
-    }
 
     double get_angle_to_object(int id) {
         ObjectData obj = get_object_from_id(id);
@@ -203,23 +147,6 @@ public:
         return 0;
     }
 
-    sl::Mat get_left_image() {
-        if (successful_grab()) {
-	    sl::Mat im;
-            zed_.retrieveImage(im, VIEW::LEFT);
-	    return im;
-        }
-        return sl::Mat();
-    }
-
-    sl::Mat get_right_image() {
-        if (successful_grab()) {
-            sl::Mat im;
-            zed_.retrieveImage(im, VIEW::RIGHT, MEM::GPU);
-            return im;
-        }
-        return sl::Mat();
-    }
 
 
     void print_pose(Pose& pose) {

@@ -33,6 +33,11 @@ public:
     const double get_vx();
     const double get_vy();
     const double get_vz();
+
+    double get_distance(double x_offset, double y_offset, double z_offset);
+    double get_distance(sl::Transform offset);
+    double get_yaw_angle();
+    double get_pitch_angle();
 };
 
 #endif //POSE_ESTIMATION_TARGET_INFO_HPP

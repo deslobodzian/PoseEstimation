@@ -94,6 +94,31 @@ std::vector<ObjectData> Zed::get_objects_from_label(int label) {
     return tmp;
 }
 
+std::vector<ObjectData> Zed::get_objects_from_element(game_elements element) {
+    return get_objects_from_label((int) element);
+}
+
+sl::Transform Zed::get_calibration_stereo_transform() {
+    return calibration_params_.stereo_transform;
+}
+
+sl::Mat Zed::get_left_image() {
+    if (successful_grab()) {
+        sl::Mat im;
+        zed_.retrieveImage(im, VIEW::LEFT);
+        return im;
+    }
+    return sl::Mat();
+}
+
+sl::Mat Zed::get_right_image() {
+    if (successful_grab()) {
+        sl::Mat im;
+        zed_.retrieveImage(im, VIEW::RIGHT);
+        return im;
+    }
+    return sl::Mat();
+}
 
 void Zed::close() {
     zed_.close();

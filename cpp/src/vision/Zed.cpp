@@ -1,7 +1,7 @@
 //
 // Created by DSlobodzian on 4/21/2022.
 //
-#include "camera/Zed.hpp"
+#include "vision/Zed.hpp"
 
 Zed::Zed() {
     // Initial Parameters
@@ -39,7 +39,7 @@ bool Zed::open_camera() {
 bool Zed::enable_tracking() {
     PositionalTrackingParameters tracking_params;
     if (!zed_.isOpened()) {
-        error("Opening camera failed");
+        error("Opening vision failed");
         return false;
     }
     tracking_params.enable_area_memory = true;
@@ -51,7 +51,7 @@ bool Zed::enable_tracking() {
 bool Zed::enable_tracking(Eigen::Vector3d init_pose) {
     PositionalTrackingParameters tracking_params;
     if (!zed_.isOpened()) {
-        error("Opening camera failed");
+        error("Opening vision failed");
         return false;
     }
     tracking_params.enable_area_memory = true;

@@ -1,7 +1,7 @@
 //
 // Created by DSlobodzian on 1/27/2022.
 //
-#include "camera/monocular_camera.hpp"
+#include "vision/monocular_camera.hpp"
 
 MonocularCamera::MonocularCamera(int device_id, camera_config config) {
     device_id_ = device_id;

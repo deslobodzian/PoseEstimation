@@ -117,7 +117,7 @@ void PoseEstimator::init() {
 //         std::to_string(init_pose_(1)) + ", " +
 //         std::to_string(init_pose_(2)) + "]");
 
-    info("Starting ZED camera thread.");
+    info("Starting ZED vision thread.");
     inference_threads_.push_back(
             std::thread(
                     &PoseEstimator::run_inference_zed,
@@ -125,7 +125,7 @@ void PoseEstimator::init() {
                     std::ref(zed_)
             ));
 
-    info("Starting monocular camera threads.");
+    info("Starting monocular vision threads.");
     for (int i = 0; i < num_monocular_cameras_; ++i) {
         inference_threads_.push_back(
                 std::thread(
@@ -158,7 +158,7 @@ void PoseEstimator::print_measurements(int camera_id) {
 
 void PoseEstimator::print_zed_measurements(int label) {
     std::string message =
-            "ZED camera measurement { Object [" + std::to_string(label) +
+            "ZED vision measurement { Object [" + std::to_string(label) +
             "]: Distance [" + std::to_string(zed_.get_distance_to_object_label(label)) +
             "] meters, Angle [" + std::to_string(zed_.get_angle_to_object_label(label)) +
             "] radians}";
@@ -168,7 +168,7 @@ void PoseEstimator::print_zed_measurements(int label) {
 
 void PoseEstimator::send_message() {
     zed_.update_objects();
-    // Camera ID 0, will be the camera facing the intake.
+    // Camera ID 0, will be the vision facing the intake.
     double blue_ball_yaw = -99;
     double red_ball_yaw = -99;
     if (num_monocular_cameras_ > 0) {
@@ -216,7 +216,7 @@ void PoseEstimator::display_frame(int camera_id) {
 	if (!frame.empty()) {
 		cv::imshow(id, monocular_cameras_.at(camera_id).get_frame());
 	} else {
-		error("Frame empty in camera [" + std::to_string(camera_id));
+		error("Frame empty in vision [" + std::to_string(camera_id));
 	}
 }
 

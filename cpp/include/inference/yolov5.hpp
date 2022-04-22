@@ -14,7 +14,7 @@
 #include "calibrator.h"
 #include <mutex>
 
-#include "camera/monocular_camera.hpp"
+#include "vision/monocular_camera.hpp"
 #include <sl/Camera.hpp>
 
 #define USE_FP16  // set USE_INT8 or USE_FP16 or USE_FP32

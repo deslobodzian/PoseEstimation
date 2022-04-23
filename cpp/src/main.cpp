@@ -17,6 +17,7 @@ int main() {
     while (true) {
         server.send_message("Test");
         server.receive_message();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
 //        server.receive_message();
         // wait until the estimator has started all threads before feeding data to the filter.
 //        if (estimator.threads_started()) {

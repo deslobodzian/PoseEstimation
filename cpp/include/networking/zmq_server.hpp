@@ -16,7 +16,7 @@ private:
     zmq::context_t _ctx;
 public:
     ZMQServer() {
-        _socket = zmq::socket_t(_ctx, zmq::socket_type::pair);
+        _socket = zmq::socket_t(_ctx, zmq::socket_type::router);
         // bind socket
         info("Binding Socket: " + _address);
         _socket.bind(_address);

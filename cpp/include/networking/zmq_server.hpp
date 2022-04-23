@@ -12,7 +12,7 @@
 class ZMQServer {
 private:
     zmq::socket_t _socket;
-    std::string _address = "tcp://0.0.0.0:27001";
+    std::string _address = "tcp://10.56.87.20:27001";
     zmq::context_t _ctx;
 public:
     ZMQServer() {

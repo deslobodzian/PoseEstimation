@@ -76,9 +76,9 @@ void PoseEstimator::update_measurements() {
     for (auto &camera : monocular_cameras_) {
         camera.add_measurements(z_);
     }
-    zed_.add_measurements(z_, blue_plate);
-    zed_.add_measurements(z_, red_plate);
-    zed_.add_measurements(z_, goal);
+//    zed_.add_measurements(z_, blue_plate);
+//    zed_.add_measurements(z_, red_plate);
+//    zed_.add_measurements(z_, goal);
 }
 
 void PoseEstimator::estimate_pose() {

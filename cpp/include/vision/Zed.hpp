@@ -59,61 +59,8 @@ public:
     sl::Mat get_left_image();
     sl::Mat get_right_image();
 
+    Pose get_camera_pose();
     void close();
-
-
-    void print_object(int label) {
-         for (auto object : get_objects_from_label(label)) {
-		        std::cout << "Object label {" << object.raw_label << "} with id {" << object.id << "}\n";
-         }
-    }
-
-    void add_measurements(std::vector<Measurement> &z, game_elements element) {
-         for (auto &object : get_objects_from_element(element)) {
-             z.push_back(Measurement(get_distance_to_object(object.id), get_angle_to_object(object.id), element));
-         }
-    }
-
-    Pose get_camera_pose() {
-         zed_.getPosition(camera_pose_, sl::REFERENCE_FRAME::CAMERA);
-         if (successful_grab()) {
-             return camera_pose_;
-         }
-         return Pose();
-    }
-
-
-    void transform_pose(Transform &pose, float tx, float ty, float tz) {
-        Transform tmpTransform;
-        tmpTransform.setIdentity();
-        tmpTransform.tx = tx;
-        tmpTransform.ty = ty;
-        tmpTransform.tz = tz;
-        pose = Transform::inverse(tmpTransform) * pose * tmpTransform;
-    }
-
-    void transform_pose(Transform &pose, Transform transform) {
-         pose = Transform::inverse(transform) * pose * transform;
-    }
-
-    float get_linear_velocity_x() {
-        if (successful_grab()) {
-            zed_.getSensorsData(sensors_data_, TIME_REFERENCE::IMAGE);
-            imu_data_ = sensors_data_.imu;
-            return imu_data_.linear_acceleration.tx;
-        }
-        return 0;
-    }
-
-    float get_linear_velocity_y() {
-        if (successful_grab()) {
-            zed_.getSensorsData(sensors_data_, TIME_REFERENCE::IMAGE);
-            imu_data_ = sensors_data_.imu;
-            return imu_data_.linear_acceleration.ty;
-        }
-        return 0;
-    }
-
 
 
     void print_pose(Pose& pose) {
@@ -122,5 +69,3 @@ public:
     }
 
 };
-
-//

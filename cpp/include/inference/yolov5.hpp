@@ -70,8 +70,6 @@ public:
     bool prepare_inference(cv::Mat& img_cv_rgb);
     void run_inference_and_convert_to_zed(cv::Mat& img_cv_rgb);
     void run_inference(cv::Mat& img_cv_rgb);
-    template <typename T>
-    void convert_for_zed_sdk(T& res, cv::Mat& img_cv_rgb);
     std::vector<sl::CustomBoxObjectData> get_custom_obj_data();
     std::vector<tracked_object> get_monocular_obj_data();
 

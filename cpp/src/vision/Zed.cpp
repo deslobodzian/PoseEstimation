@@ -120,6 +120,14 @@ sl::Mat Zed::get_right_image() {
     return sl::Mat();
 }
 
+sl::Pose Zed::get_camera_pose() {
+    zed_.getPosition(camera_pose_, sl::REFERENCE_FRAME::CAMERA);
+    if (successful_grab()) {
+        return camera_pose_;
+    }
+    return Pose();
+}
+
 void Zed::close() {
     zed_.close();
 }

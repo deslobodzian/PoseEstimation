@@ -3,7 +3,6 @@
 //
 #include "utils.hpp"
 #include "networking/zmq_server.hpp"
-#include "networking/udp_server.hpp"
 
 
 int main() {
@@ -14,13 +13,11 @@ int main() {
 //    std::vector<Eigen::Vector3d> z;
 //    estimator.init();
     ZMQServer server;
-    Server udp_server;
 
     debug("Starting loop");
     while (true) {
-        udp_server.send("Test");
-//        server.send_message("Test");
-//        server.receive_message();
+        server.send_message("Test");
+        server.receive_message();
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
 //        server.receive_message();
         // wait until the estimator has started all threads before feeding data to the filter.

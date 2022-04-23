@@ -31,7 +31,7 @@ public:
 
     void receive_message() {
         zmq::message_t incoming_frame;
-        _socket.recv(incoming_frame, zmq::recv_flags::none);
+        _socket.recv(incoming_frame, zmq::recv_flags::dontwait);
         info("Incoming frame {" + incoming_frame.str() + "}");
     }
 };

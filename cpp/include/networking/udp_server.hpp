@@ -85,8 +85,7 @@ struct input_frame{
                 break;
         }
     }
-}
-
+};
 
 class Server {
 

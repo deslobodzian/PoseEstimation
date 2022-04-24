@@ -19,12 +19,12 @@
 
 struct output_frame {
 
-    enum PACK_TYPE {
+    enum FRAME_TYPE {
         DEFAULT = 0,
         TRACKED_OBJECTS = 1
     };
 
-    PACK_TYPE type;
+    FRAME_TYPE type;
     std::vector<TrackedObjectInfo> tracked_objects;
 
     output_frame() {
@@ -53,12 +53,14 @@ struct output_frame {
 };
 
 struct input_frame{
-    int id;
+    enum FRAME_TYPE {
+        DEFAULT = 0,
+        INIT = 1
+    };
     long millis;
     ControlInput input;
     double init_pose[3]; // initial position [x, y, theta]
     input_frame() {
-        id = -1;
         millis = 0;
         input.dx = 0;
         input.dy = 0;
@@ -68,20 +70,22 @@ struct input_frame{
         init_pose[2] = 0;
     };
     input_frame(std::vector<std::string> values) {
-        if (atof(values.at(0).c_str()) == 0) {
-            id = 0;
-            init_pose[0] = atof(values.at(1).c_str());
-            init_pose[1] = atof(values.at(2).c_str());
-            init_pose[2] = atof(values.at(3).c_str());
-        } else {
-            id = 1;
-            millis = atof(values.at(1).c_str());
-            input.dx = atof(values.at(2).c_str());
-            input.dy = atof(values.at(3).c_str());
-            input.d_theta = atof(values.at(4).c_str());
+        FRAME_TYPE type = (FRAME_TYPE) atof(values.at(0).c_str());
+        switch (type) {
+            case DEFAULT:
+                millis = atof(values.at(1).c_str());
+                input.dx = atof(values.at(2).c_str());
+                input.dy = atof(values.at(3).c_str());
+                input.d_theta = atof(values.at(4).c_str());
+                break;
+            case INIT:
+                init_pose[0] = atof(values.at(1).c_str());
+                init_pose[1] = atof(values.at(2).c_str());
+                init_pose[2] = atof(values.at(3).c_str());
+                break;
         }
     }
-};
+}
 
 
 class Server {
@@ -175,7 +179,7 @@ public:
     }
 
     int send(output_frame &frame) {
-        return send(frame.to_udp_string());
+        return send(frame.to_packet());
     }
 
     std::vector<std::string> split( const std::string& str, char delimiter = ';' ) {

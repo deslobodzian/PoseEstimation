@@ -110,8 +110,6 @@ private:
     input_frame prev_frame_;
     input_frame init_pose_;
     output_frame data_frame_;
-    bool has_init_pose_ = false;
-    bool real_data_started_ = false;
 
     std::thread data_thread_;
     std::thread recv_thread_;
@@ -202,10 +200,8 @@ public:
         if (values.size() >= 5) {
             if (atof(values.at(0).c_str()) == 0) {
                 init_pose_ = input_frame(values);
-                has_init_pose_ = true;
                 return input_frame();
             } else {
-                real_data_started_ = true;
                 return input_frame(values);
             }
         }
@@ -216,7 +212,7 @@ public:
             error("No frame");
         } else {
             input_frame incoming_frame = get_new_frame();
-            if (incoming_frame.millis > latest_frame_.millis && incoming_frame.id == 1) {
+            if (incoming_frame.millis > latest_frame_.millis) {
 //                info("Received frame");
                 prev_frame_ = latest_frame_;
                 latest_frame_ = incoming_frame;

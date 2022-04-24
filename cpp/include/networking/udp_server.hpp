@@ -11,110 +11,58 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <iostream>
+#include "vision/tracked_object_info.hpp"
+#include "localization/particle_filter.hpp"
 #include <cmath>
 
 #define BUFFER_SIZE 1024
 
 struct output_frame {
-    long millis;
-    double est_x;
-    double est_y;
-    double est_heading;
-    bool has_target;
-    double goal_distance;
-    double goal_angle;
-    double goal_x;
-    double goal_y;
-    double goal_z;
-    double goal_vx;
-    double goal_vy;
-    double goal_vz;
-    double blue_ball_yaw;
-    double red_ball_yaw;
+
+    enum PACK_TYPE {
+        DEFAULT = 0,
+        TRACKED_OBJECTS = 1
+    };
+
+    PACK_TYPE type;
+    std::vector<TrackedObjectInfo> tracked_objects;
+
     output_frame() {
-        millis = 0;
-        est_x = 0;
-        est_y = 0;
-        est_heading = 0;
-        has_target = false;
-        goal_distance = 0;
-        goal_angle = 0;
-        goal_x = 0;
-        goal_y = 0;
-        goal_z = 0;
-        goal_vx = 0;
-        goal_vy = 0;
-        goal_vz = 0;
-        blue_ball_yaw = 0;
-        red_ball_yaw = 0;
+        type = DEFAULT;
     }
-    output_frame(
-            long m,
-            double x,
-            double y,
-            double heading,
-            bool target,
-            double goal_dist,
-            double goal_ang,
-            double gx,
-            double gy,
-            double gz,
-            double vx,
-            double vy,
-            double vz,
-            double b_ball_yaw,
-            double r_ball_yaw
-            ) {
-        millis = m;
-        est_x = x;
-        est_y = y;
-        est_heading = heading;
-        has_target = target;
-        goal_distance = goal_dist;
-        goal_angle = goal_ang;
-        goal_x = gx;
-        goal_y = gy;
-        goal_z = gz;
-        goal_vx = vx;
-        goal_vy = vy;
-        goal_vz = vz;
-        blue_ball_yaw = b_ball_yaw;
-        red_ball_yaw= r_ball_yaw;
+
+    output_frame(std::vector<TrackedObjectInfo> tracked_objects) {
+        type = TRACKED_OBJECTS;
+        this->tracked_objects = tracked_objects;
     }
-    double is_nan(double value) {
-        return isnan(value) ? value : -999;
-    }
-    std::string to_udp_string() {
-        std::string value = std::to_string(millis) + ";" +
-                            std::to_string(is_nan(est_x)) + ";" +
-                            std::to_string(is_nan(est_y)) + ";" +
-                            std::to_string(is_nan(est_heading)) +  ";" +
-                            std::to_string(has_target) +  ";" +
-                            std::to_string(is_nan(goal_distance)) +  ";" +
-                            std::to_string(is_nan(goal_angle)) + ";" +
-                            std::to_string(is_nan(goal_x)) + ";" +
-                            std::to_string(is_nan(goal_y)) + ";" +
-                            std::to_string(is_nan(goal_z)) + ";" +
-                            std::to_string(is_nan(goal_vx)) + ";" +
-                            std::to_string(is_nan(goal_vy)) + ";" +
-                            std::to_string(is_nan(goal_vz)) + ";" +
-                            std::to_string(is_nan(blue_ball_yaw)) + ";" +
-                            std::to_string(is_nan(red_ball_yaw));
-        return value;
+
+    std::string to_packet() {
+        std::string packet;
+        switch (type) {
+            case DEFAULT:
+                packet = std::to_string(DEFAULT) + ";";
+                return packet;
+            case TRACKED_OBJECTS:
+                packet = std::to_string(TRACKED_OBJECTS) + ";";
+                for (auto object : tracked_objects) {
+                    packet.append(object.to_packet());
+                }
+                return packet;
+        }
     }
 };
 
 struct input_frame{
     int id;
     long millis;
-    double u[3]; // odometry [dx, dy, dTheta]
+    ControlInput input;
     double init_pose[3]; // initial position [x, y, theta]
     input_frame() {
         id = -1;
         millis = 0;
-        u[0] = 0;
-        u[1] = 0;
-        u[2] = 0;
+        input.dx = 0;
+        input.dy = 0;
+        input.d_theta = 0;
         init_pose[0] = 0;
         init_pose[1] = 0;
         init_pose[2] = 0;
@@ -128,9 +76,9 @@ struct input_frame{
         } else {
             id = 1;
             millis = atof(values.at(1).c_str());
-            u[0] = atof(values.at(2).c_str());
-            u[1] = atof(values.at(3).c_str());
-            u[2] = atof(values.at(4).c_str());
+            input.dx = atof(values.at(2).c_str());
+            input.dy = atof(values.at(3).c_str());
+            input.d_theta = atof(values.at(4).c_str());
         }
     }
 };
@@ -173,9 +121,6 @@ public:
         if (server_socket_ < 0) {
             error("ERROR: Couldn't open socket");
         }
-//        if (receive_socket_ < 0) {
-//            error("Couldn't open receive socket");
-//        }
 
         optval = 1;
         setsockopt(server_socket_,
@@ -229,6 +174,10 @@ public:
         return sendto(client_socket_, buf, strlen(buf), 0, (struct sockaddr*) &clientAddr_, clientLength_);
     }
 
+    int send(output_frame &frame) {
+        return send(frame.to_udp_string());
+    }
+
     std::vector<std::string> split( const std::string& str, char delimiter = ';' ) {
         std::vector<std::string> result ;
         std::istringstream stm(str) ;
@@ -237,10 +186,6 @@ public:
         return result ;
     }
 
-    int send(output_frame &frame) {
-//        info("Sent frame");
-        return send(frame.to_udp_string());
-    }
 
     std::string get_message() {
         std::string s(receive_buf, sizeof(receive_buf));
@@ -281,16 +226,9 @@ public:
     input_frame get_latest_frame() {
         return latest_frame_;
     }
+
     input_frame get_init_pose_frame() {
         return init_pose_;
-    }
-
-    bool received_init_pose() {
-        return has_init_pose_;
-    }
-
-    bool real_data_started() {
-        return real_data_started_;
     }
 
     void set_data_frame(output_frame &frame) {

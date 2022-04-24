@@ -9,9 +9,8 @@
 #include <Eigen/Dense>
 #include "map.hpp"
 
-class TargetInfo {
+class TrackedObjectInfo {
 private:
-
     game_elements element_;
     double x_;
     double y_;
@@ -22,9 +21,9 @@ private:
     double vz_;
 
 public:
-    TargetInfo();
-    TargetInfo(sl::ObjectData object);
-    ~TargetInfo();
+    TrackedObjectInfo();
+    TrackedObjectInfo(sl::ObjectData object);
+    ~TrackedObjectInfo();
 
     const double get_x();
     const double get_y();
@@ -38,6 +37,7 @@ public:
     double get_distance(sl::Transform offset);
     double get_yaw_angle();
     double get_pitch_angle();
+    std::string to_packet();
 };
 
 #endif //POSE_ESTIMATION_TARGET_INFO_HPP

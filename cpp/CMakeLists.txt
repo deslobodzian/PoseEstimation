@@ -21,6 +21,7 @@ SET(EXECUTABLE_OUTPUT_PATH ".")
 SET(SPECIAL_OS_LIBS "")
 
 find_package(ZED 3 REQUIRED)
+find_package(wpilib REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(GLEW REQUIRED)
@@ -47,18 +48,18 @@ link_directories(${OpenGL_LIBRARY_DIRS})
 link_directories(${CUDA_LIBRARY_DIRS})
 link_directories(${OpenCV_LIBRARY_DIRS})
 # cuda
-#include_directories(/usr/local/cuda/include)
-#link_directories(/usr/local/cuda/lib64)
+include_directories(/usr/local/cuda/include)
+link_directories(/usr/local/cuda/lib64)
 # tensorrt
-#include_directories(/usr/include/x86_64-linux-gnu/)
-#link_directories(/usr/lib/x86_64-linux-gnu/)
+include_directories(/usr/include/x86_64-linux-gnu/)
+link_directories(/usr/lib/x86_64-linux-gnu/)
 
 FILE(GLOB_RECURSE SRC_FILES src/*.c*)
 FILE(GLOB_RECURSE HDR_FILES include/*.h*)
 
 set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} -std=c++11)
 cuda_add_executable(${PROJECT_NAME} ${HDR_FILES} ${SRC_FILES})
-#add_definitions(-std=c++14 -g -O3 -D_MWAITXINTRIN_H_INCLUDED -Wno-deprecated-declarations)
+add_definitions(-std=c++14 -g -O3 -D_MWAITXINTRIN_H_INCLUDED -Wno-deprecated-declarations)
 
 if (LINK_SHARED_ZED)
     SET(ZED_LIBS ${ZED_LIBRARIES} ${CUDA_CUDA_LIBRARY} ${CUDA_CUDART_LIBRARY})
@@ -80,6 +81,11 @@ target_link_libraries(
         ${CUDA_CUDA_LIBRARY}
         ${CUDA_CUDART_LIBRARY}
         Eigen3::Eigen
+	zmq
+	cameraserver
+	ntcore
+	cscore
+	wpiutil
 )
 
 if(INSTALL_SAMPLES)

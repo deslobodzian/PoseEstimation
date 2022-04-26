@@ -19,7 +19,7 @@ private:
     int num_zed_cameras_;
     std::vector<Measurement> z_;
     Eigen::Vector3d init_pose_;
-    Server server_;
+    UDPServer server_;
     Zed zed_;
     ParticleFilter filter_;
     std::string engine_name_ = "custom.engine";

@@ -87,7 +87,7 @@ struct input_frame{
     }
 };
 
-class Server {
+class UDPServer {
 
 private:
     int server_socket_;
@@ -115,7 +115,7 @@ private:
     std::thread recv_thread_;
 
 public:
-    Server() {
+    UDPServer() {
         server_socket_ = socket(AF_INET, SOCK_DGRAM, 0);
         client_socket_ = socket(AF_INET, SOCK_DGRAM, 0);
 
@@ -154,7 +154,7 @@ public:
         }
     }
 
-    ~Server() = default;
+    ~UDPServer() = default;
 
     int receive() {
         bzero(receive_buf, BUFFER_SIZE);

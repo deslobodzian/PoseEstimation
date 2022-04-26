@@ -12,6 +12,7 @@
 class CameraServer {
 
 private:
+    cs::MjpegServer server_;
     cs::CvSource cv_source_;
     MonocularCamera camera_;
 

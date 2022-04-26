@@ -9,9 +9,9 @@ PoseEstimator::PoseEstimator(int num_monocular_cameras) {
     num_monocular_cameras_ = num_monocular_cameras;
     for (int i = 0; i < num_monocular_cameras_; ++i) {
         // Logitech C920s
-        camera_config config = camera_config(78, resolution(1280, 720), 60);
-        monocular_cameras_.emplace_back(MonocularCamera(i, config));
-        monocular_cameras_.at(i).open_camera();
+//        camera_config config = camera_config(78, resolution(1280, 720), 60);
+//        monocular_cameras_.emplace_back(MonocularCamera(i, config));
+//        monocular_cameras_.at(i).open_camera();
     }
 }
 
@@ -24,9 +24,9 @@ PoseEstimator::PoseEstimator(int num_monocular_cameras, int num_zed_cameras, std
     }
     // Logitech C920s
     for (int i = 0; i < num_monocular_cameras_; ++i) {
-        camera_config config = camera_config(78, resolution(1280, 720), 60);
-        monocular_cameras_.emplace_back(MonocularCamera(i, config));
-        monocular_cameras_.at(i).open_camera();
+//        camera_config config = camera_config(78, resolution(1280, 720), 60);
+//        monocular_cameras_.emplace_back(MonocularCamera(i, config));
+//        monocular_cameras_.at(i).open_camera();
     }
 }
 

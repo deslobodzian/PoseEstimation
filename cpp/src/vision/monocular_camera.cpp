@@ -23,7 +23,6 @@ bool MonocularCamera::open_camera() {
     cap_.set(CAP_PROP_FRAME_WIDTH, config_.get_camera_resolution().width);
     cap_.set(CAP_PROP_FRAME_HEIGHT, config_.get_camera_resolution().height);
     cap_.set(CAP_PROP_FPS, config_.get_fps());
-    cap_.open(config_.get_device_id(), CAP_V4L2);
     return cap_.isOpened();
 }
 

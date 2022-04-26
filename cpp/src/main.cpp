@@ -26,9 +26,11 @@ int main() {
     debug("Starting loop");
     cv::Mat image;
     while (true) {
-        if (camera.read_frame()) {
-            image = camera.get_frame();
-            cameraServer.sendFrame(image);
+        if (camera.open_camera()) {
+            if (camera.read_frame()) {
+                image = camera.get_frame();
+                cameraServer.sendFrame(image);
+            }
         }
 //        server.receive_message();
         // wait until the estimator has started all threads before feeding data to the filter.

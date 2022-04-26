@@ -24,14 +24,13 @@ int main() {
 //    estimator.init();
 
     debug("Starting loop");
+    camera.open_camera();
     cv::Mat image;
     while (true) {
-        if (camera.open_camera()) {
-            if (camera.read_frame()) {
+            if (!camera.read_frame()) {
                 image = camera.get_frame();
                 cameraServer.sendFrame(image);
             }
-        }
 //        server.receive_message();
         // wait until the estimator has started all threads before feeding data to the filter.
 //        if (estimator.threads_started()) {

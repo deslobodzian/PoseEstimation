@@ -3,12 +3,12 @@
 //
 #include "vision/c920s.hpp"
 
-C920s::C920s(int device_id, Resolution c920_resolution, int fps) {
+C920s::C920s(std::string device_id, Resolution c920_resolution, int fps) {
     unsigned int res_height;
     unsigned int res_width;
     GetCaptureSize(c920_resolution, res_width, res_height);
     resolution res = resolution(res_width, res_height);
-    config_ = CameraConfig("", diagonal_fov_, res, fps);
+    config_ = CameraConfig(device_id, diagonal_fov_, res, fps);
     open_camera();
 }
 

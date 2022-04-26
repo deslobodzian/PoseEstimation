@@ -11,7 +11,9 @@ int main() {
 
     // Instantiate Systems:
     UDPServer server;
-    C920s camera(0, RESOLUTION_1920x1080, 30);
+    resolution res(1920, 1080);
+    CameraConfig config("usb-046d_HD_Pro_Webcam_C920_EEDAD4AF-video-index0", 72, res, 30);
+    MonocularCamera camera(config);
     CameraServer cameraServer(camera);
 
     // if c++20 can replace with " Landmark{.x = 3, .y = -2, .id = 3} "

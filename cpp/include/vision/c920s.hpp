@@ -32,7 +32,7 @@ enum Resolution {
 
 class C920s : public MonocularCamera {
 private:
-    int device_id_;
+    std::string device_id_;
     CameraConfig config_;
     std::string pipeline_;
     int diagonal_fov_ = 72;
@@ -42,7 +42,7 @@ private:
         height = RESOLUTION_HEIGHTS[res];
     }
 public:
-    C920s(int device_id, Resolution c920_resolution, int fps);
+    C920s(std::string device_id, Resolution c920_resolution, int fps);
     ~C920s();
 };
 

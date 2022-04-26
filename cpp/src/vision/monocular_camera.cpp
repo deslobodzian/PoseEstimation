@@ -3,8 +3,9 @@
 //
 #include "vision/monocular_camera.hpp"
 
-MonocularCamera::MonocularCamera(int device_id, camera_config config) {
-    device_id_ = device_id;
+
+
+MonocularCamera::MonocularCamera(CameraConfig config) {
     config_ = config;
 }
 MonocularCamera::~MonocularCamera() {
@@ -18,10 +19,11 @@ bool MonocularCamera::open_camera() {
 //	    ", height=" + std::to_string(config_.camera_resolution.height) +
 //	    ", framerate="+ std::to_string(config_.frames_per_second) + 
 //	    "/1 ! videoconvert ! appsink";
-    cap_.open(device_id_, CAP_V4L2);
-    cap_.set(CAP_PROP_FRAME_WIDTH, config_.camera_resolution.width);
-    cap_.set(CAP_PROP_FRAME_HEIGHT, config_.camera_resolution.height);
-    cap_.set(CAP_PROP_FPS, config_.frames_per_second);
+//    cap_.open(config_.get_device_id(), CAP_V4L2);
+//    cap_.set(CAP_PROP_FRAME_WIDTH, config_.get_camera_resolution().width);
+//    cap_.set(CAP_PROP_FRAME_HEIGHT, config_.get_camera_resolution().height);
+//    cap_.set(CAP_PROP_FPS, config_.get_fps());
+    cap_.open(config_.get_pipeline(), CAP_GSTREAMER);
     return cap_.isOpened();
 }
 
@@ -35,16 +37,16 @@ Mat MonocularCamera::get_frame() {
 }
 
 double MonocularCamera::yaw_angle_to_object(tracked_object &obj) {
-    Point object_center = (obj.object.br() + obj.object.tl()) / 2.0;
-    Point center(config_.camera_resolution.width / 2.0, config_.camera_resolution.width / 2.0);
-    double focal_length = config_.camera_resolution.width / (2.0 * tan(config_.field_of_view.horizontal / 2.0));
+    Point object_center = (obj.object.br() + obj.object.tl()) / 2;
+    Point center(config_.get_camera_resolution().width / 2, config_.get_camera_resolution().width / 2);
+    double focal_length = config_.get_camera_resolution().width / (2 * tan(config_.get_fov().horizontal / 2));
     return atan((center - object_center).x / focal_length);
 }
 
 double MonocularCamera::pitch_angle_to_object(tracked_object &obj) {
-    Point object_center = (obj.object.br() + obj.object.tl()) / 2.0;
-    Point center(config_.camera_resolution.height / 2.0, config_.camera_resolution.height / 2.0);
-    double focal_length = config_.camera_resolution.height / (2.0 * tan(config_.field_of_view.vertical / 2.0));
+    Point object_center = (obj.object.br() + obj.object.tl()) / 2;
+    Point center((int) config_.get_camera_resolution().height / 2, config_.get_camera_resolution().height / 2);
+    double focal_length = config_.get_camera_resolution().height / (2 * tan(config_.get_fov().vertical / 2));
     return atan((center - object_center).x / focal_length);
 }
 
@@ -148,3 +150,4 @@ bool MonocularCamera::is_object_in_box(tracked_object &obj, Rect &box) {
 int MonocularCamera::get_id() {
 	return device_id_;
 }
+

@@ -33,33 +33,60 @@ struct fov {
 };
 
 struct resolution {
-    int height;
-    int width;
+    unsigned int height;
+    unsigned int width;
     resolution() = default;
-    resolution(int w, int h) {
+    resolution(unsigned int w, unsigned int h) {
         height = h;
         width = w;
     }
 };
 
-struct camera_config {
-    fov field_of_view;
-    int frames_per_second;
-    resolution camera_resolution;
-    camera_config() = default;
-    camera_config(double df, resolution res, int fps) {
-        double dFov = df * M_PI / 180.0;
+class CameraConfig {
+private:
+    std::string device_id_;
+    fov field_of_view_;
+    int frames_per_second_;
+    resolution camera_resolution_;
+    std::string pipeline_;
+public:
+    CameraConfig() = default;
+    CameraConfig(std::string device, double diagonal_fov, resolution res, int fps) {
+        device_id_ = device;
+        double d_fov = diagonal_fov * M_PI / 180.0;
         double aspect = hypot(res.width, res.height);
-        double hFov = atan(tan(dFov / 2.0) * (res.width / aspect)) * 2;
-        double vFov = atan(tan(dFov / 2.0) * (res.height / aspect)) * 2;
-        field_of_view = fov(hFov, vFov, false);
-        camera_resolution = res;
-        frames_per_second = fps;
+        double h_fov = atan(tan(d_fov / 2.0) * (res.width / aspect)) * 2;
+        double v_fov = atan(tan(d_fov / 2.0) * (res.height / aspect)) * 2;
+        field_of_view_ = fov(h_fov, v_fov, false);
+        camera_resolution_ = res;
+        frames_per_second_ = fps;
     }
-    camera_config(fov f, resolution res, int fps) {
-        field_of_view = f;
-        camera_resolution = res;
-        frames_per_second = fps;
+    CameraConfig(std::string device, fov fov, resolution res, int fps) {
+        device_id_ = device;
+        field_of_view_ = fov;
+        camera_resolution_ = res;
+        frames_per_second_ = fps;
+    }
+
+    std::string get_device_id() {
+        return device_id_;
+    }
+
+    fov get_fov() {
+        return field_of_view_;
+    }
+
+    resolution get_camera_resolution() {
+        return camera_resolution_;
+    }
+
+    int get_fps() {
+        return frames_per_second_;
+    }
+    std::string get_pipeline() {
+        pipeline_ = "v4l2src device=" + device_id_ + " ! video/x-raw(memory::NVMM), format=BGR, width=" + std::to_string(camera_resolution_.width) +
+                ", height=" + std::to_string(camera_resolution_.height) + ", framerate=" + std::to_string(frames_per_second_) +
+                "/1 ! appsink";
     }
 };
 
@@ -78,13 +105,13 @@ private:
     VideoCapture cap_;
     Mat frame_;
     int device_id_;
-    camera_config config_;
+    CameraConfig config_;
     std::vector<tracked_object> objects_;
     std::vector<tracked_object> latest_objects_;
 
 public:
     MonocularCamera() = default;
-    MonocularCamera(int device_id, camera_config config);
+    MonocularCamera(CameraConfig config);
     ~MonocularCamera();
 
     bool open_camera();
@@ -92,7 +119,6 @@ public:
     int get_id();
 
     Mat get_frame();
-    int coordinate_change(Point p);
     void draw_rect(Rect rect);
     void draw_crosshair(Rect rect);
     void draw_crosshair(tracked_object obj);

@@ -22,7 +22,7 @@ private:
 
 public:
     TrackedObjectInfo();
-    TrackedObjectInfo(sl::ObjectData object);
+    explicit TrackedObjectInfo(sl::ObjectData object);
     ~TrackedObjectInfo();
 
     const double get_x();

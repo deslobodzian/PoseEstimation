@@ -69,6 +69,10 @@ std::string TrackedObjectInfo::to_packet() {
             std::to_string(vz_) + ";";
 }
 
+TrackedObjectInfo::~TrackedObjectInfo() {
+
+}
+
 
 
 

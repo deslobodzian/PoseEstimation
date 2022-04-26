@@ -42,11 +42,11 @@ public:
         element_ = element;
     }
 
-    double get_range(){
+    double get_range() const{
         return range_;
     }
 
-    double get_bearing() {
+    double get_bearing() const {
         return bearing_;
     }
 

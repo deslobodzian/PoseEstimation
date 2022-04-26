@@ -58,7 +58,7 @@ FILE(GLOB_RECURSE SRC_FILES src/*.c*)
 FILE(GLOB_RECURSE HDR_FILES include/*.h*)
 
 set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} -std=c++11)
-cuda_add_executable(${PROJECT_NAME} ${HDR_FILES} ${SRC_FILES})
+cuda_add_executable(${PROJECT_NAME} ${HDR_FILES} ${SRC_FILES} include/networking/camera_server.hpp src/networking/camera_server.cpp)
 add_definitions(-std=c++14 -g -O3 -D_MWAITXINTRIN_H_INCLUDED -Wno-deprecated-declarations)
 
 if (LINK_SHARED_ZED)

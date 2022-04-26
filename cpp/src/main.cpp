@@ -4,6 +4,7 @@
 #include "utils.hpp"
 #include "networking/udp_server.hpp"
 #include "vision/c920s.hpp"
+#include "networking/camera_server.hpp"
 
 
 int main() {
@@ -11,6 +12,7 @@ int main() {
     // Instantiate Systems:
     UDPServer server;
     C920s camera(0, RESOLUTION_1920x1080, 30);
+    CameraServer cameraServer(camera);
 
     // if c++20 can replace with " Landmark{.x = 3, .y = -2, .id = 3} "
 //    Map map;
@@ -24,6 +26,7 @@ int main() {
     while (true) {
         if (camera.read_frame()) {
             image = camera.get_frame();
+            cameraServer.sendFrame(image);
         }
 //        server.receive_message();
         // wait until the estimator has started all threads before feeding data to the filter.

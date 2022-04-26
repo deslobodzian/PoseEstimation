@@ -87,6 +87,7 @@ public:
         pipeline_ = "v4l2src device=" + device_id_ + " ! video/x-raw(memory::NVMM), format=BGR, width=" + std::to_string(camera_resolution_.width) +
                 ", height=" + std::to_string(camera_resolution_.height) + ", framerate=" + std::to_string(frames_per_second_) +
                 "/1 ! appsink";
+        return pipeline_;
     }
 };
 

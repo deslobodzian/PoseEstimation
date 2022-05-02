@@ -35,6 +35,10 @@ Mat MonocularCamera::get_frame() {
     return frame_;
 }
 
+void MonocularCamera::get_frame(cv::Mat& image) {
+    cap_.read(image);
+}
+
 double MonocularCamera::yaw_angle_to_object(tracked_object &obj) {
     Point object_center = (obj.object.br() + obj.object.tl()) / 2;
     Point center(config_.get_camera_resolution().width / 2, config_.get_camera_resolution().width / 2);

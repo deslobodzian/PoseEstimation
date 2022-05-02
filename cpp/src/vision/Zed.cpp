@@ -111,6 +111,12 @@ sl::Mat Zed::get_left_image() {
     return sl::Mat();
 }
 
+void Zed::get_left_image(sl::Mat &image) {
+    if (successful_grab()) {
+        zed_.retrieveImage(image, VIEW::LEFT);
+    }
+}
+
 sl::Mat Zed::get_right_image() {
     if (successful_grab()) {
         sl::Mat im;

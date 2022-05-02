@@ -3,8 +3,8 @@
 //
 #include "utils.hpp"
 #include "networking/udp_server.hpp"
-#include "vision/c920s.hpp"
 #include "networking/camera_server.hpp"
+#include "inference/inference_manager.hpp"
 
 
 int main() {
@@ -14,7 +14,12 @@ int main() {
     resolution res(1920, 1080);
     CameraConfig config("/dev/v4l/by-id/usb-046d_HD_Pro_Webcam_C920_EEDAD4AF-video-index0", 72, res, 30);
     MonocularCamera camera(config);
-    CameraServer cameraServer(camera);
+
+    InferenceManager inference_manager("custom.engine");
+
+
+
+
 
     // if c++20 can replace with " Landmark{.x = 3, .y = -2, .id = 3} "
 //    Map map;
@@ -24,13 +29,7 @@ int main() {
 //    estimator.init();
 
     debug("Starting loop");
-    camera.open_camera();
-    cv::Mat image;
     while (true) {
-            if (!camera.read_frame()) {
-                image = camera.get_frame();
-                cameraServer.sendFrame(image);
-            }
 //        server.receive_message();
         // wait until the estimator has started all threads before feeding data to the filter.
 //        if (estimator.threads_started()) {

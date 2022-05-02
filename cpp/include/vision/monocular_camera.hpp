@@ -120,6 +120,8 @@ public:
     int get_id();
 
     Mat get_frame();
+    void get_frame(cv::Mat& image);
+
     void draw_rect(Rect rect);
     void draw_crosshair(Rect rect);
     void draw_crosshair(tracked_object obj);

@@ -5,7 +5,6 @@
 
 CameraServer::CameraServer(MonocularCamera camera) {
     cv_source_ = frc::CameraServer::PutVideo("Inference Image", 640, 480);
-    frc::CameraServer::AddServer("Why");
     camera_ = camera;
 }
 

@@ -57,6 +57,8 @@ public:
     sl::Transform get_calibration_stereo_transform();
 
     sl::Mat get_left_image();
+    void get_left_image(sl::Mat &image);
+
     sl::Mat get_right_image();
 
     Pose get_camera_pose();

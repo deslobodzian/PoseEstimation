@@ -11,13 +11,13 @@
 #include "vision/Zed.hpp"
 #include "vision/monocular_camera.hpp"
 
-class InferenceManger {
+class InferenceManager {
 private:
     std::vector<std::thread> threads_;
     std::string engine_name_;
 public:
-    InferenceManger(std::string custom_engine);
-    ~InferenceManger();
+    InferenceManager(std::string custom_engine);
+    ~InferenceManager();
 
     void add_inference_thread(Zed& camera);
     void add_inference_thread(MonocularCamera& camera);
